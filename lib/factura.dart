@@ -1,0 +1,652 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'singleton_formulario_actual.dart' as singleton;
+import 'package:card_settings/card_settings.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
+import 'package:file_picker/file_picker.dart';
+import 'file_picker_helper.dart' as filepickerhelper;
+import 'expansion_list.dart' as expansion;
+import 'pdfgenerator.dart' as pdfgenerator;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_collapse/flutter_collapse.dart';
+import 'form.dart' as formulario;
+
+
+//vista pdf de factura
+import 'pdf_viewer.dart';
+
+//vista pdf de ticket
+import 'pdf_viewer_ticket.dart' as ticket;
+
+
+
+import 'productos.dart';
+import 'package:pdf/pdf.dart' as pdfCreator;
+
+
+//tabs content
+import 'tab_factura_editar.dart' as tabFacturaEditar;
+import 'tab_factura_archivos.dart' as tanFacturaArchivos;
+
+
+class Choice {
+  const Choice({this.title, this.icon});
+
+  final String title;
+  final IconData icon;
+}
+const List<Choice> choices = const <Choice>[
+  const Choice(title: 'Imprimir', icon: Icons.directions_car),
+  const Choice(title: 'Bicycle', icon: Icons.directions_bike),
+  const Choice(title: 'Imprimir', icon: Icons.directions_boat),
+  const Choice(title: 'Salir', icon: Icons.directions_bus),
+//  const Choice(title: 'Train', icon: Icons.directions_railway),
+//  const Choice(title: 'Walk', icon: Icons.directions_walk),
+];
+
+class FacturaPage extends StatelessWidget {
+  final String title;
+  PdfView  pdf_factura = new PdfView();
+  //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+  ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+
+  FacturaPage({Key key, this.title}) : super(key: key);
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tabProds = TabProductos();
+    //this.pdf_factura.
+    //pdf_viewer.MyApp().
+    return Scaffold(
+        body: DefaultTabController(
+      length: 4,
+      child: Scaffold(
+          appBar: AppBar(backgroundColor: Colors.red,elevation: 20,
+            bottom: TabBar(
+              tabs: [
+                Tab(
+                  icon: Icon(Icons.edit),
+                  text: 'Editar',
+                ),
+
+                Tab(
+                  icon: Icon(Icons.picture_as_pdf),
+                  text: 'Factura',
+                ),
+                Tab(
+                  icon: Icon(Icons.picture_as_pdf),
+                  text: 'Ticket',
+                ),
+                Tab(
+                  icon: Icon(Icons.pageview),
+                  text: 'Resultado',
+                ),
+              ],
+            ),
+            title: Text('Crear Nueva Factura'),
+            //backgroundColor: Colors.red,
+            centerTitle: true,actions: <Widget>[
+
+              PopupMenuButton(color: Colors.deepOrangeAccent,
+                itemBuilder: (BuildContext context) {
+                  return choices.skip(2).map((Choice choice) {
+                    return PopupMenuItem<Choice>(
+                      value: choice,
+                      child: Text(choice.title,style: TextStyle(color: Colors.white),),
+                    );
+                  }).toList();
+                },
+              )
+
+            ],
+          ),
+          body: TabBarView(
+            children: [
+
+               tabFacturaEditar.TabFacturaEditar(),
+              //ScreenEditar(),
+              //tabProds
+              //ScreenPreview(color: Colors.red),
+
+              this.pdf_factura,
+              this.pdf_ticket,
+
+              tanFacturaArchivos.TabFacturaArchivos()
+              //Icon(Icons.directions_car),
+              //Icon(Icons.directions_transit),
+              //Icon(Icons.directions_bike),
+            ],
+          ),
+
+      ),
+    )  ,
+        floatingActionButton:
+    Padding(
+    padding: const EdgeInsets.only(bottom: 50.0),
+        child : FloatingActionButton(
+          // When the user presses the button, show an alert dialog containing the
+          // text that the user has entered into the text field.
+          backgroundColor: Colors.green,onPressed: () async{
+
+
+          SharedPreferences pref = await SharedPreferences.getInstance();
+          String infoTributaria = """
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.0.0">
+    <infoTributaria>
+    <ambiente>${pref.getString('ambiente')}</ambiente>
+    <tipoEmision>${pref.getString('tipoEmision')}</tipoEmision>
+    <razonSocial>${pref.getString('razonSocial')}</razonSocial>
+    <ruc>${pref.getString('ruc')}</ruc>
+    <claveAcceso>${pref.getString('claveAcceso')}</claveAcceso>
+    <codDoc>${pref.getString('codDoc')}</codDoc>
+    <estab>${pref.getString('estab')}</estab>
+    <ptoEmi>${pref.getString('ptoEmi')}</ptoEmi>
+    <secuencial>${pref.getString('secuencial')}</secuencial>
+    <dirMatriz>${pref.getString('dirMatriz')}</dirMatriz>
+  </infoTributaria>
+    """;
+          String infoFactura = singleton.MyXmlSingleton().getInfoFactura();
+
+          final Email email = Email(
+            body: 'Email body',
+            subject: 'Email subject',
+            recipients: ['lubeck05@gmail.com'],
+            cc: ['cc@example.com'],
+            bcc: ['bcc@example.com'],
+            attachmentPath: 'assets/mypdf.pdf',
+            isHTML: false,
+          );
+
+
+            return showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  // Retrieve the text the user has entered by using the
+                  // TextEditingController.
+                  //content: Text(singleton.MyXmlSingleton().forDebug.text),
+                  content:
+                  SingleChildScrollView(
+                    child:
+                    Text(infoTributaria+infoFactura,style: TextStyle(fontSize: 8),)
+                    ,)
+                  ,
+                );
+              },
+            );
+          },
+          tooltip: 'Show me the value!',
+          child: Icon(Icons.send),
+        ),
+     )
+    );
+  }
+}
+
+/*
+class ScreenEditar extends StatefulWidget {
+  @override
+  _ScreenEditarState createState() => new _ScreenEditarState();
+}*/
+
+//class _ScreenEditarState extends State<ScreenEditar> {
+class ScreenEditar extends StatelessWidget {
+  /*
+  const ScreenEditar({
+    Key key,
+    @required this.color,
+    @required this.name,
+  }) : super(key: key);
+*/
+  //final Color color;
+  //final String name;
+  String title = "Spheria";
+  String author = "Cody Leet";
+  String url = "http://www.codyleet.com/spheria";
+  List<String> infoFactura = [
+    'fechaEmision',
+    'dirEstablecimiento',
+    'obligadoContabilidad',
+    'tipoIdentificacionComprador',
+    'razonSocialComprador',
+    'identificacionComprador',
+    'totalSinImpuestos',
+    'totalDescuento',
+    'codigoImpuesto',
+    'codigoPorcentaje',
+    ''
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      //key: _formKey,
+      child: CardSettings(
+        children: <Widget>[
+          CardSettingsHeader(
+            labelAlign: TextAlign.center,
+            label: 'Datos de factura',
+            color: Colors.blueAccent,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'Fecha emision',
+            initialValue: title,
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'Title is required.';
+            },
+            onSaved: (value) => title = value,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'Direccion',
+            initialValue: 'Editar direccion',
+            validator: (value) {
+              if (!value.startsWith('http:')) return 'Must be a valid website.';
+            },
+            onSaved: (value) => url = value,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'A contabilidad',
+            initialValue: 'Editar estado',
+            validator: (value) {
+              if (!value.startsWith('http:')) return 'Must be a valid website.';
+            },
+            onSaved: (value) => url = value,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'Tipo Identificacion',
+            initialValue: 'Editar tipo identificacion',
+            validator: (value) {
+              if (!value.startsWith('http:')) return 'Must be a valid website.';
+            },
+            onSaved: (value) => url = value,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'Razon social',
+            initialValue: 'Editar razon social',
+            validator: (value) {
+              if (!value.startsWith('http:')) return 'Must be a valid website.';
+            },
+            onSaved: (value) => url = value,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'Identificacion',
+            initialValue: 'Editar identificacion',
+            validator: (value) {
+              if (!value.startsWith('http:')) return 'Must be a valid website.';
+            },
+            onSaved: (value) => url = value,
+          ),
+          CardSettingsText(
+            labelWidth: 150,
+            label: 'auxiliar',
+            initialValue: 'Editar auxiliar',
+            validator: (value) {
+              if (!value.startsWith('http:')) return 'Must be a valid website.';
+            },
+            onSaved: (value) => url = value,
+          ),
+
+
+          Padding(
+            padding: EdgeInsets.all(20.0),
+            child: RaisedButton(
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(18.0),
+                  side: BorderSide(color: Colors.red)),
+              onPressed: () {
+
+                //mediante funcion de otro .dart con parametros todos los datos de
+                //del form, generar el xml, codificar y enviar
+              },
+              color: Colors.red,
+              textColor: Colors.white,
+              child: Text("Debug".toUpperCase(),
+                  style: TextStyle(fontSize: 17)),
+            ),
+          ),
+
+
+        ],
+      ),
+    );
+  }
+}
+
+class ScreenPreview extends StatelessWidget {
+  const ScreenPreview({
+    Key key,
+    @required this.color,
+    @required this.name,
+  }) : super(key: key);
+
+  final Color color;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: <Widget>[
+        Container(
+          color: Colors.grey,
+          height: 510,
+        ),
+        Container(
+          color: Colors.red,
+          height: 110,
+        ),
+      ],
+    );
+  }
+}
+
+
+//para los resultados
+class NewScreen extends StatelessWidget {
+  const NewScreen({
+    Key key,
+    //@required this.color,
+    //@required this.name,
+  }) : super(key: key);
+
+  //final Color color;
+  //final String name;
+  //String dropdownValue = 'One';
+  //String title = "Spheria";
+  //String author = "Cody Leet";
+  //String url = "http://www.codyleet.com/spheria";
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Form(
+        //key: _formKey,
+        child: CardSettings(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: RaisedButton(
+                shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(18.0),
+                    side: BorderSide(color: Colors.red)),
+                onPressed: () {
+                  print (singleton.MyXmlSingleton().infoTributaria);
+                  //singleton.MyXmlSingleton().ruc = 'tmr';
+
+
+                },
+                color: Colors.red,
+                textColor: Colors.white,
+                child: Text("Debug".toUpperCase(),
+                    style: TextStyle(fontSize: 17)),
+              ),
+            ),
+            CardSettingsHeader(
+              color: Colors.blueAccent,
+              label: 'Facturas pasadas',
+              labelAlign: TextAlign.center,
+            ),
+            Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Text(
+                      'Factura 2020/3/1 21:44',
+                      style: TextStyle(fontSize: 16),
+                    )),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("pdf".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("ticket".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Text(
+                      'Factura 2020/3/1 21:44',
+                      style: TextStyle(fontSize: 16),
+                    )),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("pdf".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("ticket".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Text(
+                      'Factura 2020/3/1 21:44',
+                      style: TextStyle(fontSize: 16),
+                    )),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("pdf".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("ticket".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Text(
+                      'Factura 2020/3/1 21:44',
+                      style: TextStyle(fontSize: 16),
+                    )),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("pdf".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                  child: RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.blueAccent)),
+                    onPressed: () {
+                      //mediante funcion de otro .dart con parametros todos los datos de
+                      //del form, generar el xml, codificar y enviar
+                    },
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    child: Text("ticket".toUpperCase(),
+                        style: TextStyle(fontSize: 12)),
+                  ),
+                )
+
+
+              ],
+            ),
+
+            TextField(readOnly: true,controller: singleton.MyXmlSingleton().forDebug,)
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Pdfview extends StatefulWidget {
+  @override
+  _PdfviewState createState() => _PdfviewState();
+}
+
+class _PdfviewState extends State<Pdfview> {
+  String path;
+
+  @override
+  initState() {
+    super.initState();
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/teste.pdf');
+  }
+
+  Future<File> writeCounter(Uint8List stream) async {
+    final file = await _localFile;
+
+    // Write the file
+    return file.writeAsBytes(stream);
+  }
+
+  Future<Uint8List> fetchPost() async {
+    final response = await http.get(
+        'https://expoforest.com.br/wp-content/uploads/2017/05/exemplo.pdf');
+    final responseJson = response.bodyBytes;
+
+    return responseJson;
+  }
+
+  loadPdf() async {
+    writeCounter(await fetchPost());
+    path = (await _localFile).path;
+
+    if (!mounted) return;
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        //if (path != null)
+        Container(
+          //height: 300.0,
+          child: PdfViewer(
+            filePath: path,
+          ),
+        ),
+        //else
+        Text("Pdf is not Loaded"),
+        RaisedButton(
+          child: Text("Load pdf"),
+          onPressed: loadPdf,
+        ),
+      ],
+    );
+  }
+}
