@@ -3,14 +3,15 @@
 
 import 'package:card_settings/card_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'singleton_formulario_actual.dart' as singleton;
 class FormEmisor extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _FormEmisorState();
   }
 }
@@ -20,9 +21,7 @@ class _FormEmisorState extends State<FormEmisor> {
   //final String title;
   @override
   void initState() {
-
     super.initState();
-
     getSharedPrefs();
   }
 
@@ -40,7 +39,7 @@ class _FormEmisorState extends State<FormEmisor> {
       this.controller_codDoc = new TextEditingController(text:prefs.getString("codDoc"));
       this.controller_estab = new TextEditingController(text: prefs.getString("estab"));
       this.controller_ptoEmi = new TextEditingController(text: prefs.getString("ptoEmi"));
-      this.controller_dirMatriz = new TextEditingController(text: prefs.getString("secuencial"));
+      this.controller_dirMatriz = new TextEditingController(text: prefs.getString("dirMatriz"));
     });
   }
 
@@ -53,7 +52,7 @@ class _FormEmisorState extends State<FormEmisor> {
     });
   }
 */
-  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  // final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
   //MyHomePage({Key key, this.title}) : super(key: key);
   String dropdownValue = 'One';
@@ -83,6 +82,7 @@ class _FormEmisorState extends State<FormEmisor> {
   TextEditingController controller_codDoc = TextEditingController();
   TextEditingController controller_dirMatriz = TextEditingController();
 
+  
   /*
   Future<bool> saveData() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -116,19 +116,12 @@ class _FormEmisorState extends State<FormEmisor> {
     //print('Pressed $counter times.');
     //await prefs.setString(identificador, counter);
   }
-  /*
-  Future<String> getRazonSocial() async
-  {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String temp = (prefs.getString('razonSocial')); //+ 1;
-    print ('futuro : ' + temp);
-    return temp;
-  }*/
-  //PDFDocument doc = await PDFDocument.fromURL('http://www.africau.edu/images/default/sample.pdf');
 
   @override
   Widget build(BuildContext context){
+    final productoInfo=Provider.of<ProductosArrayInfo>(context);
     var _ponyModel= 22;
+    // final productoInfo=Provider.of<ProductosArrayInfo>(context);
     //obtiene
     _inicializaVariables();
     setState(() {
@@ -139,14 +132,33 @@ class _FormEmisorState extends State<FormEmisor> {
       body:
 
       Form(onChanged: (()async{
+
+
+
+
         SharedPreferences pref  = await SharedPreferences.getInstance();
         pref.setString('razonSocial',this.controller.text);
-        pref.setString('tipoEmision','1'); // unico
+        pref.setString('tipoEmision',this.controller_ambiente.text); // unico
         pref.setString('ruc',this.controller_ruc.text);
         pref.setString('codDoc',this.controller_codDoc.text);
         pref.setString('estab',this.controller_estab.text);
         pref.setString('ptoEmi',this.controller_ptoEmi.text);
         pref.setString('dirMatriz',this.controller_dirMatriz.text);
+
+        
+        //this.controller_ambiente.text;
+        productoInfo.tipoEmision= this.controller_tipoEmision.text;
+        productoInfo.razonSocial = this.controller.text;
+        productoInfo.ruc = this.controller_ruc.text;
+        productoInfo.codDoc = this.controller_codDoc.text;
+        productoInfo.estab = this.controller_estab.text;
+        productoInfo.ptoEmi = this.controller_ptoEmi.text;
+        productoInfo.dirMatriz = this.controller_dirMatriz.text;
+
+        // print ("[cnotroller ]" + this.controller_ambiente.text);
+        //print ( productoInfo.ambiente);
+
+
         //print ('sadsa');
       }),
         //key: _formKey,
@@ -161,14 +173,25 @@ class _FormEmisorState extends State<FormEmisor> {
             CardSettingsListPicker(contentAlign: TextAlign.center,
               values: ['1','2'],
               //hintText: 'ada',
-              hintText: 'Seleccione',
+              //hintText: 'Seleccione',
               label: 'Ambiente',
-              initialValue: 'Prueba',
+              initialValue: '1',
               options: ['Prueba','Produccion'],
               onChanged: ((value) async{
-                //print (value);
+                  print ('[valor] ' +value);
                   SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.setString('ambiente', value);
+                  switch (int.parse(value)) {
+                    case 1:
+                    productoInfo.ambiente = 'prueba';
+                        prefs.setString('ambiente', 'prueba');
+                      break;
+                    case 2:
+                    productoInfo.ambiente = 'produccion';
+                        prefs.setString('ambiente', 'produccion');
+                      break;
+                    default:
+                  }
+                  //prefs.setString('ambiente', value);
               }),
             ),
             CardSettingsListPicker(contentAlign: TextAlign.center,
@@ -200,7 +223,7 @@ class _FormEmisorState extends State<FormEmisor> {
               }),
             ),
             CardSettingsText(
-              //controller: controller_ruc,
+              controller: controller_ruc,
               keyboardType: TextInputType.numberWithOptions(),
 
               maxLength: 13,
@@ -235,10 +258,10 @@ class _FormEmisorState extends State<FormEmisor> {
               initialValue: 'Prueba',
               options: ['Factura','Liquidacion', 'Nota de credito'
                 , 'Nota de debito','Guia de remision','comprobante de retencion'],
-              onChanged: ((value) async{
+              onChanged: ((value) {
                 //print (value);
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('codDoc', value);
+                // SharedPreferences prefs = await SharedPreferences.getInstance();
+                // prefs.setString('codDoc', value);
               }),
             ),
             CardSettingsText(controller: controller_estab,
@@ -256,7 +279,7 @@ class _FormEmisorState extends State<FormEmisor> {
               label: 'Punto Emision',
               //initialValue: 'Editar razon social',
               validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
+                //if (!value.startsWith('http:')) return 'Must be a valid website.';
               },
               onSaved: (value) => url = value,
             ),
@@ -266,7 +289,7 @@ class _FormEmisorState extends State<FormEmisor> {
               label: 'Dir Matriz',
               //initialValue: 'Editar identificacion',
               validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
+                //if (!value.startsWith('http:')) return 'Must be a valid website.';
               },
               onSaved: (value) => url = value,
             ),

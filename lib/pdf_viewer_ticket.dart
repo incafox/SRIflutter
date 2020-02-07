@@ -7,6 +7,7 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfwidget;
+import 'package:shared_preferences/shared_preferences.dart';
 
 //void main() => runApp(MyApp());
 
@@ -15,7 +16,7 @@ class PdfViewTicket extends StatefulWidget {
   _PdfViewTicketState createState() => _PdfViewTicketState();
 }
 
-class _PdfViewTicketState extends State<PdfViewTicket> {
+class _PdfViewTicketState extends State<PdfViewTicket> with AutomaticKeepAliveClientMixin<PdfViewTicket>{
   String assetPDFPath = "";
   String urlPDFPath = "";
   final pdfwidget.Document pdf = pdfwidget.Document();
@@ -23,12 +24,13 @@ class _PdfViewTicketState extends State<PdfViewTicket> {
   @override
   void initState() {
     //super.initState();
-
+   // getSharedPrefs();
+    
     getFileFromAsset("assets/mypdf.pdf").then((f) {
-      setState(() {
+      //setState(() {
         assetPDFPath = f.path;
         print(assetPDFPath);
-      });
+      //});
     });
 
 //    getFileFromUrl("http://www.pdf995.com/samples/pdf.pdf").then((f) {
@@ -38,6 +40,34 @@ class _PdfViewTicketState extends State<PdfViewTicket> {
 //      });
 //    });
   }
+
+  Future<Null> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      this.controller_razonSocial =
+          new TextEditingController(text: prefs.getString("razonSocial"));
+      this.controller_ruc =
+          new TextEditingController(text: prefs.getString("ruc"));
+      this.controller_codDoc =
+          new TextEditingController(text: prefs.getString("codDoc"));
+      this.controller_estab =
+          new TextEditingController(text: prefs.getString("estab"));
+      this.controller_ptoEmi =
+          new TextEditingController(text: prefs.getString("ptoEmi"));
+      this.controller_dirMatriz =
+          new TextEditingController(text: prefs.getString("secuencial"));
+    });
+  }
+
+  TextEditingController controller_razonSocial = TextEditingController();
+  TextEditingController controller_ambiente = TextEditingController();
+  TextEditingController controller_ruc = TextEditingController();
+  TextEditingController controller_tipoEmision = TextEditingController();
+  TextEditingController controller_estab = TextEditingController();
+  TextEditingController controller_ptoEmi = TextEditingController();
+  TextEditingController controller_claveAcceso = TextEditingController();
+  TextEditingController controller_codDoc = TextEditingController();
+  TextEditingController controller_dirMatriz = TextEditingController();
 
   Future<File> getFileFromAsset(String asset) async {
     try {
@@ -79,9 +109,7 @@ class _PdfViewTicketState extends State<PdfViewTicket> {
   @override
   Widget build(BuildContext context) {
     //tmr();
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
 //        appBar: AppBar(
 //          title: Text("Flutter PDF Tutorial"),
 //        ),
@@ -107,68 +135,102 @@ class _PdfViewTicketState extends State<PdfViewTicket> {
                   height: 20,
                 ),
                 RaisedButton(
-                  color: Colors.cyan,
-                  child: Text("Abrir pdf TICKET"),
+                  color: Colors.red,
+                  textColor: Colors.white,
+                  child: Text("GENERAR TICKET PDF"),
                   onPressed: () async {
                     pdf.addPage(pdfwidget.Page(
                         pageFormat: PdfPageFormat.a4,
                         build: (pdfwidget.Context context) {
-                          return
-                          pdfwidget.Center(child:
-                            pdfwidget.Container(
-                                      width: 250,
-                                      child: pdfwidget.Column(children: [
-                                        pdfwidget.Text("RAZON SOCIAL"),
-                                        pdfwidget.Text("razon social"),
-                                        pdfwidget.Text("RUC :  12345678"),
-                                        pdfwidget.Text("Dir matriz : qwertyuj"),
-                                        pdfwidget.Text("_____________________"),
-                                        pdfwidget.Text("AUTORIZACION CLAVE DE ACCESO"),
-                                        pdfwidget.Text("1T324Y5UI273743284892847839284738298748932874538274483274"),
-                                        pdfwidget.Text("_____________________"),
-                                        pdfwidget.Text("FACTURA No : 1232456 12345678"),
-                                        pdfwidget.Text("FECHA EMISION : 1232456 12345678"),
-                                        pdfwidget.Text("Razon social/nombre y apellidos"),
-                                        pdfwidget.Text("CONSUMIDOR FINAL"),
-                                        pdfwidget.Text("RUC/CI: 99999999999"),
-                                        pdfwidget.Text("_____________________"),
-                                        pdfwidget.Text("_____________________"),
-                              pdfwidget.Table.fromTextArray(context: context, data: const <List<String>>[
-                                <String>['Cant.', 'Producto', 'P.Unit', 'Total'],
-                                <String>['1', 'filete', '44.0', '44.0'],
-                                <String>['1', 'Portafilete', '22.0', '22.0'],
-                                <String>['','Subtotal 12%', 'Acrobat 1', '25.00'],
-                                <String>['','Subtotal 0%', 'Acrobat 1', '25.00'],
-                                <String>['','Descuento',  'Acrobat 1', '25.00'],
-                                <String>['','IVA12%',  'Acrobat 1', '25.00'],
-                                <String>['VALOR TOTAL', 'PDF 1.0', 'Acrobat 1', '25.00'],
-                              ]),
-
-                                        pdfwidget.Table.fromTextArray(context: context, data: const <List<String>>[
-                                          <String>['1993', 'PDF 1.0', 'Acrobat 1', '25.00'],
-                                          <String>['1993', 'PDF 1.0', 'Acrobat 1', '25.00'],
-                                          <String>['1993', 'PDF 1.0', 'Acrobat 1', '25.00'],
-                                        ])
-
-
-
-
-
-
-                                      ]),
-                                    )
-                          );
+                          return pdfwidget.Center(
+                              child: pdfwidget.Container(
+                            width: 250,
+                            child: pdfwidget.Column(children: [
+                              pdfwidget.Text("RAZON SOCIAL"),
+                              pdfwidget.Text(this.controller_razonSocial.text),
+                              pdfwidget.Text("RUC:" + this.controller_ruc.text),
+                              pdfwidget.Text("Dir matriz :" +
+                                  this.controller_dirMatriz.text),
+                              pdfwidget.Text("____________________________"),
+                              pdfwidget.Text("AUTORIZACION/CLAVE DE ACCESO"),
+                              pdfwidget.Text(
+                                  "1T324Y5UI2737432848\n928478392847382987"
+                                  ,textAlign: pdfwidget.TextAlign.center),
+                              pdfwidget.Text("____________________________"),
+                              pdfwidget.Text("FACTURA No : 1232456 12345678"),
+                              pdfwidget.Text(
+                                  "Fecha de emision :" + DateTime.now().toString(),textAlign: pdfwidget.TextAlign.center),
+                              pdfwidget.Text("____________________________"),
+                              pdfwidget.Text("Razon social/nombre y apellidos"),
+                              pdfwidget.Text("CONSUMIDOR FINAL"),
+                              pdfwidget.Text("RUC/CI: 999929999999"),
+                              pdfwidget.Text("_____________________"),
+                              pdfwidget.Text("_____________________"),
+                              pdfwidget.Table.fromTextArray(
+                                  context: context,
+                                  data: const <List<String>>[
+                                    <String>[
+                                      'Cant.',
+                                      'Producto',
+                                      'P.Unit',
+                                      'Total'
+                                    ],
+                                    <String>['1', 'filete', '44.0', '44.0'],
+                                    <String>[
+                                      '1',
+                                      'Portafilete',
+                                      '22.0',
+                                      '22.0'
+                                    ],
+                                    <String>[
+                                      '',
+                                      'Subtotal 12%',
+                                      'Acrobat 1',
+                                      '25.00'
+                                    ],
+                                    <String>[
+                                      '',
+                                      'IVA12%',
+                                      'Acrobat 1',
+                                      '25.00'
+                                    ],
+                                    <String>[
+                                      'VALOR TOTAL',
+                                      'PDF 1.0',
+                                      'Acrobat 1',
+                                      '25.00'
+                                    ],
+                                  ]),
+                              pdfwidget.Table.fromTextArray(
+                                  context: context,
+                                  data: const <List<String>>[
+                                    <String>[
+                                      '1993',
+                                      'PDF 1.0',
+                                      'Acrobat 1',
+                                      '25.00'
+                                    ],
+                                    <String>[
+                                      '1993',
+                                      'PDF 1.0',
+                                      'Acrobat 1',
+                                      '25.00'
+                                    ],
+                                    <String>[
+                                      '1993',
+                                      'PDF 1.0',
+                                      'Acrobat 1',
+                                      '25.00'
+                                    ],
+                                  ])
+                            ]),
+                          ));
 //                                    pdfwidget.Table.fromTextArray(
 //                                        context: context,
 //                                        data: const <List<String>>[
 //                                          <St
 //
 //
-
-
-
-
-                            ;
                           // Center
                         })); //
 
@@ -180,6 +242,7 @@ class _PdfViewTicketState extends State<PdfViewTicket> {
                     await file.writeAsBytes(pdf.save());
 
                     if (assetPDFPath != null) {
+                      
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -222,9 +285,13 @@ class _PdfViewTicketState extends State<PdfViewTicket> {
             child: Icon(Icons.print),
           ),
         ),
-      ),
-    );
+      );//,
+    
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 class PdfViewPage extends StatefulWidget {

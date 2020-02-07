@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'singleton_formulario_actual.dart' as singleton;
@@ -36,163 +39,313 @@ import 'tab_factura_editar.dart' as tabFacturaEditar;
 import 'tab_factura_archivos.dart' as tanFacturaArchivos;
 
 
-class Choice {
-  const Choice({this.title, this.icon});
-
-  final String title;
-  final IconData icon;
+class FacturaPage extends StatefulWidget {
+  // final String title;
+  // FacturaPage(this.title);
+  @override
+  _FacturaPageState createState() => _FacturaPageState();
 }
-const List<Choice> choices = const <Choice>[
-  const Choice(title: 'Imprimir', icon: Icons.directions_car),
-  const Choice(title: 'Bicycle', icon: Icons.directions_bike),
-  const Choice(title: 'Imprimir', icon: Icons.directions_boat),
-  const Choice(title: 'Salir', icon: Icons.directions_bus),
-//  const Choice(title: 'Train', icon: Icons.directions_railway),
-//  const Choice(title: 'Walk', icon: Icons.directions_walk),
-];
+//with AutomaticKeepAliveClientMixin
+class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClientMixin<FacturaPage> {
 
-class FacturaPage extends StatelessWidget {
-  final String title;
+
+
+  //final String title = widget.title;
   PdfView  pdf_factura = new PdfView();
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
   ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+  tabFacturaEditar.TabFacturaEditar tabFacturax = new tabFacturaEditar.TabFacturaEditar();
 
-  FacturaPage({Key key, this.title}) : super(key: key);
+  //FacturaPage({this.title});
 
+  Widget roundedButton(String buttonLabel, Color bgColor, Color textColor) {
+    var loginBtn = new Container(
+      padding: EdgeInsets.all(5.0),
+      alignment: FractionalOffset.center,
+      decoration: new BoxDecoration(
+        color: bgColor,
+        borderRadius: new BorderRadius.all(const Radius.circular(10.0)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: const Color(0xFF696969),
+            offset: Offset(1.0, 3.0),
+            blurRadius: 0.001,
+          ),
+        ],
+      ),
+      child: Text(
+        buttonLabel,
+        style: new TextStyle(
+            color: textColor, fontSize: 20.0, fontWeight: FontWeight.bold),
+      ),
+    );
+    return loginBtn;
+  }
+
+  Future<bool> _onBackPressed() {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Salir?', textAlign: TextAlign.center,),
+        content: new Text('Deseas salir realmente?', textAlign: TextAlign.center,),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(false),
+            child:roundedButton("No", Colors.red,
+                const Color(0xFFFFFFFF)),
+            //FlatButton(color: Colors.green,child: Text('NO'),),
+          ),
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(true),
+            child: roundedButton(" Yes ", Colors.green,
+                const Color(0xFFFFFFFF)),
+            //FlatButton(color: Colors.red,child: Text('SI'),),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
 
 
   @override
   Widget build(BuildContext context) {
+    final productoInfo=Provider.of<ProductosArrayInfo>(context);
+
     Widget tabProds = TabProductos();
     //this.pdf_factura.
     //pdf_viewer.MyApp().
-    return Scaffold(
-        body: DefaultTabController(
-      length: 4,
-      child: Scaffold(
-          appBar: AppBar(backgroundColor: Colors.red,elevation: 20,
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.edit),
-                  text: 'Editar',
-                ),
+    // AutomaticKeepAlive()
+    super.build(context);
+    return WillPopScope(
+          onWillPop: _onBackPressed,
+          child: Scaffold(
+          body: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+            appBar: AppBar(backgroundColor: Colors.red,elevation: 20,
+              bottom: TabBar(
+                tabs: [
+                  Tab(
+                    icon: Icon(Icons.edit),
+                    text: 'Editar',
+                  ),
 
-                Tab(
-                  icon: Icon(Icons.picture_as_pdf),
-                  text: 'Factura',
-                ),
-                Tab(
-                  icon: Icon(Icons.picture_as_pdf),
-                  text: 'Ticket',
-                ),
-                Tab(
-                  icon: Icon(Icons.pageview),
-                  text: 'Resultado',
-                ),
+                  Tab(
+                    icon: Icon(Icons.picture_as_pdf),
+                    text: 'Factura',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.picture_as_pdf),
+                    text: 'Ticket',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.pageview),
+                    text: 'Resultado',
+                  ),
+                ],
+              ),
+              title: Text('Crear Nueva Factura'),
+              //backgroundColor: Colors.red,
+              centerTitle: true,actions: <Widget>[
+
+                // PopupMenuButton(color: Colors.deepOrangeAccent,
+                //   itemBuilder: (BuildContext context) {
+                //     return choices.skip(2).map((Choice choice) {
+                //       return PopupMenuItem<Choice>(
+                //         value: choice,
+                //         child: Text(choice.title,style: TextStyle(color: Colors.white),),
+                //       );
+                //     }).toList();
+                //   },
+                // )
+
               ],
             ),
-            title: Text('Crear Nueva Factura'),
-            //backgroundColor: Colors.red,
-            centerTitle: true,actions: <Widget>[
+            body: TabBarView(
+              children: [
 
-              PopupMenuButton(color: Colors.deepOrangeAccent,
-                itemBuilder: (BuildContext context) {
-                  return choices.skip(2).map((Choice choice) {
-                    return PopupMenuItem<Choice>(
-                      value: choice,
-                      child: Text(choice.title,style: TextStyle(color: Colors.white),),
-                    );
-                  }).toList();
-                },
-              )
+                 //tabFacturaEditar.TabFacturaEditar(),
+                 
+                 tabFacturax,
 
-            ],
-          ),
-          body: TabBarView(
-            children: [
+                this.pdf_factura,
+                this.pdf_ticket,
 
-               tabFacturaEditar.TabFacturaEditar(),
-              //ScreenEditar(),
-              //tabProds
-              //ScreenPreview(color: Colors.red),
+                tanFacturaArchivos.TabFacturaArchivos()
+                //Icon(Icons.directions_car),
+                //Icon(Icons.directions_transit),
+                //Icon(Icons.directions_bike),
+              ],
+            ),
 
-              this.pdf_factura,
-              this.pdf_ticket,
-
-              tanFacturaArchivos.TabFacturaArchivos()
-              //Icon(Icons.directions_car),
-              //Icon(Icons.directions_transit),
-              //Icon(Icons.directions_bike),
-            ],
-          ),
-
-      ),
-    )  ,
-        floatingActionButton:
-    Padding(
-    padding: const EdgeInsets.only(bottom: 50.0),
-        child : FloatingActionButton(
-          // When the user presses the button, show an alert dialog containing the
-          // text that the user has entered into the text field.
-          backgroundColor: Colors.green,onPressed: () async{
-
-
-          SharedPreferences pref = await SharedPreferences.getInstance();
-          String infoTributaria = """
-<?xml version="1.0" encoding="UTF-8"?>
-<factura id="comprobante" version="1.0.0">
-    <infoTributaria>
-    <ambiente>${pref.getString('ambiente')}</ambiente>
-    <tipoEmision>${pref.getString('tipoEmision')}</tipoEmision>
-    <razonSocial>${pref.getString('razonSocial')}</razonSocial>
-    <ruc>${pref.getString('ruc')}</ruc>
-    <claveAcceso>${pref.getString('claveAcceso')}</claveAcceso>
-    <codDoc>${pref.getString('codDoc')}</codDoc>
-    <estab>${pref.getString('estab')}</estab>
-    <ptoEmi>${pref.getString('ptoEmi')}</ptoEmi>
-    <secuencial>${pref.getString('secuencial')}</secuencial>
-    <dirMatriz>${pref.getString('dirMatriz')}</dirMatriz>
-  </infoTributaria>
-    """;
-          String infoFactura = singleton.MyXmlSingleton().getInfoFactura();
-
-          final Email email = Email(
-            body: 'Email body',
-            subject: 'Email subject',
-            recipients: ['lubeck05@gmail.com'],
-            cc: ['cc@example.com'],
-            bcc: ['bcc@example.com'],
-            attachmentPath: 'assets/mypdf.pdf',
-            isHTML: false,
-          );
-
-
-            return showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  // Retrieve the text the user has entered by using the
-                  // TextEditingController.
-                  //content: Text(singleton.MyXmlSingleton().forDebug.text),
-                  content:
-                  SingleChildScrollView(
-                    child:
-                    Text(infoTributaria+infoFactura,style: TextStyle(fontSize: 8),)
-                    ,)
-                  ,
-                );
-              },
-            );
-          },
-          tooltip: 'Show me the value!',
-          child: Icon(Icons.send),
         ),
-     )
+      )  ,
+          floatingActionButton:
+      Padding(
+      padding: const EdgeInsets.only(bottom: 0.0),
+          child : SpeedDial(
+
+            // both default to 16
+            marginRight: 18,
+            marginBottom: 10,
+            animatedIcon: AnimatedIcons.menu_close,
+            animatedIconTheme: IconThemeData(size: 35.0),
+            // this is ignored if animatedIcon is non null
+            // child: Icon(Icons.add),
+            visible:  true,//_dialVisible,
+            // If true user is forced to close dial manually 
+            // by tapping main button and overlay is not rendered.
+            closeManually: false,
+            curve: Curves.decelerate,
+            overlayColor: Colors.black54,
+            overlayOpacity: 0.5,
+            onOpen: () => print('OPENING DIAL'),
+            onClose: () => print('DIAL CLOSED'),
+            tooltip: 'Speed Dial',
+            heroTag: 'speed-dial-hero-tag',
+            backgroundColor: Colors.yellow,
+            foregroundColor: Colors.black,
+            elevation: 4.0,
+            shape: CircleBorder(),
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.send),
+                backgroundColor: Colors.green,
+                label: 'Enviar Correo',
+                labelStyle: TextStyle(fontSize: 16.0),
+                onTap: ()async {
+                  final Email email = Email(
+                  body: 'Envio adjunto factura',
+                  subject: 'Factura electronica',
+                  recipients: [productoInfo.cliente_email], //el que va a recibir
+                  // cc: ['cc@example.com'],
+                  // bcc: ['bcc@example.com'],
+                  //attachmentPath: '/path/to/attachment.zip',
+                  isHTML: false,
+                );
+
+                await FlutterEmailSender.send(email);
+
+
+                }
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.cloud_upload),
+                backgroundColor: Colors.red,
+                label: 'Enviar SRI',
+                labelStyle: TextStyle(fontSize: 16.0),
+                onTap: ()async{
+                  // StackProductos x = productoInfo.stack;  // getDescripciones();
+                  // List<String> r = x.globalKey.currentState.getProductos();
+                  // for (var item in r) {
+                  //   print (item);
+                  // }
+                  // print('SECOND CHILD');
+                  List<Widget> y = productoInfo.productos;
+
+                  print('size > ' + y.length.toString());
+
+                  List <String> r = productoInfo.descripciones;
+                 
+
+                  List <String> co = productoInfo.costosUnitarios;
+                 
+                  List <String> ca = productoInfo.cantidades;
+                 
+                  List <String> to = productoInfo.totales;
+                 
+                  for (var i = 0; i < 10; i++) {
+                    print('indice > ' + i.toString());
+                    print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
+                  }
+                  // productoInfo.getDescrip();                
+                  print ("final");
+                  List<String> tmr = productoInfo.conceptos();
+                  for (var item in tmr) {
+                    print (item);
+                  }
+
+                  print('el precio total');
+                  print(productoInfo.getPrecioTotal());
+
+                  
+                  } ,
+              ),
+              // SpeedDialChild(
+              //   child: Icon(Icons.keyboard_voice),
+              //   backgroundColor: Colors.green,
+              //   label: 'Third',
+              //   labelStyle: TextStyle(fontSize: 18.0),
+              //   onTap: () => print('THIRD CHILD'),
+              // ),
+            ],
+          ),
+            
+//         FloatingActionButton(
+//           backgroundColor: Colors.green,onPressed: () async{
+//           SharedPreferences pref = await SharedPreferences.getInstance();
+//           String infoTributaria = """
+// <?xml version="1.0" encoding="UTF-8"?>
+// <factura id="comprobante" version="1.0.0">
+//     <infoTributaria>
+//     <ambiente>${pref.getString('ambiente')}</ambiente>
+//     <tipoEmision>${pref.getString('tipoEmision')}</tipoEmision>
+//     <razonSocial>${pref.getString('razonSocial')}</razonSocial>
+//     <ruc>${pref.getString('ruc')}</ruc>
+//     <claveAcceso>${pref.getString('claveAcceso')}</claveAcceso>
+//     <codDoc>${pref.getString('codDoc')}</codDoc>
+//     <estab>${pref.getString('estab')}</estab>
+//     <ptoEmi>${pref.getString('ptoEmi')}</ptoEmi>
+//     <secuencial>${pref.getString('secuencial')}</secuencial>
+//     <dirMatriz>${pref.getString('dirMatriz')}</dirMatriz>
+//   </infoTributaria>
+//     """;
+//           String infoFactura = singleton.MyXmlSingleton().getInfoFactura();
+
+//           final Email email = Email(
+//             body: 'Email body',
+//             subject: 'Email subject',
+//             recipients: ['lubeck05@gmail.com'],
+//             cc: ['cc@example.com'],
+//             bcc: ['bcc@example.com'],
+//             attachmentPath: 'assets/mypdf.pdf',
+//             isHTML: false,
+//           );
+//             return showDialog(
+//               context: context,
+//               builder: (context) {
+//                 return AlertDialog(
+//                   // Retrieve the text the user has entered by using the
+//                   // TextEditingController.
+//                   //content: Text(singleton.MyXmlSingleton().forDebug.text),
+//                   content:
+//                   SingleChildScrollView(
+//                     child:
+//                     Text(infoTributaria+infoFactura,style: TextStyle(fontSize: 8),)
+//                     ,)
+//                   ,
+//                 );
+//               },
+//             );
+//           },
+//           tooltip: 'Show me the value!',
+//           child: Icon(Icons.send),
+//         ),
+
+
+
+
+       )
+      ),
     );
   }
-}
 
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+  
+}
 /*
 class ScreenEditar extends StatefulWidget {
   @override

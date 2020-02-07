@@ -1,40 +1,107 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'factura.dart' as factura;
 import 'form_emisor.dart' as formEmisor;
 import 'form_cliente.dart' as formCliente;
-import 'form_descripcion.dart' as formDescripcion;
+import 'form_descripcion.dart';
+import 'singleton_formulario_actual.dart' as singleton;
 
-//todo : cambiar a statefull
-class TabFacturaEditar extends StatefulWidget {
+
+// class StackProductos extends StatefulWidget {
+//   @override
+//   _StackProductosState createState() => _StackProductosState();
+// }
+
+// class _StackProductosState extends State<StackProductos> {
+//   List<CardProduct> productos;
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     // productos = [CardProduct(),CardProduct()];
+//     super.initState();
+//   }
+
+//   void addProduct(){
+//     this.productos.add(new CardProduct());
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(children: this.productos.toList(),);
+//   }
+// }
+
+class StackProductos extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _TabFacturaEditarState();
+  _StackProductosState createState() => _StackProductosState();
+}
+
+class _StackProductosState extends State<StackProductos> {
+  List<Widget> productos;
+  // CardProduct t = CardProduct();
+  
+  @override
+  void initState() {
+    this.productos = [];
+    super.initState();
+    
+  }
+  function(value) => setState(() {
+    productos[value] = Container(color: Colors.cyan,height: 0.1,);
+    // this.productos.removeAt(value);
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final productoInfo=Provider.of<ProductosArrayInfo>(context);
+    return Container(width: double.infinity,child: 
+    Column(children: <Widget>[
+
+      SizedBox(width: 200,
+              child: MaterialButton(
+            textColor: Colors.white,child: Row(children: <Widget>[
+              Icon(Icons.add_box),
+          Text('\t    Agrega producto')
+        ],) ,
+            color: Colors.red,
+            onPressed: (){
+              setState(() {
+                this.productos.add(CardProduct(func: function,indice: this.productos.length, ));
+                productoInfo.productos = this.productos;
+                
+                // print ('eee');
+                // List<Widget> todos = productoInfo.productos;
+                // print (todos.length);
+              });
+            }),
+      ),
+      Column(children: this.productos.toList(),),
+    ],)
+    );
   }
 }
 
-//class MyHomePage extends StatelessWidget {
-class _TabFacturaEditarState extends State<TabFacturaEditar> {
-  //final String title;
+
+class TabFacturaEditar extends StatefulWidget {
   @override
-  void initState() {
-    super.initState();
-    getSharedPrefs();
+  _TabFacturaEditarState createState() => _TabFacturaEditarState();
+}
 
-  }
+class _TabFacturaEditarState extends State<TabFacturaEditar>with AutomaticKeepAliveClientMixin<TabFacturaEditar> {
 
+//class MyHomePage extends StatelessWidget {
 //class TabFacturaEditar extends StatelessWidget {
-  /*
-  const ScreenEditar({
-    Key key,
-    @required this.color,
-    @required this.name,
-  }) : super(key: key);
-*/
+  //TabFacturaEditar()
+  //final String title;
+  // GlobalKey<CardProductState> llavesita;
+  // StackProductos test = new StackProductos();
+ 
+  List<CardProduct> productos=[];
 
-  TextEditingController controller = TextEditingController();
+  TextEditingController controller_razonSocial = TextEditingController();
   TextEditingController controller_ambiente = TextEditingController();
   TextEditingController controller_ruc = TextEditingController();
   TextEditingController controller_tipoEmision = TextEditingController();
@@ -43,49 +110,128 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
   TextEditingController controller_secuencial = TextEditingController();
   TextEditingController controller_codDoc = TextEditingController();
   TextEditingController controller_claveAcceso = TextEditingController();
-
-//  Future<Null> getSharedPrefs() async {
-//    SharedPreferences prefs = await SharedPreferences.getInstance();
-////
-////    this.razonSocial = prefs.getString("razonSocial");
-////    this.razonSocial = prefs.getString("ruc");
-////    this.razonSocial = prefs.getString("codDoc");
-////    this.razonSocial = prefs.getString("estab");
-////    this.razonSocial = prefs.getString("ptoEmi");
-////    this.razonSocial = prefs.getString("secuencial");
-////    //setState(() {
-//      this.controller = new TextEditingController(text: prefs.getString("razonSocial"));
-//      this.controller_ruc = new TextEditingController(text: prefs.getString("ruc"));
-//      this.controller_codDoc = new TextEditingController(text:prefs.getString("codDoc"));
-//      this.controller_estab = new TextEditingController(text: prefs.getString("estab"));
-//      this.controller_ptoEmi = new TextEditingController(text: prefs.getString("ptoEmi"));
-//      this.controller_secuencial = new TextEditingController(text: prefs.getString("secuencial"));
-//    //});
-//  }
+//  TextEditingController controller_ = TextEditingController();
+  TextEditingController controller_dirMatriz = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    getSharedPrefs();
+  }
 
   Future<Null> getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      //SharedPreferences prefs = await SharedPreferences.getInstance();
-      this.controller =
-          new TextEditingController(text: prefs.getString("razonSocial"));
-      this.controller_ruc =
-          new TextEditingController(text: prefs.getString("ruc"));
-      this.controller_codDoc =
-          new TextEditingController(text: prefs.getString("codDoc"));
-      this.controller_estab =
-          new TextEditingController(text: prefs.getString("estab"));
-      this.controller_ptoEmi =
-          new TextEditingController(text: prefs.getString("ptoEmi"));
-      this.controller_secuencial =
-          new TextEditingController(text: prefs.getString("secuencial"));
+      this.controller_ambiente = new TextEditingController(text: prefs.getString("ambiente"));
+      this.controller_razonSocial = new TextEditingController(text: prefs.getString("razonSocial"));
+      this.controller_tipoEmision = new TextEditingController(text: prefs.getString("tipoEmision"));
+      this.controller_ruc = new TextEditingController(text: prefs.getString("ruc"));
+      this.controller_codDoc = new TextEditingController(text:prefs.getString("codDoc"));
+      this.controller_estab = new TextEditingController(text: prefs.getString("estab"));
+      this.controller_ptoEmi = new TextEditingController(text: prefs.getString("ptoEmi"));
+      this.controller_secuencial = new TextEditingController(text: prefs.getString("secuencial"));
+      this.controller_dirMatriz = new TextEditingController(text: prefs.getString("dirMatriz"));
     });
   }
+
 
   //SharedPreferences pref = new SharedPreferences.getInstance();
   @override
   Widget build(BuildContext context) {
     //this.getSharedPrefs();
+    final productoInfo=Provider.of<ProductosArrayInfo>(context);
+    this.controller_ambiente.text=productoInfo.ambiente;
+    this.controller_tipoEmision.text = productoInfo.tipoEmision;
+    this.controller_razonSocial.text = productoInfo.razonSocial;
+    this.controller_ruc.text = productoInfo.ruc;
+    this.controller_claveAcceso.text =productoInfo.claveAcceso;
+    this.controller_codDoc.text = productoInfo.codDoc;
+    this.controller_estab.text = productoInfo.estab;
+    this.controller_ptoEmi.text = productoInfo.ptoEmi;
+    this.controller_secuencial.text = productoInfo.secuencial;
+    this.controller_dirMatriz.text = productoInfo.dirMatriz;
+    // productoInfo.addProducto();
+    // productoInfo.addProducto();
+    // productoInfo.addProducto();
+
+    Table tab = new Table(columnWidths: const <int, TableColumnWidth>{
+      0: FlexColumnWidth(30.0),
+      1: FlexColumnWidth(50.0),
+    },
+      border: TableBorder.all(color: Colors.black45),
+      children: [
+        TableRow(children: [
+          Text('\tAmbiente'),
+          Text(this.controller_ambiente.text),
+          // Text(productoInfo.ambiente),
+        ]),
+        TableRow(children: [
+          Text('\tTipo emision'),
+          Text(this.controller_tipoEmision.text),
+        ]),
+        TableRow(children: [
+          Text('\tRazon social'),
+          Text(this.controller_razonSocial.text),
+        ]),
+        TableRow(children: [
+          Text('\tRuc'),
+          Text(this.controller_ruc.text),
+        ]),
+        // TableRow(children: [
+        //   Text('\tClave acceso'),
+        //   Text(this.controller_claveAcceso.text),
+        // ]),
+        TableRow(children: [
+          Text('\tCodigo documentario'),
+          Text(this.controller_codDoc.text),
+        ]),
+        TableRow(children: [
+          Text('\tEstablecimiento'),
+          Text(this.controller_estab.text),
+        ]),
+        TableRow(children: [
+          Text('\tPunto de emision'),
+          Text(this.controller_ptoEmi.text),
+        ]),
+        TableRow(children: [
+          Text('\tSecuencial'),
+          Text(this.controller_secuencial.text),
+        ]),
+        TableRow(children: [
+          Text('\tDir matriz'),
+          Text(this.controller_dirMatriz.text),
+        ])
+      ],
+    );
+
+    Table tabDatosCliente =
+        new Table(
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(30.0),
+              1: FlexColumnWidth(50.0),
+            },
+            border: TableBorder.all(color: Colors.black45), children: [
+          TableRow(children: [
+            Text('\tRazon Social'),
+            Text(productoInfo.cliente_razonSocial),
+          ]),TableRow(children: [
+            Text('\tEmail'),
+            Text(productoInfo.cliente_email),
+          ]),TableRow(children: [
+            Text('\tDireccion'),
+            Text(productoInfo.cliente_direccion),
+          ]),TableRow(children: [
+            Text('\tContabilidad'),
+            Text(productoInfo.cliente_contabilidad),
+          ]),TableRow(children: [
+            Text('\ttipo identificacion'),
+            Text(productoInfo.cliente_tipoIdentificacion),
+          ]),TableRow(children: [
+            Text('\tIdentificacion'),
+            Text(productoInfo.cliente_identificacion),
+          ]),
+    ]);
+
     return Container(
       color: Colors.black12,
       child: ListView(
@@ -125,31 +271,64 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              height: 35,
+                              height: 45,
                             ),
 
                             Container(
+                              padding: EdgeInsets.all(5),
                               width: double.infinity,
-                              child: SafeArea(
-                                child: Text(
-                                  '\nRazon Social:' + this.controller.text+ "\n"+'Ruc\t\t\t\t\t\t\t:' +
-                                      this.controller_ruc.text + '\ncod Doc               :' +
-                                      this.controller_codDoc.text,
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
+                              child: Table(columnWidths: const <int, TableColumnWidth>{
+      0: FlexColumnWidth(30.0),
+      1: FlexColumnWidth(50.0),
+    },
+      border: TableBorder.all(color: Colors.black45),
+      children: [
+        TableRow(children: [
+          Text('\tAmbiente'),
+           Text(this.controller_ambiente.text),
+          //Text(productoInfo.ambiente),
+        ]),
+        TableRow(children: [
+          Text('\tTipo emision'),
+          Text(this.controller_tipoEmision.text),
+        ]),
+        TableRow(children: [
+          Text('\tRazon social'),
+          Text(this.controller_razonSocial.text),
+        ]),
+        TableRow(children: [
+          Text('\tRuc'),
+          Text(this.controller_ruc.text),
+        ]),
+        // TableRow(children: [
+        //   Text('\tClave acceso'),
+        //   Text(this.controller_claveAcceso.text),
+        // ]),
+        TableRow(children: [
+          Text('\tCodigo documentario'),
+          Text(this.controller_codDoc.text),
+        ]),
+        TableRow(children: [
+          Text('\tEstablecimiento'),
+          Text(this.controller_estab.text),
+        ]),
+        TableRow(children: [
+          Text('\tPunto de emision'),
+          Text(this.controller_ptoEmi.text),
+        ]),
+        TableRow(children: [
+          Text('\tSecuencial'),
+          Text(this.controller_secuencial.text),
+        ]),
+        TableRow(children: [
+          Text('\tDir matriz'),
+          Text(this.controller_dirMatriz.text),
+        ])
+      ],
+    )
+,
                             ), // = new TextEditingController(text:prefs.getString("codDoc"));
-                            Container(
-                              child: Text('establecimiento :' +
-                                  this.controller_estab.text),
-                              width: double.infinity,
-                            ), //= new TextEditingController(text: prefs.getString("estab"));
-                            Container(
-                              child: Text('pto Emision         :' +
-                                  this.controller_ptoEmi.text),
-                              width: double.infinity,
-                            ), //= new TextEditingController(text: prefs.getString("ptoEmi"));
-//                          Container(
+                            //Container(
 //                            child: Text('secuencial : ' +
 //                                this.controller_secuencial.text),
 //                            width: double.infinity,
@@ -193,31 +372,18 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
                           ),
                         ),
                       ),
-                      //PARA CONTENIDO
-                      Container(
-                        //height: 200.0,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 35,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              child:
-                                  Text('Razon Social :' + this.controller.text),
-                            ),
-                            Container(
-                                width: double.infinity,
-                                child: Text('Ruc                  :' +
-                                    this.controller_ruc.text)),
-                            //= new TextEditingController(text: prefs.getString("ruc"));
-                            //Text('cod Doc : '+this.controller_codDoc.text), // = new TextEditingController(text:prefs.getString("codDoc"));
-                            //Text('establecimiento: '+this.controller_estab.text), //= new TextEditingController(text: prefs.getString("estab"));
-                            //Text('pto Emision:  '+this.controller_ptoEmi.text), //= new TextEditingController(text: prefs.getString("ptoEmi"));
-                            //Text('secuencial : '+this.controller_secuencial.text), //= new TextEditingController(text: prefs.getString("secuencial"));
-                          ],
+                      Column(children: <Widget>[
+
+                        Container(
+                          height: 45,
                         ),
-                      )
+                        //PARA CONTENIDO
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          width: double.infinity,
+                          child: tabDatosCliente,
+                        ),
+                      ],)
                     ],
                   ),
                 ),
@@ -233,12 +399,12 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
               child: new Material(
                 child: new InkWell(
                   onTap: () {
-                    print("tapped");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                formDescripcion.FormDescripcion()));
+//                    print("tapped");
+//                    Navigator.push(
+//                        context,
+//                        MaterialPageRoute(
+//                            builder: (context) =>
+//                                formDescripcion.FormDescripcion()));
                   },
                   child: Stack(
                     children: <Widget>[
@@ -264,18 +430,6 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
                               height: 35,
                             ),
 
-//                          Text('Razon Social : ' + this.controller.text),
-////                          Text('Ruc: ' +
-//                              this
-//                                  .controller_ruc
-//                                  .text), //= new TextEditingController(text: prefs.getString("ruc"));
-//                          Text('cod Doc : ' +
-//                              this
-//                                  .controller_codDoc
-//                                  .text), // = new TextEditingController(text:prefs.getString("codDoc"));
-//                          Text('establecimiento: ' +
-//                              this
-//                                  .controller_estab
 //                                  .text), //= new TextEditingController(text: prefs.getString("secuencial"));
                           ],
                         ),
@@ -288,61 +442,139 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
               color: Colors.white,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
-            child: Container(
-              //padding: EdgeInsets.all(10),
-              child: new Material(
-                child: new InkWell(
-                  onTap: () {
-                    print("tapped");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                formDescripcion.FormDescripcion()));
-                  },
-                  child: Stack(
-                    children: <Widget>[
-                      //TITULO
-                      Container(
-                        //color: Colors.black26,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Center(
-                          child: Text(
-                            'Agregar producto',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                        ),
-                      ),
-                      //PARA CONTENIDO
-                      Container(
-                        //height: 200.0,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 35,
-                            ),
 
-//                        Text('Razon Social : '+this.controller.text),
-//                        Text('Ruc: '+this.controller_ruc.text), //= new TextEditingController(text: prefs.getString("ruc"));
-//                        Text('cod Doc : '+this.controller_codDoc.text), // = new TextEditingController(text:prefs.getString("codDoc"));
-//                        Text('establecimiento: '+this.controller_estab.text), //= new TextEditingController(text: prefs.getString("estab"));
-//                        Text('pto Emision:  '+this.controller_ptoEmi.text), //= new TextEditingController(text: prefs.getString("ptoEmi"));
-//                        Text('secuencial : '+this.controller_secuencial.text), //= new TextEditingController(text: prefs.getString("secuencial"));
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                color: Colors.transparent,
-              ),
-              color: Colors.redAccent,
-            ),
-          ),
+          
+          productoInfo.stack,
+          //StackProductos(),
+
+
+
+          //this.test,
+        // CardProduct(),
+        // CardProduct(),
+        // CardProduct(),
+        // CardProduct(),
+        // Column(children:
+        //   this.productos.toList()
+        // ,),
+          //todo mrd
+          
+//           Padding(
+//             padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+//             child: Container(
+//               //padding: EdgeInsets.all(10),
+//               child: new Material(
+//                 child: new InkWell(
+//                   onTap: () {
+//                     print("tapped");
+// //                    Navigator.push(
+// //                        context,
+// //                        MaterialPageRoute(
+// //                            builder: (context) => formEmisor.FormEmisor()));
+//                   },
+//                   child: Stack(
+//                     children: <Widget>[
+//                       //TITULO
+//                       Container(
+//                         color: Colors.black54,
+//                         width: double.infinity,
+//                         height: 35.0,
+//                         child: Center(
+//                           child: Text(
+//                             'Descuentos',
+//                             textAlign: TextAlign.center,
+//                             style: TextStyle(color: Colors.white, fontSize: 18),
+//                           ),
+//                         ),
+//                       ),
+//                       //PARA CONTENIDO
+//                       Container(
+//                         //height: 200.0,
+//                         child: Column(
+//                           children: <Widget>[
+//                             Container(
+//                               height: 35,
+//                             ),
+//                             Container(
+//                               width: double.infinity,
+//                               child: Text(
+//                                   'Razon Social : ' + this.controller_razonSocial.text),
+//                             ),
+//                             Container(
+//                               child: Text('Ruc: ' + this.controller_ruc.text),
+//                               width: double.infinity,
+//                             ),
+//                             //= new TextEditingController(text: prefs.getString("ruc"));
+// //                        Text('cod Doc : '+this.controller_codDoc.text), // = new TextEditingController(text:prefs.getString("codDoc"));
+// //                        Text('establecimiento: '+this.controller_estab.text), //= new TextEditingController(text: prefs.getString("estab"));
+// //                        Text('pto Emision:  '+this.controller_ptoEmi.text), //= new TextEditingController(text: prefs.getString("ptoEmi"));
+// //                        Text('secuencial : '+this.controller_secuencial.text), //= new TextEditingController(text: prefs.getString("secuencial"));
+//                           ],
+//                         ),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//                 color: Colors.transparent,
+//               ),
+//               color: Colors.white,
+//             ),
+//           ),
+//           Padding(
+//             padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+//             child: Container(
+//               //padding: EdgeInsets.all(10),
+//               child: new Material(
+//                 child: new InkWell(
+//                   onTap: () {
+//                     print("tapped");
+// //                    Navigator.push(
+// //                        context,
+// //                        MaterialPageRoute(
+// //                            builder: (context) =>
+// //                                formDescripcion.FormDescripcion()));
+//                   },
+//                   child: Stack(
+//                     children: <Widget>[
+//                       //TITULO
+//                       Container(
+//                         //color: Colors.black26,
+//                         width: double.infinity,
+//                         height: 35.0,
+//                         child: Center(
+//                           child: Text(
+//                             'Agregar descuento unitario',
+//                             textAlign: TextAlign.center,
+//                             style: TextStyle(color: Colors.white, fontSize: 18),
+//                           ),
+//                         ),
+//                       ),
+//                       //PARA CONTENIDO
+//                       Container(
+//                         //height: 200.0,
+//                         child: Column(
+//                           children: <Widget>[
+//                             Container(
+//                               height: 35,
+//                             ),
+
+// //                        Text('Razon Social : '+this.controller.text),
+// //                        Text('Ruc: '+this.controller_ruc.text), //= new TextEditingController(text: prefs.getString("ruc"));
+// //                        Text('cod Doc : '+this.controller_codDoc.text), // = new TextEditingController(text:prefs.getString("codDoc"));
+// //                        Text('establecimiento: '+this.controller_estab.text), //= new TextEditingController(text: prefs.getString("estab"));
+// //                        Text('pto Emision:  '+this.controller_ptoEmi.text), //= new TextEditingController(text: prefs.getString("ptoEmi"));
+// //                        Text('secuencial : '+this.controller_secuencial.text), //= new TextEditingController(text: prefs.getString("secuencial"));
+//                           ],
+//                         ),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//                 color: Colors.transparent,
+//               ),
+//               color: Colors.redAccent,
+//             ),
+//           ),
           Padding(
             padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
             child: Container(
@@ -350,11 +582,11 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
               child: new Material(
                 child: new InkWell(
                   onTap: () {
-                    print("tapped");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => formEmisor.FormEmisor()));
+                    // print("tapped");
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => formEmisor.FormEmisor()));
                   },
                   child: Stack(
                     children: <Widget>[
@@ -365,7 +597,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
                         height: 35.0,
                         child: Center(
                           child: Text(
-                            'Descuentos',
+                            'Sub - Total',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
@@ -379,124 +611,10 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
                             Container(
                               height: 35,
                             ),
-                            Container(
-                              width: double.infinity,
-                              child: Text(
-                                  'Razon Social : ' + this.controller.text),
-                            ),
-                            Container(
-                              child: Text('Ruc: ' + this.controller_ruc.text),
-                              width: double.infinity,
-                            ),
-                            //= new TextEditingController(text: prefs.getString("ruc"));
-//                        Text('cod Doc : '+this.controller_codDoc.text), // = new TextEditingController(text:prefs.getString("codDoc"));
-//                        Text('establecimiento: '+this.controller_estab.text), //= new TextEditingController(text: prefs.getString("estab"));
-//                        Text('pto Emision:  '+this.controller_ptoEmi.text), //= new TextEditingController(text: prefs.getString("ptoEmi"));
-//                        Text('secuencial : '+this.controller_secuencial.text), //= new TextEditingController(text: prefs.getString("secuencial"));
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                color: Colors.transparent,
-              ),
-              color: Colors.white,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
-            child: Container(
-              //padding: EdgeInsets.all(10),
-              child: new Material(
-                child: new InkWell(
-                  onTap: () {
-                    print("tapped");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                formDescripcion.FormDescripcion()));
-                  },
-                  child: Stack(
-                    children: <Widget>[
-                      //TITULO
-                      Container(
-                        //color: Colors.black26,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Center(
-                          child: Text(
-                            'Agregar descuento unitario',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                        ),
-                      ),
-                      //PARA CONTENIDO
-                      Container(
-                        //height: 200.0,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 35,
-                            ),
-
-//                        Text('Razon Social : '+this.controller.text),
-//                        Text('Ruc: '+this.controller_ruc.text), //= new TextEditingController(text: prefs.getString("ruc"));
-//                        Text('cod Doc : '+this.controller_codDoc.text), // = new TextEditingController(text:prefs.getString("codDoc"));
-//                        Text('establecimiento: '+this.controller_estab.text), //= new TextEditingController(text: prefs.getString("estab"));
-//                        Text('pto Emision:  '+this.controller_ptoEmi.text), //= new TextEditingController(text: prefs.getString("ptoEmi"));
-//                        Text('secuencial : '+this.controller_secuencial.text), //= new TextEditingController(text: prefs.getString("secuencial"));
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                color: Colors.transparent,
-              ),
-              color: Colors.redAccent,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
-            child: Container(
-              //padding: EdgeInsets.all(10),
-              child: new Material(
-                child: new InkWell(
-                  onTap: () {
-                    print("tapped");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => formEmisor.FormEmisor()));
-                  },
-                  child: Stack(
-                    children: <Widget>[
-                      //TITULO
-                      Container(
-                        color: Colors.black54,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Center(
-                          child: Text(
-                            'Total',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                        ),
-                      ),
-                      //PARA CONTENIDO
-                      Container(
-                        //height: 200.0,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 35,
-                            ),
-
-                            Text(' Total '),
+                            Text(
+                              productoInfo.precioFinalTotal.toString()
+                              ,style: TextStyle(fontSize: 25),
+                              ),
 //                          Text('Ruc: ' +
 //                              this
 //                                  .controller_ruc
@@ -540,4 +658,8 @@ class _TabFacturaEditarState extends State<TabFacturaEditar> {
       //color: Colors.black,
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

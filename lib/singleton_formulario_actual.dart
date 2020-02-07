@@ -80,7 +80,36 @@ String getInfoFactura(){
 }
 
 //CAMPOS DETALLES
+  Column stack = new Column();
+  List<Widget> productos = <Widget>[];
+  void update(){//String descrip, String unit, String cantidad, String total){
+      this.stack = new Column(children: this.productos,);//descrip, unit, cantidad, total));
+  }
+  void addCelda(){
+    this.productos.add(Container(
+      child: Column(children: <Widget>[
+        Text('ada'),
+//        Text(descrip),
+//        Text(unit),
+//        Text(cantidad),
+//        Text(total),
+      ],),
+    ));
+    this.update();
+  }
 
+  Widget celda(){ //String descrip, String unit, String cantidad, String total){
+    return Container(
+      child: Column(children: <Widget>[
+        Text('ada'),
+//        Text(descrip),
+//        Text(unit),
+//        Text(cantidad),
+//        Text(total),
+      ],),
+    );
+
+  }
 
 
 String getDetalles(){

@@ -3,12 +3,22 @@
 import 'package:card_settings/card_settings.dart';
 import 'package:flutter/material.dart';
 import 'singleton_formulario_actual.dart' as singleton;
-class TabFacturaArchivos extends StatelessWidget {
-  const TabFacturaArchivos({
-    Key key,
-    //@required this.color,
-    //@required this.name,
-  }) : super(key: key);
+
+
+class TabFacturaArchivos extends StatefulWidget {
+  @override
+  _TabFacturaArchivosState createState() => _TabFacturaArchivosState();
+}
+
+class _TabFacturaArchivosState extends State<TabFacturaArchivos> {
+  
+
+//class TabFacturaArchivos extends StatelessWidget {
+  // const TabFacturaArchivos({
+  //   Key key,
+  //   //@required this.color,
+  //   //@required this.name,
+  // }) : super(key: key);
 
   //final Color color;
   //final String name;

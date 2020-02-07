@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
+import 'package:provider/provider.dart';
 import 'factura.dart';
 import 'file_picker_helper.dart' as filepick;
 import 'pdfgenerator.dart';
@@ -24,18 +26,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: appTitle,
-      home: MyHomePage(),
+    return ChangeNotifierProvider(
+      create: (context) => ProductosArrayInfo(),
+      child: MaterialApp(
+        title: appTitle,
+        home: MyHomePage(),
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
+    // TODO: implement createStatek
     return _MyHomePageState();
   }
 }
@@ -45,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   //final String title;
   @override
   void initState() {
-
     super.initState();
 
     getSharedPrefs();
@@ -60,12 +63,18 @@ class _MyHomePageState extends State<MyHomePage> {
     this.razonSocial = prefs.getString("ptoEmi");
     this.razonSocial = prefs.getString("secuencial");
     setState(() {
-      this.controller = new TextEditingController(text: prefs.getString("razonSocial"));
-      this.controller_ruc = new TextEditingController(text: prefs.getString("ruc"));
-      this.controller_codDoc = new TextEditingController(text:prefs.getString("codDoc"));
-      this.controller_estab = new TextEditingController(text: prefs.getString("estab"));
-      this.controller_ptoEmi = new TextEditingController(text: prefs.getString("ptoEmi"));
-      this.controller_secuencial = new TextEditingController(text: prefs.getString("secuencial"));
+      this.controller =
+          new TextEditingController(text: prefs.getString("razonSocial"));
+      this.controller_ruc =
+          new TextEditingController(text: prefs.getString("ruc"));
+      this.controller_codDoc =
+          new TextEditingController(text: prefs.getString("codDoc"));
+      this.controller_estab =
+          new TextEditingController(text: prefs.getString("estab"));
+      this.controller_ptoEmi =
+          new TextEditingController(text: prefs.getString("ptoEmi"));
+      this.controller_secuencial =
+          new TextEditingController(text: prefs.getString("secuencial"));
     });
   }
 
@@ -89,14 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
   //todo:ESTOS VAN PARA SHARED
   String ambiente = '';
   String tipoEmision = '';
-  String razonSocial= '';
-  String ruc= '';
-  String claveAcceso= '';
-  String codDoc= '';
-  String estab= '';
-  String ptoEmi= '';
-  String secuencial= '';
-  String dirMatriz= '';
+  String razonSocial = '';
+  String ruc = '';
+  String claveAcceso = '';
+  String codDoc = '';
+  String estab = '';
+  String ptoEmi = '';
+  String secuencial = '';
+  String dirMatriz = '';
 
   TextEditingController controller = TextEditingController();
   TextEditingController controller_ambiente = TextEditingController();
@@ -124,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
       border: Border.all(),
     );
   }
+
   _inicializaVariables() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     this.ambiente = (prefs.getString('ambiente')); //+ 1;
@@ -151,8 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
   //PDFDocument doc = await PDFDocument.fromURL('http://www.africau.edu/images/default/sample.pdf');
 
   @override
-  Widget build(BuildContext context){
-    var _ponyModel= 22;
+  Widget build(BuildContext context) {
+    var _ponyModel = 22;
     //obtiene
     _inicializaVariables();
     setState(() {
@@ -162,9 +172,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
           //backgroundColor: Colors.blueAccent,
-          title: Text('Facturas Pasadas', textAlign: TextAlign.right,)),
-      body:
-          formEmisor.FormEmisor(),
+          title: Text(
+        'Facturas Pasadas',
+        textAlign: TextAlign.right,
+      )),
+      body: formEmisor.FormEmisor(),
 //      Form(onChanged: (()async{
 //        SharedPreferences pref  = await SharedPreferences.getInstance();
 //        pref.setString('razonSocial',this.controller.text);
@@ -281,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //            ),
 //
 //            //fullpdfview.MyApp(),
-///*
+      ///*
 //            Padding(
 //              padding: EdgeInsets.all(20.0),
 //              child: RaisedButton(
@@ -309,13 +321,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // When the user presses the button, show an alert dialog containing the
         // text that the user has entered into the text field.
         onPressed: () {
-
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>
-                  FacturaPage()
-              ) );
-      /*return showDialog(
+              context, MaterialPageRoute(builder: (context) => FacturaPage()));
+          /*return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -325,188 +333,218 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
       );*/
-    },
-    tooltip: 'Show me the value!',
-    child: Icon(Icons.add),
-    ),
-        drawer:
-      SizedBox(
-
-        width: MediaQuery.of(context).size.width * 0.45,//20.0,,
-      child:
-
-      Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(//physics: const NeverScrollableScrollPhysics(),
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children:
-
-          <Widget>[
-            DrawerHeader(
-              child:
-
-              Stack(children: <Widget>[Center (child: Container(height: 120,color:Colors.blueAccent) ),
-        Center(child: Text('Menu',textAlign: TextAlign.right,style: TextStyle(fontSize: 22,color: Colors.white),),)  ,
-
-        ],),
-
-
-              decoration: BoxDecoration(
-                color: Colors.blue,
+        },
+        tooltip: 'Show me the value!',
+        child: Icon(Icons.add),
+      ),
+      drawer: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.45, //20.0,,
+        child: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            //physics: const NeverScrollableScrollPhysics(),
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child:Image.network(
+                                "https://library.kissclipart.com/20181105/vq/kissclipart-invoice-logo-clipart-invoice-logo-586f857303eb3ebc.png"),
+                               
+                // Stack(
+                //   children: <Widget>[
+                //     Center(
+                //         child: Container(
+                //             child: Image.network(
+                //                 "https://library.kissclipart.com/20181105/vq/kissclipart-invoice-logo-clipart-invoice-logo-586f857303eb3ebc.png"),
+                //             width: 190,
+                //             height: 190,
+                //             color: Colors.white)),
+                //   ],
+                // ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
               ),
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-                Icon(Icons.monetization_on),
-                Text('Nueva Factura',textAlign: TextAlign.right,),
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        FacturaPage()
-                    ) );
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Icon(Icons.monetization_on),
+                    Text(
+                      'Nueva Factura',
+                      textAlign: TextAlign.right,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FacturaPage()));
+                },
+              ),
+              Divider(
+                height: 3,
+              ),
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Container(
+                      //
 
-              },
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-
-                Container(//
-
-
-
-                  height: 40,width: 150,color: Colors.white60,child: Row(children: <Widget>[
-                  Icon(Icons.send),
-                  Text('Reenviar factura',textAlign: TextAlign.end,),
-
-                ],),)
-                  ,
-
-
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        FacturaPage()
-                    ) );
-
-              },
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-                Icon(Icons.storage),
-                Text('Facturas emitidas',textAlign: TextAlign.center,),
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        pasadas.FacturasPasadas()
-                    ) );
-
-              },
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-                Icon(Icons.person),
-                Text('Clientes',textAlign: TextAlign.center,),
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        FacturaPage()
-                    ) );
-
-              },
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-                Icon(Icons.book),
-                Text('Productos',textAlign: TextAlign.center,),
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        FacturaPage()
-                    ) );
-
-              },
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-                Icon(Icons.share),
-                Text('VPN',textAlign: TextAlign.center,),
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        FacturaPage()
-                    ) );
-
-              },
-            ),
-            ListTile(
-              title: Row(children: <Widget>[
-                Icon(Icons.settings),
-                Text('Ajustes',textAlign: TextAlign.center,),
-              ],),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                //Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        //FacturaPage()
-                    fullpdfview.MyAppx()
-                    ) );
-
-
-              },
-            ),
-          ],
+                      height: 40,
+                      width: 150,
+                      color: Colors.white60,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.send),
+                          Text(
+                            'Reenviar factura',
+                            textAlign: TextAlign.end,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(builder: (context) =>
+                  //         FacturaPage()
+                  //     ) );
+                },
+              ),
+              Divider(
+                height: 3,
+              ),
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Icon(Icons.storage),
+                    Text(
+                      'Facturas emitidas',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => pasadas.FacturasPasadas()));
+                },
+              ),
+              Divider(
+                height: 3,
+              ),
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Icon(Icons.person),
+                    Text(
+                      'Clientes',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FacturaPage()));
+                },
+              ),
+              Divider(
+                height: 3,
+              ),
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Icon(Icons.book),
+                    Text(
+                      'Productos',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FacturaPage()));
+                },
+              ),
+              Divider(
+                height: 3,
+              ),
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Icon(Icons.share),
+                    Text(
+                      'VPN',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FacturaPage()));
+                },
+              ),
+              Divider(
+                height: 3,
+              ),
+              ListTile(
+                title: Row(
+                  children: <Widget>[
+                    Icon(Icons.settings),
+                    Text(
+                      'Ajustes',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  //Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              //FacturaPage()
+                              fullpdfview.MyAppx()));
+                },
+              ),
+            ],
+          ),
         ),
       ),
-        ),
-
     );
   }
 }
-
-
 
 class NewScreen extends StatefulWidget {
   @override

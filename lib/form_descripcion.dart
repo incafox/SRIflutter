@@ -1,255 +1,431 @@
-
 import 'package:card_settings/card_settings.dart';
+import 'package:card_settings/helpers/decimal_text_input_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
+import 'package:flutter_final_sri/tab_factura_editar.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'singleton_formulario_actual.dart' as singleton;
-class FormDescripcion extends StatefulWidget {
+import 'tab_factura_editar.dart';
 
+class CardProduct extends StatefulWidget {
+  // method() => createState().setDescripcion(value);
+  // String value;
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _FormDescripcionState();
-  }
+  final globalKey = GlobalKey<CardProductState>();
+
+    final Function func;
+    final int indice;
+    // List<String> samples(){
+    //   return this.
+    // }
+  CardProduct({@required this.indice,@required this.func });// : super(key: key);
+  @override
+  CardProductState createState() => CardProductState(this.indice);
 }
 
-//class MyHomePage extends StatelessWidget {
-class _FormDescripcionState extends State<FormDescripcion> {
-  //final String title;
+class CardProductState extends State<CardProduct> {
+  CardProductState(this.indice);
+  final int indice;
+  // CardProductState(Key key):super(key : key);
+  String descripcion ;//; = 're'; //= Text('ada');
+  String costoUnitario;// = 'er'; // = Text('ada');
+  int cantidad = 1; //= Text('ada');
+  String total = ''; // = Text('ada');]
+  // int indice;
+  List<Container> bucket = [];
+  FormDescripcion formulario; // = new FormDescripcion(  );
+  // final cardKey = GlobalKey<CardProductState>();
+  // GlobalKey<CardProductState> _cardState;
+
   @override
-  void initState() {
-
+  initState() {
+    // TODO: implement initState\
+    this.descripcion = '';
+    this.cantidad = 1;
+    this.costoUnitario = '0';
+    this.total = '0';
+    // this.formulario = new FormDescripcion();
+    // this.cardKey = GlobalKey();
+    // this.widget.key = _cardState;
+    // this.descripcion = Text('dadsa');
+    // this.costoUnitario = Text('ada');
+    // this.cantidad = Text('ada');
+    // this.total = Text('asda');
+    // this.formulario = FormDescripcion(productoText: this.descripcion,);
     super.initState();
-
-    getSharedPrefs();
   }
 
-  Future<Null> getSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.razonSocial = prefs.getString("razonSocial");
-    this.razonSocial = prefs.getString("ruc");
-    this.razonSocial = prefs.getString("codDoc");
-    this.razonSocial = prefs.getString("estab");
-    this.razonSocial = prefs.getString("ptoEmi");
-    this.razonSocial = prefs.getString("secuencial");
-    setState(() {
-      this.controller = new TextEditingController(text: prefs.getString("razonSocial"));
-      this.controller_ruc = new TextEditingController(text: prefs.getString("ruc"));
-      this.controller_codDoc = new TextEditingController(text:prefs.getString("codDoc"));
-      this.controller_estab = new TextEditingController(text: prefs.getString("estab"));
-      this.controller_ptoEmi = new TextEditingController(text: prefs.getString("ptoEmi"));
-      this.controller_secuencial = new TextEditingController(text: prefs.getString("secuencial"));
-    });
+  //final GlobalKey<CardProductState> key = new GlobalKey<CardProductState>();
+  @override
+  Widget build(BuildContext context) {
+    //final productoInfo=Provider.of<Pro ductosArrayInfo>(context);
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) {
+            return FormDescripcion(
+              func: function, 
+              cantidad: this.cantidad.toString(),
+              descripcion: this.descripcion.toString(),
+              costoUnitario: this.costoUnitario.toString(),
+              total: this.total.toString(),
+              );
+            // return this.formulario;
+          }),
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.all(5),
+        child: Container(
+          decoration:new  BoxDecoration(
+            //borde,
+          color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(8))
+        ),
+            width: double.infinity,
+            // color: Colors.black12,
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 26,width: 57,
+                                  child: FlatButton(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
+                      color: Colors.red,
+                      onPressed: (){
+                        print('indeice >>' + widget.indice.toString());
+                        widget.func(widget.indice);
+                      },
+                      child: Icon(Icons.close,color: Colors.white,)),
+                ),
+
+              Table(columnWidths: const <int, TableColumnWidth>{
+      0: FlexColumnWidth(19.0),
+      1: FlexColumnWidth(50.0),
+    },
+      border: TableBorder.all(color: Colors.black45),
+      children: [
+        TableRow(children: [
+          Text(' Descripcion'),
+          Text('\t'+this.descripcion),
+        ]),
+        TableRow(children: [
+          Text(' Costo Unitario'),
+          Text('\t'+this.costoUnitario),
+        ]),
+        TableRow(children: [
+          Text(' Cantidad'),
+          Text('\t'+this.cantidad.toString()),
+        ]),
+        TableRow(children: [
+          Text(' Total'),
+          Text('\t'+this.total),
+        ])
+      ],
+    ),
+    Container(height: 14,)
+              ],
+            )),
+      ),
+    );
   }
 
-/*
-  Future<void> updateStartup() async{
-    //final pref = await SharedPreferences.getInstance();
-    String lastString = await getRazonSocial();
-    setState(() {
-      this.razonSocial = lastString;
-    });
-  }
-*/
-  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  // function(value) => setState(() => descripcion = value);
+  function(descrip, costuni, cant, total) => setState(() {
+    descripcion = descrip;
+    this.costoUnitario = costuni.toString();  
+    this.cantidad = int.parse(cant);  
+    this.total = total.toString();  
+    final productoInfo=Provider.of<ProductosArrayInfo>(context,listen: false);
+    List<String> f = productoInfo.descripciones;
+    List<String> co = productoInfo.costosUnitarios;
+    List<String> ca = productoInfo.cantidades;
+    List<String> to = productoInfo.totales;
+    try 
+    {
+      f.removeAt(this.indice);
+      co.removeAt(this.indice);
+      ca.removeAt(this.indice);
+      to.removeAt(this.indice);
+    } 
+    catch (e) 
+    {
+    }
+    f.insert(this.indice, this.descripcion);
+    productoInfo.descripciones = f;
 
-  //MyHomePage({Key key, this.title}) : super(key: key);
-  String dropdownValue = 'One';
-  String title = "Spheria";
-  String author = "Cody Leet";
-  String url = "http://www.codyleet.com/spheria";
+    co.insert(this.indice, this.costoUnitario);
+    productoInfo.costosUnitarios = co;
 
-  //todo:ESTOS VAN PARA SHARED
-  String ambiente = '';
-  String tipoEmision = '';
-  String razonSocial= '';
-  String ruc= '';
-  String claveAcceso= '';
-  String codDoc= '';
-  String estab= '';
-  String ptoEmi= '';
-  String secuencial= '';
-  String dirMatriz= '';
+    ca.insert(this.indice, this.cantidad.toString() );
+    productoInfo.cantidades = ca;
 
-  TextEditingController controller = TextEditingController();
-  TextEditingController controller_ambiente = TextEditingController();
-  TextEditingController controller_ruc = TextEditingController();
-  TextEditingController controller_tipoEmision = TextEditingController();
-  TextEditingController controller_estab = TextEditingController();
-  TextEditingController controller_ptoEmi = TextEditingController();
-  TextEditingController controller_secuencial = TextEditingController();
-  TextEditingController controller_codDoc = TextEditingController();
-  TextEditingController controller_claveAcceso = TextEditingController();
-/*
-  Future<bool> saveData() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await  preferences.setString('razonSocial', controller.text);
+    to.insert(this.indice, this.total);
+    productoInfo.totales = to;
 
-  }
+  } );
+}
 
-  Future<String>  loadData()async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString('razonSocial');
-  }
-*/
+// class FormDescripcion extends StatefulWidget {
+//  FormDescripcion(this.cardKey);//: super(key: key);
+//     final GlobalKey<CardProductState> cardKey;
+
+// //  FormDescripcion(this.cardKey);//: super(key: key);
+// //  final GlobalKey<CardProductState> actualProductKey;
+//  @override
+//  State<StatefulWidget> createState() {
+//    // TODO: implement createState
+//    return _FormDescripcionState();
+//  }
+// }
+// GlobalKey<CardProductState> keyCard = GlobalKey();
+
+//class MyHomePage extends StatelessWidget {
+class FormDescripcion extends StatelessWidget {
+  final Function func;
+  final String descripcion;
+  final String costoUnitario;
+  final String cantidad;
+  final String total;
+
+  FormDescripcion({Key key,@required this.func,
+                    @required this.descripcion,@required this.costoUnitario,
+                    @required this.cantidad,@required this.total}) : super(key: key);
+
+  // final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+
+  // TextEditingController controller = TextEditingController();
+  // TextEditingController controller_ambiente = new TextEditingController();
+  // TextEditingController controller_ruc = TextEditingController();
+  // TextEditingController controller_tipoEmision = TextEditingController();
+  // TextEditingController controller_estab = TextEditingController();
+  // TextEditingController controller_ptoEmi = TextEditingController();
+  // TextEditingController controller_secuencial = TextEditingController();
+  // TextEditingController controller_codDoc = TextEditingController();
+  // TextEditingController controller_claveAcceso = TextEditingController();
+
+  TextEditingController controller_descripcion = TextEditingController();
+  TextEditingController controller_costoUnitario = TextEditingController(text: '0');
+  TextEditingController controller_cantidad  = TextEditingController(text: '1');
+  TextEditingController controller_total  = TextEditingController(text: '0');
+
+
   BoxDecoration myBoxDecoration() {
     return BoxDecoration(
       border: Border.all(),
     );
   }
-  _inicializaVariables() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.ambiente = (prefs.getString('ambiente')); //+ 1;
-    this.tipoEmision = (prefs.getString('tipoEmision')); //+ 1;
-    this.razonSocial = (prefs.getString('razonSocial')); //+ 1;
-    this.ruc = (prefs.getString('ruc')); //+ 1;
-    this.claveAcceso = (prefs.getString('claveAcceso')); //+ 1;
-    this.codDoc = (prefs.getString('codDoc')); //+ 1;
-    this.estab = (prefs.getString('estab')); //+ 1;
-    this.ptoEmi = (prefs.getString('ptoEmi')); //+ 1;
-    this.secuencial = (prefs.getString('secuencial')); //+ 1;
-    this.dirMatriz = (prefs.getString('dirMatriz')); //+ 1;
-    //print('Pressed $counter times.');
-    //await prefs.setString(identificador, counter);
-  }
-
-  /*
-  Future<String> getRazonSocial() async
-  {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String temp = (prefs.getString('razonSocial')); //+ 1;
-    print ('futuro : ' + temp);
-    return temp;
-  }*/
-  //PDFDocument doc = await PDFDocument.fromURL('http://www.africau.edu/images/default/sample.pdf');
+//  _inicializaVariables() async {
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    this.ambiente = (prefs.getString('ambiente')); //+ 1;
+//    this.tipoEmision = (prefs.getString('tipoEmision')); //+ 1;
+//    this.razonSocial = (prefs.getString('razonSocial')); //+ 1;
+//    this.ruc = (prefs.getString('ruc')); //+ 1;
+//    this.claveAcceso = (prefs.getString('claveAcceso')); //+ 1;
+//    this.codDoc = (prefs.getString('codDoc')); //+ 1;
+//    this.estab = (prefs.getString('estab')); //+ 1;
+//    this.ptoEmi = (prefs.getString('ptoEmi')); //+ 1;
+//    this.secuencial = (prefs.getString('secuencial')); //+ 1;
+//    this.dirMatriz = (prefs.getString('dirMatriz')); //+ 1;
+//    //print('Pressed $counter times.');
+//    //await prefs.setString(identificador, counter);
+//  }
 
   @override
-  Widget build(BuildContext context){
-    var _ponyModel= 22;
-    //obtiene
-    _inicializaVariables();
-    setState(() {
-      this._inicializaVariables();
-    });
-    singleton.MyXmlSingleton().inicializaVariables();
+  Widget build(BuildContext context) {
+    this.controller_descripcion.text = this.descripcion;
+    this.controller_costoUnitario.text = this.costoUnitario;
+    this.controller_cantidad.text = this.cantidad;
+    this.controller_total.text = this.total;
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
+    // inicio();
+    // this.producto = CardProduct();
+    // var _ponyModel = 22;
+//    _inicializaVariables();
+//    setState(() {
+////      this._inicializaVariables();
+//    });
+//    singleton.MyXmlSingleton().inicializaVariables();
     return Scaffold(
-      body:
+      appBar: AppBar(
+        backgroundColor: Colors.red, elevation: 20,
+        title: Text('Ficha de Producto'),
+        //backgroundColor: Colors.red,
+        centerTitle: true,
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(2, 8, 2, 8),
+            child: RaisedButton(
+              elevation: 25,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(18.0),
+                  side: BorderSide(color: Colors.black26)),
+              onPressed: () {
+                //mediante funcion de otro .dart con parametros todos los datos de
+                //del form, generar el xml, codificar y enviar
+                singleton.MyXmlSingleton().addCelda();
+              },
+              color: Colors.black,
+              textColor: Colors.white,
+              child:
+                  Text("Guardar".toUpperCase(), style: TextStyle(fontSize: 12)),
+            ),
+          )
+        ],
+      ),
+      body: Form(
+        onChanged: (() {
+          func(
+            controller_descripcion.text,
+            controller_costoUnitario.text,
+            controller_cantidad.text,
+            controller_total.text
+          );
+          // productoInfo.modifyProduct(this.index, this.controller_descripcion.text);
+          // productoInfo.lista = this.controller_descripcion.text;
+          print(controller_descripcion.text);
+          print('conto unit: '+this.controller_costoUnitario.text.toString());
+          double contunit = double.parse(this.controller_costoUnitario.text) ;
+          int cantidad = int.parse(this.controller_cantidad.text) ;
+          print((contunit*cantidad).toString());
+          // this.controller_total.text = "\$" +(contunit*cantidad).toString();
+          double formatDecimal = contunit*cantidad;
+          // formatDecimal = double.;
+          this.controller_total.text = (contunit*cantidad).toString();
+          print (this.controller_total.text);
+                // this.controller_costoUnitario.text = (value);
 
-      Form(onChanged: (()async{
-        SharedPreferences pref  = await SharedPreferences.getInstance();
-        pref.setString('razonSocial',this.controller.text);
-        pref.setString('ruc',this.controller_ruc.text);
-        pref.setString('codDoc',this.controller_codDoc.text);
-        pref.setString('estab',this.controller_estab.text);
-        pref.setString('ptoEmi',this.controller_ptoEmi.text);
-        pref.setString('secuencial',this.controller_secuencial.text);
-        //print ('sadsa');
-
-      }),
+          double pTotal = productoInfo.getPrecioTotal();
+          productoInfo.precioFinalTotal = pTotal;
+          //  print(widget.cardKey.currentState.descripcion);
+        }),
         //key: _formKey,
-        child: CardSettings( //cardElevation: 67,
+        child: CardSettings(
+          //cardElevation: 67,
           children: <Widget>[
             CardSettingsHeader(
               labelAlign: TextAlign.center,
-              label: 'Descripcion y Conceptos',
+              label: 'Producto',
               color: Colors.blueAccent,
+            ),
+//        this.controller_descripcion.text = widget.actualProductKey.currentState.descripcion.data;
+//        this.controller_costoUnitario.text = widget.actualProductKey.currentState.descripcion.data;
+//        this.controller_cantidad.text = widget.actualProductKey.currentState.descripcion.data;
+//        this.controller_total.text = widget.actualProductKey.currentState.descripcion.data;
 
-            ),
-            CardSettingsListPicker(contentAlign: TextAlign.center,
-              values: ['dad','dad'],
-              //hintText: 'ada',
-              initialValue: 'None',
-              label: 'Ambiente',
-
-              options: ['Prueba','Produccion'],
-              onChanged: ((value){
-                print (value);
-              }),
-            ),
-            CardSettingsListPicker(contentAlign: TextAlign.center,
-              values: ['01','02','03'],
-              validator: (String value) {
-                if (value == null || value.isEmpty) return 'You must pick a type.';
-                return null;
-              },
-              key: this._fbKey,
-              hintText: 'Select One',
-              autovalidate: true,
-              initialValue: 'daa',
-              label: 'Tipo Emision',
-              showMaterialonIOS: true,
-              options: ['nota de credito','factura','sin cargo'],
-              onChanged: ((value){
-                print (value);
-              }),
-            ),
-            CardSettingsText(hintText: 'sadad',
+            CardSettingsText(
+              numberOfLines: 3, hintText: 'Descripcion de producto',
               //hintText: 'ayua',
-              controller: controller,
-              labelWidth: 150,
-              label: 'Razon Social',
-              initialValue: title,
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Title is required.';
-              },
-              onSaved: (value) => print ('dadsadddddd'),
-              onChanged: ((value) {
-                print ('dasdadsddddd');
+              controller: controller_descripcion,
+              labelWidth: 100,
+              label: 'Descripcion',
+              maxLength: 70,
+              // initialValue: productoInfo.lista,
+              initialValue: controller_descripcion.text,
 
+              // validator: (value) {
+              //   if (value == null || value.isEmpty) return 'Title is required.';
+              // },
+              // onSaved: (value) => print ('daedsadddddd'),
+              onChanged: ((value) {
+                print(value);
+                productoInfo.lista = value;
+//                this.producto.setDescripcion(value);
+                // this.producto.value = value;
+              }),
+            ),
+//             CardSettingsListPicker(
+//               // numberOfLines: 3, hintText: 'codigo de impuesto',
+//               hintText: 'codigo de impuesto',
+//               controller: controller_descripcion,
+//               labelWidth: 100,
+//               label: 'Descripcion',
+//               maxLength: 70,
+//               // initialValue: productoInfo.lista,
+//               initialValue: controller_descripcion.text,
+
+//               // validator: (value) {
+//               //   if (value == null || value.isEmpty) return 'Title is required.';
+//               // },
+//               // onSaved: (value) => print ('daedsadddddd'),
+//               onChanged: ((value) {
+//                 print(value);
+//                 productoInfo.lista = value;
+// //                this.producto.setDescripcion(value);
+//                 // this.producto.value = value;
+//               }),
+//             ),
+            
+            CardSettingsText(
+              controller: this.controller_costoUnitario,
+              keyboardType: TextInputType.numberWithOptions(),
+              maxLength: 10,
+              autovalidate: true,
+              labelWidth: 170,
+              label: 'Costo Unitario',
+             initialValue: this.controller_costoUnitario.text,
+              hintText: 'Numero',
+//              validator: (value) {
+//                try{
+//                  if (value.length>13) return 'Ruc es de 13 numeros';
+//                }
+//                catch(e){
+//                  print ('faf');
+//                }
+//
+//              },
+//              onSaved: (value) => url = value,
+              onChanged: ((value) {
+                print('conto unit'+this.controller_costoUnitario.value.toString());
+                this.controller_costoUnitario.text = (value);
+//                this.producto.setCostoUni(value);
               }),
             ),
             CardSettingsText(
-              controller: controller_ruc,
-              labelWidth: 150,
-              label: 'Ruc',
-              initialValue: 'Editar direccion',
-              validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
-              onChanged: ((value){
-                setState(() {
+              controller: this.controller_cantidad,
+              keyboardType: TextInputType.numberWithOptions(decimal: false),
 
-                });
+              maxLength: 10,
+              autovalidate: true,
+              labelWidth: 170,
+              label: 'Cantidad',
+            //  initialValue: this.producto.getCantidad(),
+              hintText: 'Numero',
+              validator: (value) {
+                try {
+                  if (value is double) return 'Ruc es de 13 numeros';
+                } catch (e) {
+                  // print ('faf');
+                }
+              },
+//              onSaved: (value) => url = value,
+              onChanged: ((value) {
+                print(value);
+//                this.producto.setCantidad(value);
               }),
             ),
-            CardSettingsText(controller: controller_codDoc,
-              labelWidth: 150,
-              label: 'Cod Documentario',
-              initialValue: 'Editar estado',
-              validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
-            ),
-            CardSettingsText(controller: controller_estab,
-              hintText: 'ndjka',labelWidth: 150,
-              label: 'Establecimiento',
-              //initialValue: 'Editar tipo identificacion',
-              validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
-            ),
-            CardSettingsText(controller: controller_ptoEmi,
-              labelWidth: 150,
-              label: 'Pto Emision',
-              //initialValue: 'Editar razon social',
-              validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
-            ),
-            CardSettingsText(controller: controller_secuencial,
-              labelWidth: 150,
-              label: 'Secuencial',
-              //initialValue: 'Editar identificacion',
-              validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
-            ),
-
+            CardSettingsText(
+              
+              //  focusNode: AlwaysDisabledFocusNode(), 
+              autocorrect: true,
+              inputFormatters: [DecimalTextInputFormatter(decimalDigits: 2)],
+              enabled: false,
+                hintText: '\$',
+                controller: this.controller_total,
+                labelWidth: 170,
+                label: 'Total',
+//              initialValue: this.producto.getTotal(),
+                validator: (value) {
+                  if (!value.startsWith('http:'))
+                    return 'Must be a valid website.';
+                },
+                onChanged: ((value) {
+                  print(value);
+//                  this.producto.setTotal(value);
+                })
+//              onSaved: (value) => url = value,
+                ),
+                // Text('total' + this.controller_total.text),
             //fullpdfview.MyApp(),
 /*
             Padding(
@@ -270,7 +446,6 @@ class _FormDescripcionState extends State<FormDescripcion> {
               ),
             ),
 */
-
           ],
         ),
       ),
@@ -289,170 +464,6 @@ class _FormDescripcionState extends State<FormDescripcion> {
 
 
       */
-      drawer:
-      SizedBox(
-
-        width: MediaQuery.of(context).size.width * 0.45,//20.0,,
-        child:
-
-        Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
-          child: ListView(//physics: const NeverScrollableScrollPhysics(),
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children:
-
-            <Widget>[
-              DrawerHeader(
-                child:
-
-                Stack(children: <Widget>[Center (child: Container(height: 120,color:Colors.blueAccent) ),
-                  Center(child: Text('Menu',textAlign: TextAlign.right,style: TextStyle(fontSize: 22,color: Colors.white),),)  ,
-
-                ],),
-
-
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-                  Icon(Icons.monetization_on),
-                  Text('Nueva Factura',textAlign: TextAlign.right,),
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-                  //Navigator.push(
-                    //  context,
-                   //   MaterialPageRoute(builder: (context) =>
-                   //       FacturaPage()
-                   //   ) );
-
-                },
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-
-                  Container(//
-
-
-
-                    height: 40,width: 150,color: Colors.white60,child: Row(children: <Widget>[
-                    Icon(Icons.send),
-                    Text('Reenviar factura',textAlign: TextAlign.end,),
-
-                  ],),)
-                  ,
-
-
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-                  /*
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>
-                          FacturaPage()
-                      ) );*/
-
-                },
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-                  Icon(Icons.storage),
-                  Text('Facturas emitidas',textAlign: TextAlign.center,),
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-                  /*Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>
-                          pasadas.FacturasPasadas()
-                      ) );*/
-
-                },
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-                  Icon(Icons.person),
-                  Text('Clientes',textAlign: TextAlign.center,),
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-                  /*
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>
-                          FacturaPage()
-                      ) );*/
-
-                },
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-                  Icon(Icons.book),
-                  Text('Productos',textAlign: TextAlign.center,),
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-
-
-                },
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-                  Icon(Icons.share),
-                  Text('VPN',textAlign: TextAlign.center,),
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-
-
-                },
-              ),
-              ListTile(
-                title: Row(children: <Widget>[
-                  Icon(Icons.settings),
-                  Text('Ajustes',textAlign: TextAlign.center,),
-                ],),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-
-
-
-
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-
     );
   }
 }
-
