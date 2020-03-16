@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfwidget;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //void main() => runApp(MyApp());
@@ -42,6 +44,8 @@ class _PdfViewTicketState extends State<PdfViewTicket> with AutomaticKeepAliveCl
   }
 
   Future<Null> getSharedPrefs() async {
+    final productoInfo=Provider.of<ProductosArrayInfo>(context);
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       this.controller_razonSocial =
@@ -56,6 +60,8 @@ class _PdfViewTicketState extends State<PdfViewTicket> with AutomaticKeepAliveCl
           new TextEditingController(text: prefs.getString("ptoEmi"));
       this.controller_dirMatriz =
           new TextEditingController(text: prefs.getString("secuencial"));
+
+      
     });
   }
 
@@ -109,15 +115,16 @@ class _PdfViewTicketState extends State<PdfViewTicket> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     //tmr();
-    return Scaffold(
+    return// MaterialApp(home: 
+    Scaffold(
 //        appBar: AppBar(
 //          title: Text("Flutter PDF Tutorial"),
 //        ),
-        body: Center(
-          child: Builder(
-            builder: (context) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+          body: Center(
+            child: Builder(
+              builder: (context) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
 //                RaisedButton(
 //                  color: Colors.amber,
 //                  child: Text("Abrir PDF url"),
@@ -131,161 +138,164 @@ class _PdfViewTicketState extends State<PdfViewTicket> with AutomaticKeepAliveCl
 //                    }
 //                  },
 //                ),
-                SizedBox(
-                  height: 20,
-                ),
-                RaisedButton(
-                  color: Colors.red,
-                  textColor: Colors.white,
-                  child: Text("GENERAR TICKET PDF"),
-                  onPressed: () async {
-                    pdf.addPage(pdfwidget.Page(
-                        pageFormat: PdfPageFormat.a4,
-                        build: (pdfwidget.Context context) {
-                          return pdfwidget.Center(
-                              child: pdfwidget.Container(
-                            width: 250,
-                            child: pdfwidget.Column(children: [
-                              pdfwidget.Text("RAZON SOCIAL"),
-                              pdfwidget.Text(this.controller_razonSocial.text),
-                              pdfwidget.Text("RUC:" + this.controller_ruc.text),
-                              pdfwidget.Text("Dir matriz :" +
-                                  this.controller_dirMatriz.text),
-                              pdfwidget.Text("____________________________"),
-                              pdfwidget.Text("AUTORIZACION/CLAVE DE ACCESO"),
-                              pdfwidget.Text(
-                                  "1T324Y5UI2737432848\n928478392847382987"
-                                  ,textAlign: pdfwidget.TextAlign.center),
-                              pdfwidget.Text("____________________________"),
-                              pdfwidget.Text("FACTURA No : 1232456 12345678"),
-                              pdfwidget.Text(
-                                  "Fecha de emision :" + DateTime.now().toString(),textAlign: pdfwidget.TextAlign.center),
-                              pdfwidget.Text("____________________________"),
-                              pdfwidget.Text("Razon social/nombre y apellidos"),
-                              pdfwidget.Text("CONSUMIDOR FINAL"),
-                              pdfwidget.Text("RUC/CI: 999929999999"),
-                              pdfwidget.Text("_____________________"),
-                              pdfwidget.Text("_____________________"),
-                              pdfwidget.Table.fromTextArray(
-                                  context: context,
-                                  data: const <List<String>>[
-                                    <String>[
-                                      'Cant.',
-                                      'Producto',
-                                      'P.Unit',
-                                      'Total'
-                                    ],
-                                    <String>['1', 'filete', '44.0', '44.0'],
-                                    <String>[
-                                      '1',
-                                      'Portafilete',
-                                      '22.0',
-                                      '22.0'
-                                    ],
-                                    <String>[
-                                      '',
-                                      'Subtotal 12%',
-                                      'Acrobat 1',
-                                      '25.00'
-                                    ],
-                                    <String>[
-                                      '',
-                                      'IVA12%',
-                                      'Acrobat 1',
-                                      '25.00'
-                                    ],
-                                    <String>[
-                                      'VALOR TOTAL',
-                                      'PDF 1.0',
-                                      'Acrobat 1',
-                                      '25.00'
-                                    ],
-                                  ]),
-                              pdfwidget.Table.fromTextArray(
-                                  context: context,
-                                  data: const <List<String>>[
-                                    <String>[
-                                      '1993',
-                                      'PDF 1.0',
-                                      'Acrobat 1',
-                                      '25.00'
-                                    ],
-                                    <String>[
-                                      '1993',
-                                      'PDF 1.0',
-                                      'Acrobat 1',
-                                      '25.00'
-                                    ],
-                                    <String>[
-                                      '1993',
-                                      'PDF 1.0',
-                                      'Acrobat 1',
-                                      '25.00'
-                                    ],
-                                  ])
-                            ]),
-                          ));
-//                                    pdfwidget.Table.fromTextArray(
-//                                        context: context,
-//                                        data: const <List<String>>[
-//                                          <St
-//
-//
-                          // Center
-                        })); //
+                  SizedBox(
+                    height: 20,
+                  ),
+                  RaisedButton(
+                    color: Colors.red,
+                    textColor: Colors.white,
+                    child: Text("GENERAR TICKET PDF"),
+                    onPressed: () async {
+                      this.getSharedPrefs();
+//                       pdf.addPage(pdfwidget.Page(
+//                           pageFormat: PdfPageFormat.a4,
+//                           build: (pdfwidget.Context context) {
+//                             return pdfwidget.Center(
+//                                 child: pdfwidget.Container(
+//                               width: 250,
+//                               child: pdfwidget.Column(children: [
+//                                 pdfwidget.Text("RAZON SOCIAL"),
+//                                 pdfwidget.Text(this.controller_razonSocial.text),
+//                                 pdfwidget.Text("RUC:" + this.controller_ruc.text),
+//                                 pdfwidget.Text("Dir matriz :" +
+//                                     this.controller_dirMatriz.text),
+//                                 pdfwidget.Text("____________________________"),
+//                                 pdfwidget.Text("AUTORIZACION/CLAVE DE ACCESO"),
+//                                 pdfwidget.Text(
+//                                     "1T324Y5UI2737432848\n928478392847382987"
+//                                     ,textAlign: pdfwidget.TextAlign.center),
+//                                 pdfwidget.Text("____________________________"),
+//                                 pdfwidget.Text("FACTURA No : 1232456 12345678"),
+//                                 pdfwidget.Text(
+//                                     "Fecha de emision :" + DateTime.now().toString(),textAlign: pdfwidget.TextAlign.center),
+//                                 pdfwidget.Text("____________________________"),
+//                                 pdfwidget.Text("Razon social/nombre y apellidos"),
+//                                 pdfwidget.Text("CONSUMIDOR FINAL"),
+//                                 pdfwidget.Text("RUC/CI: 999929999999"),
+//                                 pdfwidget.Text("_____________________"),
+//                                 pdfwidget.Text("_____________________"),
+//                                 pdfwidget.Table.fromTextArray(
+//                                     context: context,
+//                                     data: const <List<String>>[
+//                                       <String>[
+//                                         'Cant.',
+//                                         'Producto',
+//                                         'P.Unit',
+//                                         'Total'
+//                                       ],
+//                                       <String>['1', 'filete', '44.0', '44.0'],
+//                                       <String>[
+//                                         '1',
+//                                         'Portafilete',
+//                                         '22.0',
+//                                         '22.0'
+//                                       ],
+                                      
+//                                       <String>[
+//                                         '',
+//                                         'IVA12%',
+//                                         'Acrobat 1',
+//                                         '25.00'
+//                                       ],
+//                                       <String>[
+//                                         'VALOR TOTAL',
+//                                         'PDF 1.0',
+//                                         'Acrobat 1',
+//                                         '25.00'
+//                                       ],
+//                                     ]),
+//                                 // pdfwidget.Table.fromTextArray(
+//                                 //     context: context,
+//                                 //     data: const <List<String>>[
+//                                 //       <String>[
+//                                 //         '1993',
+//                                 //         'PDF 1.0',
+//                                 //         'Acrobat 1',
+//                                 //         '25.00'
+//                                 //       ],
+//                                 //       <String>[
+//                                 //         '1993',
+//                                 //         'PDF 1.0',
+//                                 //         'Acrobat 1',
+//                                 //         '25.00'
+//                                 //       ],
+//                                 //       <String>[
+//                                 //         '1993',
+//                                 //         'PDF 1.0',
+//                                 //         'Acrobat 1',
+//                                 //         '25.00'
+//                                 //       ],
+//                                 //     ])
+//                               ]),
+//                             ));
+// //                                    pdfwidget.Table.fromTextArray(
+// //                                        context: context,
+// //                                        data: const <List<String>>[
+// //                                          <St
+// //
+// //
+//                             // Center
+//                           })); //
 
-                    // On Flutter, use the [path_provider](https://pub.dev/packages/path_provider) library:
-                    //final output = await getTemporaryDirectory();
-                    final output = await getApplicationDocumentsDirectory();
-                    final file = File("${output.path}/mypdf.pdf");
-                    //final file = File("example.pdf");
-                    await file.writeAsBytes(pdf.save());
+                      // On Flutter, use the [path_provider](https://pub.dev/packages/path_provider) library:
+                      //final output = await getTemporaryDirectory();
+                      final output = await getApplicationDocumentsDirectory();
+                      final file = File("${output.path}/mypdf.pdf");
+                      //final file = File("example.pdf");
+                      await file.writeAsBytes(pdf.save());
 
-                    if (assetPDFPath != null) {
+                      if (assetPDFPath != null) {
+                        
+                        Navigator.push(
+                            context,
+                            
+
+
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PdfViewPage(path: assetPDFPath)));
+
                       
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PdfViewPage(path: assetPDFPath)));
-                    }
-                  },
-                )
-              ],
+
+                      }
+                    },
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 0.0),
-          child: FloatingActionButton(
-            // When the user presses the button, show an alert dialog containing the
-            // text that the user has entered into the text field.
-            backgroundColor: Colors.green,
-            onPressed: () async {
-              return showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    // Retrieve the text the user has entered by using the
-                    // TextEditingController.
-                    //content: Text(singleton.MyXmlSingleton().forDebug.text),
-                    content: SingleChildScrollView(
-                      child: Text(
-                        'sadad',
-                        style: TextStyle(fontSize: 8),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 0.0),
+            child: FloatingActionButton(
+              // When the user presses the button, show an alert dialog containing the
+              // text that the user has entered into the text field.
+              backgroundColor: Colors.green,
+              onPressed: () async {
+                return showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      // Retrieve the text the user has entered by using the
+                      // TextEditingController.
+                      //content: Text(singleton.MyXmlSingleton().forDebug.text),
+                      content: SingleChildScrollView(
+                        child: Text(
+                          'sadad',
+                          style: TextStyle(fontSize: 8),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-            tooltip: 'Show me the value!',
+                    );
+                  },
+                );
+              },
+              tooltip: 'Show me the value!',
 
-            child: Icon(Icons.print),
+              child: Icon(Icons.print),
+            ),
           ),
-        ),
-      );//,
+        )
+    ;//,
     
   }
 

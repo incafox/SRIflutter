@@ -206,10 +206,10 @@ class _FormClienteState extends State<FormCliente> with AutomaticKeepAliveClient
               }),
             ),
             CardSettingsText(
-              hintText: 'editar email',
+              hintText: 'Editar email',
               // controller: controller_razonSocial,
               labelWidth: 150,
-              label: 'Razon Social',
+              label: 'Email cliente',
               initialValue: productoInfo.cliente_email,
               // validator: (value) {
               //   // if (value == null || value.isEmpty) return 'Title is required.';

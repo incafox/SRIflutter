@@ -3,6 +3,7 @@
 
 import 'package:card_settings/card_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_final_sri/file_picker_helper.dart';
 import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -120,13 +121,23 @@ class _FormEmisorState extends State<FormEmisor> {
   @override
   Widget build(BuildContext context){
     final productoInfo=Provider.of<ProductosArrayInfo>(context);
+    this.controller.text = productoInfo.xml_razonSocial;
+    this.controller_ambiente.text = productoInfo.xml_ambiente;
+    this.controller_ruc.text = productoInfo.xml_ruc;
+    this.controller_codDoc.text= productoInfo.xml_codDoc;
+    this.controller_dirMatriz.text=productoInfo.xml_dirMatriz;
+    this.controller_tipoEmision.text=productoInfo.xml_tipoEmision;
+    this.controller_estab.text=productoInfo.xml_estab;
+    this.controller_ptoEmi.text=productoInfo.xml_ptoEmi;
+    print('desde emisor form');
+    print(productoInfo.xml_ruc);
     var _ponyModel= 22;
     // final productoInfo=Provider.of<ProductosArrayInfo>(context);
     //obtiene
-    _inicializaVariables();
-    setState(() {
-      this._inicializaVariables();
-    });
+    // _inicializaVariables();
+    // setState(() {
+    //   this._inicializaVariables();
+    // });
     singleton.MyXmlSingleton().inicializaVariables();
     return Scaffold(
       body:
@@ -136,24 +147,24 @@ class _FormEmisorState extends State<FormEmisor> {
 
 
 
-        SharedPreferences pref  = await SharedPreferences.getInstance();
-        pref.setString('razonSocial',this.controller.text);
-        pref.setString('tipoEmision',this.controller_ambiente.text); // unico
-        pref.setString('ruc',this.controller_ruc.text);
-        pref.setString('codDoc',this.controller_codDoc.text);
-        pref.setString('estab',this.controller_estab.text);
-        pref.setString('ptoEmi',this.controller_ptoEmi.text);
-        pref.setString('dirMatriz',this.controller_dirMatriz.text);
+        // SharedPreferences pref  = await SharedPreferences.getInstance();
+        // pref.setString('razonSocial',this.controller.text);
+        // pref.setString('tipoEmision',this.controller_ambiente.text); // unico
+        // pref.setString('ruc',this.controller_ruc.text);
+        // pref.setString('codDoc',this.controller_codDoc.text);
+        // pref.setString('estab',this.controller_estab.text);
+        // pref.setString('ptoEmi',this.controller_ptoEmi.text);
+        // pref.setString('dirMatriz',this.controller_dirMatriz.text);
 
         
         //this.controller_ambiente.text;
-        productoInfo.tipoEmision= this.controller_tipoEmision.text;
-        productoInfo.razonSocial = this.controller.text;
-        productoInfo.ruc = this.controller_ruc.text;
-        productoInfo.codDoc = this.controller_codDoc.text;
-        productoInfo.estab = this.controller_estab.text;
-        productoInfo.ptoEmi = this.controller_ptoEmi.text;
-        productoInfo.dirMatriz = this.controller_dirMatriz.text;
+        // productoInfo.tipoEmision= this.controller_tipoEmision.text;
+        // productoInfo.razonSocial = this.controller.text;
+        // productoInfo.ruc = this.controller_ruc.text;
+        // productoInfo.codDoc = this.controller_codDoc.text;
+        // productoInfo.estab = this.controller_estab.text;
+        // productoInfo.ptoEmi = this.controller_ptoEmi.text;
+        // productoInfo.dirMatriz = this.controller_dirMatriz.text;
 
         // print ("[cnotroller ]" + this.controller_ambiente.text);
         //print ( productoInfo.ambiente);
@@ -167,51 +178,66 @@ class _FormEmisorState extends State<FormEmisor> {
             CardSettingsHeader(
               labelAlign: TextAlign.center,
               label: 'Datos de Emisor',
-              color: Colors.blueAccent,
+              color: Colors.blue,
 
             ),
-            CardSettingsListPicker(contentAlign: TextAlign.center,
-              values: ['1','2'],
-              //hintText: 'ada',
-              //hintText: 'Seleccione',
+            // CardSettingsListPicker(contentAlign: TextAlign.center,
+            //   values: ['1','2'],
+            //   //hintText: 'ada',
+            //   //hintText: 'Seleccione',
+            //   label: 'Ambiente',
+            //   initialValue: '1',
+            //   options: ['Prueba','Produccion'],
+            //   onChanged: ((value) async{
+            //       print ('[valor] ' +value);
+            //       SharedPreferences prefs = await SharedPreferences.getInstance();
+            //       switch (int.parse(value)) {
+            //         case 1:
+            //         productoInfo.ambiente = 'prueba';
+            //             prefs.setString('ambiente', 'prueba');
+            //           break;
+            //         case 2:
+            //         productoInfo.ambiente = 'produccion';
+            //             prefs.setString('ambiente', 'produccion');
+            //           break;
+            //         default:
+            //       }
+            //       //prefs.setString('ambiente', value);
+            //   }),
+            // ),
+            CardSettingsText(hintText: 'sadad',
+              //hintText: 'ayua',
+              // controller: controller,
+              labelWidth: 150,
               label: 'Ambiente',
-              initialValue: '1',
-              options: ['Prueba','Produccion'],
-              onChanged: ((value) async{
-                  print ('[valor] ' +value);
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  switch (int.parse(value)) {
-                    case 1:
-                    productoInfo.ambiente = 'prueba';
-                        prefs.setString('ambiente', 'prueba');
-                      break;
-                    case 2:
-                    productoInfo.ambiente = 'produccion';
-                        prefs.setString('ambiente', 'produccion');
-                      break;
-                    default:
-                  }
-                  //prefs.setString('ambiente', value);
+              initialValue: this.controller_ambiente.text,
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Title is required.';
+              },
+              onSaved: (value) => print ('dadsadddddd'),
+              onChanged: ((value) {
+                // print ('dasdadsddddd');
+
               }),
             ),
-            CardSettingsListPicker(contentAlign: TextAlign.center,
-              values: ['1','2'],
-              //hintText: 'ada',
-              hintText: 'Seleccione',
-              label: 'Tipo Emision',
-              initialValue: 'Prueba',
-              options: ['Prueba','Produccion'],
-              onChanged: ((value) async{
-                //print (value);
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('tipoEmision', value);
-              }),
-            ),
+            // CardSettingsListPicker(contentAlign: TextAlign.center,
+            //   values: ['1','2'],
+            //   //hintText: 'ada',
+            //   hintText: 'Seleccione',
+            //   label: 'Tipo Emision',
+            //   initialValue: 'Prueba',
+            //   options: ['Prueba','Produccion'],
+            //   onChanged: ((value) async{
+            //     //print (value);
+            //     SharedPreferences prefs = await SharedPreferences.getInstance();
+            //     prefs.setString('tipoEmision', value);
+            //   }),
+            // ),
             CardSettingsText(hintText: 'sadad',
               //hintText: 'ayua',
               controller: controller,
               labelWidth: 150,
-              label: 'Razon Social',
+              label: 'Tipo de emision',
               initialValue: title,
               validator: (value) {
                 if (value == null || value.isEmpty) return 'Title is required.';
@@ -223,6 +249,23 @@ class _FormEmisorState extends State<FormEmisor> {
               }),
             ),
             CardSettingsText(
+              enabled: false,
+              // ,hintText: 'sadad',
+              //hintText: 'ayua',
+              controller: this.controller,
+              labelWidth: 150,
+              label: 'Razon Social',
+              initialValue: productoInfo.xml_razonSocial,
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Title is required.';
+              },
+              onSaved: (value) => print ('dadsadddddd'),
+              onChanged: ((value) {
+                // print ('dasdadsddddd');
+
+              }),
+            ),
+            CardSettingsText(
               controller: controller_ruc,
               keyboardType: TextInputType.numberWithOptions(),
 
@@ -230,8 +273,8 @@ class _FormEmisorState extends State<FormEmisor> {
               autovalidate: true,
               labelWidth: 150,
               label: 'Ruc',
-              initialValue: '',
-              hintText: 'ruc 13 digitos',
+              initialValue: productoInfo.xml_ruc,
+              // hintText: 'ruc 13 digitos',
               validator: (value) {
                 try{
                   if (value.length>13) return 'Ruc es de 13 numeros';
@@ -249,51 +292,66 @@ class _FormEmisorState extends State<FormEmisor> {
                 });
               }),
             ),
-            CardSettingsListPicker(
-              contentAlign: TextAlign.center,
-              values: ['01','03','04','05','06','07'],
-              //hintText: 'ada',
-              hintText: 'Factura',
-              label: 'Codigo Doc',
-              initialValue: 'Prueba',
-              options: ['Factura','Liquidacion', 'Nota de credito'
-                , 'Nota de debito','Guia de remision','comprobante de retencion'],
+            // CardSettingsListPicker(
+            //   contentAlign: TextAlign.center,
+            //   values: ['01','03','04','05','06','07'],
+            //   //hintText: 'ada',
+            //   hintText: 'Factura',
+            //   label: 'Codigo Doc',
+            //   initialValue: 'Prueba',
+            //   options: ['Factura','Liquidacion', 'Nota de credito'
+            //     , 'Nota de debito','Guia de remision','comprobante de retencion'],
+            //   onChanged: ((value) {
+            //     //print (value);
+            //     // SharedPreferences prefs = await SharedPreferences.getInstance();
+            //     // prefs.setString('codDoc', value);
+            //   }),
+            // ),
+            CardSettingsText(hintText: 'sadad',
+              //hintText: 'ayua',
+              
+              labelWidth: 150,
+              label: 'Codigo Doc.',
+              initialValue: productoInfo.xml_codDoc,
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Title is required.';
+              },
+              onSaved: (value) => print ('dadsadddddd'),
               onChanged: ((value) {
-                //print (value);
-                // SharedPreferences prefs = await SharedPreferences.getInstance();
-                // prefs.setString('codDoc', value);
+                print ('dasdadsddddd');
+
               }),
             ),
             CardSettingsText(controller: controller_estab,
               hintText: 'Establecimiento',labelWidth: 150,
               label: 'Establecimiento',
-              //initialValue: 'Editar tipo identificacion',
-              validator: (value) {
-                if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
+              initialValue: productoInfo.xml_estab,
+              // validator: (value) {
+              //   if (!value.startsWith('http:')) return 'Must be a valid website.';
+              // },
+              // onSaved: (value) => url = value,
             ),
             CardSettingsText(controller: controller_ptoEmi,
               labelWidth: 150,
               hintText: 'punto de emision',
               label: 'Punto Emision',
-              //initialValue: 'Editar razon social',
-              validator: (value) {
-                //if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
+              initialValue: productoInfo.xml_ptoEmi,
+              // validator: (value) {
+              //   //if (!value.startsWith('http:')) return 'Must be a valid website.';
+              // },
+              // onSaved: (value) => url = value,
             ),
             CardSettingsText(controller: controller_dirMatriz,
               labelWidth: 150,
               hintText: 'direccion matriz',
               label: 'Dir Matriz',
-              //initialValue: 'Editar identificacion',
-              validator: (value) {
-                //if (!value.startsWith('http:')) return 'Must be a valid website.';
-              },
-              onSaved: (value) => url = value,
+              initialValue: productoInfo.xml_dirMatriz,
+              // validator: (value) {
+              //   //if (!value.startsWith('http:')) return 'Must be a valid website.';
+              // },
+              // onSaved: (value) => url = value,
             ),
-
+            // FilePickerDemo()
             //fullpdfview.MyApp(),
 /*
             Padding(

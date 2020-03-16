@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-//import 'package:dart_mssql/dart_mssql.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -21,10 +20,10 @@ import 'pdfgenerator.dart' as pdfgenerator;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_collapse/flutter_collapse.dart';
 import 'form.dart' as formulario;
-
+import 'tab_factura_archivos.dart';
 
 //vista pdf de factura
-import 'pdf_viewer.dart' as ppdf;
+import 'pdf_viewer.dart';
 
 //vista pdf de ticket
 import 'pdf_viewer_ticket.dart' as ticket;
@@ -40,62 +39,21 @@ import 'tab_factura_editar.dart' as tabFacturaEditar;
 import 'tab_factura_archivos.dart' as tanFacturaArchivos;
 
 
-// class "Client" for ORM example
-class Client {
-  int client_id;
-  String client_name;
-  List<Invoice> invoices;
-
-  Client.fromJson(Map<String, dynamic> json) {
-    client_id = json['client_id'];
-    client_name = json['client_name'];
-  }  
-
-  Map<String, dynamic> toJson() {  
-    return {
-      'client_id': client_id,
-      'client_name': client_name,
-    };
-  }
-}
-// class "Invoice" for ORM example
-class Invoice {
-  int client_id;
-  int inv_number;
-
-  Invoice.fromJson(Map<String, dynamic> json) {
-    client_id = json['client_id'];
-    inv_number = json['inv_number'];
-  }  
-
-  Map<String, dynamic> toJson() {  
-    return {
-      'client_id': client_id,
-      'inv_number': inv_number,
-    };
-  }
-}
-
-class FacturaPage extends StatefulWidget {
+class ReenviarPage extends StatefulWidget {
   // final String title;
   // FacturaPage(this.title);
   @override
-  _FacturaPageState createState() => _FacturaPageState();
+  _ReenviarPageState createState() => _ReenviarPageState();
 }
 //with AutomaticKeepAliveClientMixin
-class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClientMixin<FacturaPage> {
+class _ReenviarPageState extends State<ReenviarPage> with AutomaticKeepAliveClientMixin<ReenviarPage> {
 
   //final String title = widget.title;
-  ppdf.MyApp  pdf_factura = new ppdf.MyApp();
+  // PdfView  pdf_factura = new PdfView();
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
   ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
   tabFacturaEditar.TabFacturaEditar tabFacturax = new tabFacturaEditar.TabFacturaEditar();
-
   //FacturaPage({this.title});
-   // Establish a connection
-//  SqlConnection connection = SqlConnection(host:"SERVERNAME", db:"DBNAME", user:"USERNAME", password:"PASSWORD");
-
-  
 
   Widget roundedButton(String buttonLabel, Color bgColor, Color textColor) {
     var loginBtn = new Container(
@@ -122,10 +80,6 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
   }
 
   Future<bool> _onBackPressed() {
-    final productoInfo=Provider.of<ProductosArrayInfo>(context,listen: false);
-    // List<String> r = [];
-    // r.clear();
-    // productoInfo.productosDB = ["",""];
     return showDialog(
       context: context,
       builder: (context) => new AlertDialog(
@@ -161,285 +115,10 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
     // AutomaticKeepAlive()
     super.build(context);
     return WillPopScope(
-          onWillPop: _onBackPressed,
+          // onWillPop: _onBackPressed,
           child: Scaffold(
-          body: DefaultTabController(
-        length: 4,
-        child: Scaffold(
-            appBar: AppBar(backgroundColor: Colors.blue,elevation: 20,
-              bottom: TabBar(
-                tabs: [
-                  Tab(
-                    icon: Icon(Icons.edit),
-                    text: 'Editar',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.picture_as_pdf),
-                    text: 'Ticket',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.picture_as_pdf),
-                    text: 'Factura',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.pageview),
-                    text: 'Resultado',
-                  ),
-                ],
-              ),
-              title: Text('Crear Nueva Factura'),
-              //backgroundColor: Colors.red,
-              centerTitle: true,actions: <Widget>[
-
-                // PopupMenuButton(color: Colors.deepOrangeAccent,
-                //   itemBuilder: (BuildContext context) {
-                //     return choices.skip(2).map((Choice choice) {
-                //       return PopupMenuItem<Choice>(
-                //         value: choice,
-                //         child: Text(choice.title,style: TextStyle(color: Colors.white),),
-                //       );
-                //     }).toList();
-                //   },
-                // )
-
-              ],
-            ),
-            body: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-
-                 //tabFacturaEditar.TabFacturaEditar(),
-                 
-                 tabFacturax,
-
-                this.pdf_factura,
-                this.pdf_ticket,
-
-                tanFacturaArchivos.TabFacturaArchivos()
-                //Icon(Icons.directions_car),
-                //Icon(Icons.directions_transit),
-                //Icon(Icons.directions_bike),
-              ],
-            ),
-
-        ),
-      )  ,
-          floatingActionButton:
-      Padding(
-      padding: const EdgeInsets.only(bottom: 0.0),
-          child : SpeedDial(
-
-            // both default to 16
-            marginRight: 18,
-            marginBottom: 10,
-            animatedIcon: AnimatedIcons.menu_close,
-            animatedIconTheme: IconThemeData(size: 35.0),
-            // this is ignored if animatedIcon is non null
-            // child: Icon(Icons.add),
-            visible:  true,//_dialVisible,
-            // If true user is forced to close dial manually 
-            // by tapping main button and overlay is not rendered.
-            closeManually: false,
-            curve: Curves.decelerate,
-            overlayColor: Colors.black54,
-            overlayOpacity: 0.5,
-            onOpen: () => print('OPENING DIAL'),
-            onClose: () => print('DIAL CLOSED'),
-            tooltip: 'Speed Dial',
-            heroTag: 'speed-dial-hero-tag',
-            backgroundColor: Colors.yellow,
-            foregroundColor: Colors.black,
-            elevation: 4.0,
-            shape: CircleBorder(),
-            children: [
-              SpeedDialChild(
-                child: Icon(Icons.send),
-                backgroundColor: Colors.green,
-                label: 'Enviar Correo',
-                labelStyle: TextStyle(fontSize: 16.0),
-                onTap: ()async {
-                  final Email email = Email(
-                  body: 'Envio adjunto factura',
-                  subject: 'Factura electronica',
-                  recipients: [productoInfo.cliente_email], //el que va a recibir
-                  // cc: ['cc@example.com'],
-                  // bcc: ['bcc@example.com'],
-                  //attachmentPath: '/path/to/attachment.zip',
-                  isHTML: false,
-                );
-
-                await FlutterEmailSender.send(email);
-
-
-                }
-              ),
-              SpeedDialChild(
-                child: Icon(Icons.cloud_upload),
-                backgroundColor: Colors.red,
-                label: 'Enviar SRI',
-                labelStyle: TextStyle(fontSize: 16.0),
-                onTap: ()async{
-                  // StackProductos x = productoInfo.stack;  // getDescripciones();
-                  // List<String> r = x.globalKey.currentState.getProductos();
-                  // for (var item in r) {
-                  //   print (item);
-                  // }
-                  // print('SECOND CHILD');
-                  List<Widget> y = productoInfo.productos;
-
-                  print('size > ' + y.length.toString());
-
-                  List <String> r = productoInfo.descripciones;
-                  List <String> co = productoInfo.costosUnitarios;
-                  List <String> ca = productoInfo.cantidades;
-                  List <String> to = productoInfo.totales;
-                 
-                  for (var i = 0; i < 10; i++) {
-                    print('indice > ' + i.toString());
-                    print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
-                  }
-                  // productoInfo.getDescrip();                
-                  print ("final");
-                  List<String> tmr = productoInfo.conceptos();
-                  for (var item in tmr) {
-                    print (item);
-                  }
-                  print('el precio total');
-                  print(productoInfo.getPrecioTotal());
-
-
-
-
-
-
-                  } ,
-              )
-              ,
-              SpeedDialChild(
-                child: Icon(Icons.cloud_upload),
-                backgroundColor: Colors.blue,
-                label: 'Mostrar XML',
-                labelStyle: TextStyle(fontSize: 16.0),
-                onTap: ()async{
-
-
-                  return showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  // Retrieve the text the user has entered by using the
-                  // TextEditingController.
-                  //content: Text(singleton.MyXmlSingleton().forDebug.text),
-                  content:
-                  SingleChildScrollView(
-                    child:
-                    Text(productoInfo.xml_FINAL, style: TextStyle(fontSize: 8),)
-                    ,)
-                  ,
-                );
-              },
-            );
-                  // StackProductos x = productoInfo.stack;  // getDescripciones();
-                  // List<String> r = x.globalKey.currentState.getProductos();
-                  // for (var item in r) {
-                  //   print (item);
-                  // }
-                  // print('SECOND CHILD');
-                  // List<Widget> y = productoInfo.productos;
-
-                  // print('size > ' + y.length.toString());
-
-                  // List <String> r = productoInfo.descripciones;
-                  // List <String> co = productoInfo.costosUnitarios;
-                  // List <String> ca = productoInfo.cantidades;
-                  // List <String> to = productoInfo.totales;
-                 
-                  // for (var i = 0; i < 10; i++) {
-                  //   print('indice > ' + i.toString());
-                  //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
-                  // }
-                  // // productoInfo.getDescrip();                
-                  // print ("final");
-                  // List<String> tmr = productoInfo.conceptos();
-                  // for (var item in tmr) {
-                  //   print (item);
-                  // }
-                  // print('el precio total');
-                  // print(productoInfo.getPrecioTotal());
-
-
-
-
-
-
-                  } ,
-              )
-
-              // SpeedDialChild(
-              //   child: Icon(Icons.keyboard_voice),
-              //   backgroundColor: Colors.green,
-              //   label: 'Third',
-              //   labelStyle: TextStyle(fontSize: 18.0),
-              //   onTap: () => print('THIRD CHILD'),
-              // ),
-            ],
-          ),
             
-//         FloatingActionButton(
-//           backgroundColor: Colors.green,onPressed: () async{
-//           SharedPreferences pref = await SharedPreferences.getInstance();
-//           String infoTributaria = """
-// <?xml version="1.0" encoding="UTF-8"?>
-// <factura id="comprobante" version="1.0.0">
-//     <infoTributaria>
-//     <ambiente>${pref.getString('ambiente')}</ambiente>
-//     <tipoEmision>${pref.getString('tipoEmision')}</tipoEmision>
-//     <razonSocial>${pref.getString('razonSocial')}</razonSocial>
-//     <ruc>${pref.getString('ruc')}</ruc>
-//     <claveAcceso>${pref.getString('claveAcceso')}</claveAcceso>
-//     <codDoc>${pref.getString('codDoc')}</codDoc>
-//     <estab>${pref.getString('estab')}</estab>
-//     <ptoEmi>${pref.getString('ptoEmi')}</ptoEmi>
-//     <secuencial>${pref.getString('secuencial')}</secuencial>
-//     <dirMatriz>${pref.getString('dirMatriz')}</dirMatriz>
-//   </infoTributaria>
-//     """;
-//           String infoFactura = singleton.MyXmlSingleton().getInfoFactura();
-
-//           final Email email = Email(
-//             body: 'Email body',
-//             subject: 'Email subject',
-//             recipients: ['lubeck05@gmail.com'],
-//             cc: ['cc@example.com'],
-//             bcc: ['bcc@example.com'],
-//             attachmentPath: 'assets/mypdf.pdf',
-//             isHTML: false,
-//           );
-//             return showDialog(
-//               context: context,
-//               builder: (context) {
-//                 return AlertDialog(
-//                   // Retrieve the text the user has entered by using the
-//                   // TextEditingController.
-//                   //content: Text(singleton.MyXmlSingleton().forDebug.text),
-//                   content:
-//                   SingleChildScrollView(
-//                     child:
-//                     Text(infoTributaria+infoFactura,style: TextStyle(fontSize: 8),)
-//                     ,)
-//                   ,
-//                 );
-//               },
-//             );
-//           },
-//           tooltip: 'Show me the value!',
-//           child: Icon(Icons.send),
-//         ),
-
-
-
-
-       )
+          body: TabFacturaArchivos()
       ),
     );
   }

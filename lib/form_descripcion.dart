@@ -33,6 +33,7 @@ class CardProductState extends State<CardProduct> {
   String costoUnitario;// = 'er'; // = Text('ada');
   int cantidad = 1; //= Text('ada');
   String total = ''; // = Text('ada');]
+  String impuesto = '';
   // int indice;
   List<Container> bucket = [];
   FormDescripcion formulario; // = new FormDescripcion(  );
@@ -46,6 +47,7 @@ class CardProductState extends State<CardProduct> {
     this.cantidad = 1;
     this.costoUnitario = '0';
     this.total = '0';
+    this.impuesto = '0';
     // this.formulario = new FormDescripcion();
     // this.cardKey = GlobalKey();
     // this.widget.key = _cardState;
@@ -60,6 +62,8 @@ class CardProductState extends State<CardProduct> {
   //final GlobalKey<CardProductState> key = new GlobalKey<CardProductState>();
   @override
   Widget build(BuildContext context) {
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
+
     //final productoInfo=Provider.of<Pro ductosArrayInfo>(context);
     return InkWell(
       onTap: () {
@@ -71,6 +75,7 @@ class CardProductState extends State<CardProduct> {
               descripcion: this.descripcion.toString(),
               costoUnitario: this.costoUnitario.toString(),
               total: this.total.toString(),
+              impuesto : this.impuesto.toString(),
               );
             // return this.formulario;
           }),
@@ -93,6 +98,27 @@ class CardProductState extends State<CardProduct> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
                       color: Colors.red,
                       onPressed: (){
+                        // List<Widget> y = productoInfo.productos;
+
+                  // print('size > ' + y.length.toString());
+
+                  List <String> r = productoInfo.descripciones;
+                  List <String> co = productoInfo.costosUnitarios;
+                  List <String> ca = productoInfo.cantidades;
+                  List <String> im = productoInfo.impuestos;
+                  List <String> to = productoInfo.totales;
+                  r[indice] = "None";
+                  co[indice] = "None";
+                  ca[indice] = "None";
+                  to[indice] = "None";
+                  im[indice] = "None";
+                  productoInfo.descripciones = r;
+                  productoInfo.costosUnitarios = co;
+                   productoInfo.cantidades = ca;
+                  productoInfo.impuestos = im;
+                  productoInfo.totales = to;
+                  
+                        productoInfo.precioFinalTotal =  productoInfo.getPrecioTotal();
                         print('indeice >>' + widget.indice.toString());
                         widget.func(widget.indice);
                       },
@@ -120,6 +146,10 @@ class CardProductState extends State<CardProduct> {
         TableRow(children: [
           Text(' Total'),
           Text('\t'+this.total),
+        ]),
+        TableRow(children: [
+          Text(' Impuesto'),
+          Text('\t'+this.impuesto),
         ])
       ],
     ),
@@ -131,22 +161,26 @@ class CardProductState extends State<CardProduct> {
   }
 
   // function(value) => setState(() => descripcion = value);
-  function(descrip, costuni, cant, total) => setState(() {
+  function(descrip, costuni, cant, total, impuesto) => setState(() {
     descripcion = descrip;
     this.costoUnitario = costuni.toString();  
     this.cantidad = int.parse(cant);  
     this.total = total.toString();  
+    this.impuesto = impuesto;
     final productoInfo=Provider.of<ProductosArrayInfo>(context,listen: false);
     List<String> f = productoInfo.descripciones;
     List<String> co = productoInfo.costosUnitarios;
     List<String> ca = productoInfo.cantidades;
     List<String> to = productoInfo.totales;
+    List<String> im = productoInfo.impuestos;
+
     try 
     {
       f.removeAt(this.indice);
       co.removeAt(this.indice);
       ca.removeAt(this.indice);
       to.removeAt(this.indice);
+      im.removeAt(this.indice);
     } 
     catch (e) 
     {
@@ -162,6 +196,9 @@ class CardProductState extends State<CardProduct> {
 
     to.insert(this.indice, this.total);
     productoInfo.totales = to;
+
+    im.insert(this.indice, this.impuesto);
+    productoInfo.impuestos = im;
 
   } );
 }
@@ -187,10 +224,13 @@ class FormDescripcion extends StatelessWidget {
   final String costoUnitario;
   final String cantidad;
   final String total;
+  final String impuesto;
+
 
   FormDescripcion({Key key,@required this.func,
                     @required this.descripcion,@required this.costoUnitario,
-                    @required this.cantidad,@required this.total}) : super(key: key);
+                    @required this.cantidad,@required this.total,
+                    @required this.impuesto}) : super(key: key);
 
   // final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
@@ -208,6 +248,7 @@ class FormDescripcion extends StatelessWidget {
   TextEditingController controller_costoUnitario = TextEditingController(text: '0');
   TextEditingController controller_cantidad  = TextEditingController(text: '1');
   TextEditingController controller_total  = TextEditingController(text: '0');
+  TextEditingController controller_impuesto  = TextEditingController(text: '0');
 
 
   BoxDecoration myBoxDecoration() {
@@ -237,6 +278,7 @@ class FormDescripcion extends StatelessWidget {
     this.controller_costoUnitario.text = this.costoUnitario;
     this.controller_cantidad.text = this.cantidad;
     this.controller_total.text = this.total;
+    this.controller_impuesto.text = this.impuesto;
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
     // inicio();
     // this.producto = CardProduct();
@@ -253,24 +295,24 @@ class FormDescripcion extends StatelessWidget {
         //backgroundColor: Colors.red,
         centerTitle: true,
         actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(2, 8, 2, 8),
-            child: RaisedButton(
-              elevation: 25,
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(18.0),
-                  side: BorderSide(color: Colors.black26)),
-              onPressed: () {
-                //mediante funcion de otro .dart con parametros todos los datos de
-                //del form, generar el xml, codificar y enviar
-                singleton.MyXmlSingleton().addCelda();
-              },
-              color: Colors.black,
-              textColor: Colors.white,
-              child:
-                  Text("Guardar".toUpperCase(), style: TextStyle(fontSize: 12)),
-            ),
-          )
+          // Padding(
+          //   padding: EdgeInsets.fromLTRB(2, 8, 2, 8),
+          //   child: RaisedButton(
+          //     elevation: 25,
+          //     shape: new RoundedRectangleBorder(
+          //         borderRadius: new BorderRadius.circular(18.0),
+          //         side: BorderSide(color: Colors.black26)),
+          //     onPressed: () {
+          //       //mediante funcion de otro .dart con parametros todos los datos de
+          //       //del form, generar el xml, codificar y enviar
+          //       singleton.MyXmlSingleton().addCelda();
+          //     },
+          //     color: Colors.black,
+          //     textColor: Colors.white,
+          //     child:
+          //         Text("Guardar".toUpperCase(), style: TextStyle(fontSize: 12)),
+          //   ),
+          // )
         ],
       ),
       body: Form(
@@ -279,15 +321,16 @@ class FormDescripcion extends StatelessWidget {
             controller_descripcion.text,
             controller_costoUnitario.text,
             controller_cantidad.text,
-            controller_total.text
+            controller_total.text,
+            controller_impuesto.text
           );
           // productoInfo.modifyProduct(this.index, this.controller_descripcion.text);
           // productoInfo.lista = this.controller_descripcion.text;
           print(controller_descripcion.text);
-          print('conto unit: '+this.controller_costoUnitario.text.toString());
+          // print('conto unit: '+this.controller_costoUnitario.text.toString());
           double contunit = double.parse(this.controller_costoUnitario.text) ;
           int cantidad = int.parse(this.controller_cantidad.text) ;
-          print((contunit*cantidad).toString());
+          // print((contunit*cantidad).toString());
           // this.controller_total.text = "\$" +(contunit*cantidad).toString();
           double formatDecimal = contunit*cantidad;
           // formatDecimal = double.;
@@ -297,7 +340,8 @@ class FormDescripcion extends StatelessWidget {
 
           double pTotal = productoInfo.getPrecioTotal();
           productoInfo.precioFinalTotal = pTotal;
-          //  print(widget.cardKey.currentState.descripcion);
+          
+          //print(widget.cardKey.currentState.descripcion);
         }),
         //key: _formKey,
         child: CardSettings(
@@ -314,7 +358,7 @@ class FormDescripcion extends StatelessWidget {
 //        this.controller_total.text = widget.actualProductKey.currentState.descripcion.data;
 
             CardSettingsText(
-              numberOfLines: 3, hintText: 'Descripcion de producto',
+              numberOfLines: 2, hintText: 'Descripcion de producto',
               //hintText: 'ayua',
               controller: controller_descripcion,
               labelWidth: 100,
@@ -328,7 +372,7 @@ class FormDescripcion extends StatelessWidget {
               // },
               // onSaved: (value) => print ('daedsadddddd'),
               onChanged: ((value) {
-                print(value);
+                // print(value);
                 productoInfo.lista = value;
 //                this.producto.setDescripcion(value);
                 // this.producto.value = value;
@@ -376,7 +420,7 @@ class FormDescripcion extends StatelessWidget {
 //              },
 //              onSaved: (value) => url = value,
               onChanged: ((value) {
-                print('conto unit'+this.controller_costoUnitario.value.toString());
+                // print('conto unit'+this.controller_costoUnitario.value.toString());
                 this.controller_costoUnitario.text = (value);
 //                this.producto.setCostoUni(value);
               }),
@@ -398,12 +442,13 @@ class FormDescripcion extends StatelessWidget {
                   // print ('faf');
                 }
               },
-//              onSaved: (value) => url = value,
+//              onSaved: (value) => url = value,  
               onChanged: ((value) {
-                print(value);
+                // print(value);
 //                this.producto.setCantidad(value);
               }),
             ),
+            
             CardSettingsText(
               
               //  focusNode: AlwaysDisabledFocusNode(), 
@@ -413,7 +458,7 @@ class FormDescripcion extends StatelessWidget {
                 hintText: '\$',
                 controller: this.controller_total,
                 labelWidth: 170,
-                label: 'Total',
+                label: 'Total sin impuesto',
 //              initialValue: this.producto.getTotal(),
                 validator: (value) {
                   if (!value.startsWith('http:'))
@@ -425,6 +470,60 @@ class FormDescripcion extends StatelessWidget {
                 })
 //              onSaved: (value) => url = value,
                 ),
+              CardSettingsListPicker(contentAlign: TextAlign.center,
+                values: ['0','12','14'],
+                //hintText: 'ada',
+                //hintText: 'Seleccione',
+                label: 'Tipo Impuesto',
+                initialValue: '1',
+                options: ['0%','12%','14%'],
+                onChanged: ((value) async
+                {
+                  print ('[valor] ' +value);
+                  this.controller_impuesto.text = value.toString();
+                  print("rec >>>> ");
+                  double im = double.parse(this.controller_impuesto.text)/100.0;
+                  print("puro > "+ im.toString());
+                  print(" tecto "+this.controller_impuesto.text);
+                  im = im*double.parse(this.controller_total.text);
+                  this.controller_impuesto.text = im.toString(); 
+                  
+                  print(" im "+im.toString());
+                  // print(this.controller_impuesto.text);
+                    // switch (int.p arse(value)) {
+                    //   case 0:
+                    //       this.controller_impuesto.text = value.toString();
+                    //     break;
+                    //   case 12:
+                    //       this.controller_impuesto.text = value.toString();
+                    //     break;
+                    //   default:
+                    // }
+                    //prefs.setString('ambiente', value);
+              }),
+            ),
+            CardSettingsText(
+              controller: this.controller_impuesto,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              maxLength: 10,
+              autovalidate: true,
+              labelWidth: 170,
+              label: 'impuesto',
+            //  initialValue: this.producto.getCantidad(),
+              hintText: 'Numero',
+              validator: (value) {
+                // try {
+                //   // if (value is double) return 'Ruc es de 13 numeros';
+                // } catch (e) {
+                //   // print ('faf');
+                // }
+              },
+//              onSaved: (value) => url = value,  
+              onChanged: ((value) {
+                print(value);
+//                this.producto.setCantidad(value);
+              }),
+            ),
                 // Text('total' + this.controller_total.text),
             //fullpdfview.MyApp(),
 /*

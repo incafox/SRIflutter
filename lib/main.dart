@@ -1,7 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_final_sri/docume.dart';
+import 'package:flutter_final_sri/productosJson.dart';
 import 'package:flutter_final_sri/provider_productos.dart';
+import 'package:flutter_final_sri/reenviarFactura.dart';
+import 'package:flutter_final_sri/screens/login_screen.dart';
+// import 'package:flutter_final_sri/transition_route_observer.dart';
+import 'package:flutter_final_sri/vpn.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:provider/provider.dart';
@@ -13,17 +19,46 @@ import 'package:card_settings/card_settings.dart';
 import 'singleton_formulario_actual.dart' as singleton;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'full_pdf_view.dart' as fullpdfview;
+// import 'package:flutter_login/flutter_login.dart';
+// import 'dashboard_screen.dart';
+import 'form_emisor.dart' as formEmisor;
+// import 'login_screen.dart';
+
 
 //formularios
-import 'form_emisor.dart' as formEmisor;
 
-void main() => runApp(MyApp());
+// void main() => runApp(MyApp());
+// void main() => runApp(MyAppxxx());
+void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      systemNavigationBarColor:
+          SystemUiOverlayStyle.dark.systemNavigationBarColor,
+    ),
+  );
+  runApp(MyAppx());
 
+}
+
+class MyAppx extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => ProductosArrayInfo(),
+          child: MaterialApp(
+        title: 'Flutter Login UI',
+        debugShowCheckedModeBanner: false,
+        home: LoginScreen(),
+      ),
+    );
+  }
+}
 class MyApp extends StatelessWidget {
 //class _MyApp extends State<MyApp> {
 
   final appTitle = 'FACTURA ELECTRONICA';
-
+  
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -155,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String temp = (prefs.getString('razonSocial')); //+ 1;
-    print ('futuro : ' + temp);
+    print ('futuro : ' + temp)
     return temp;
   }*/
   //PDFDocument doc = await PDFDocument.fromURL('http://www.africau.edu/images/default/sample.pdf');
@@ -173,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
           //backgroundColor: Colors.blueAccent,
           title: Text(
-        'Facturas Pasadas',
+        'Innova SG.',
         textAlign: TextAlign.right,
       )),
       body: formEmisor.FormEmisor(),
@@ -349,8 +384,10 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
-                child:Image.network(
-                                "https://library.kissclipart.com/20181105/vq/kissclipart-invoice-logo-clipart-invoice-logo-586f857303eb3ebc.png"),
+                child:
+                SizedBox(height: 310,child: Image.asset("assets/log.jpg")),
+                // Image.network(
+                //                 "https://library.kissclipart.com/20181105/vq/kissclipart-invoice-logo-clipart-invoice-logo-586f857303eb3ebc.png"),
                                
                 // Stack(
                 //   children: <Widget>[
@@ -415,11 +452,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   // ...
                   // Then close the drawer
                   //Navigator.pop(context);
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) =>
-                  //         FacturaPage()
-                  //     ) );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          ReenviarPage()
+                      ) );
                 },
               ),
               Divider(
@@ -440,10 +477,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   // ...
                   // Then close the drawer
                   //Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => pasadas.FacturasPasadas()));
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => pasadas.FacturasPasadas()));
                 },
               ),
               Divider(
@@ -452,9 +489,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ListTile(
                 title: Row(
                   children: <Widget>[
-                    Icon(Icons.person),
+                    Icon(Icons.person_add),
                     Text(
-                      'Clientes',
+                      'Registrar Cliente',
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -463,9 +500,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Update the state of the app
                   // ...
                   // Then close the drawer
-                  //Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FacturaPage()));
+                  Navigator.pop(context);
+                   Navigator.push(context,
+                       MaterialPageRoute(builder: (context) => documeJson()));
                 },
               ),
               Divider(
@@ -485,33 +522,33 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Update the state of the app
                   // ...
                   // Then close the drawer
-                  //Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FacturaPage()));
+                  Navigator.pop(context);
+                   Navigator.push(context,
+                       MaterialPageRoute(builder: (context) => ProductosJsonSearchPage()));
                 },
               ),
-              Divider(
-                height: 3,
-              ),
-              ListTile(
-                title: Row(
-                  children: <Widget>[
-                    Icon(Icons.share),
-                    Text(
-                      'VPN',
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  //Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FacturaPage()));
-                },
-              ),
+//              Divider(
+//                height: 3,
+//              ),
+//              ListTile(
+//                title: Row(
+//                  children: <Widget>[
+//                    Icon(Icons.share),
+//                    Text(
+//                      'VPN',
+//                      textAlign: TextAlign.center,
+//                    ),
+//                  ],
+//                ),
+//                onTap: () {
+//                  // Update the state of the app
+//                  // ...
+//                  // Then close the drawer
+//                  // Navigator.pop(context);
+//                  Navigator.push(context,
+//                      MaterialPageRoute(builder: (context) => VPNPage()));
+//                },
+//              ),
               Divider(
                 height: 3,
               ),
@@ -520,7 +557,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Icon(Icons.settings),
                     Text(
-                      'Ajustes',
+                      'SRI ',
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -534,8 +571,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
+                              filepick.FilePickerDemo() ));
                               //FacturaPage()
-                              fullpdfview.MyAppx()));
+                              //fullpdfview.MyAppx()));
                 },
               ),
             ],

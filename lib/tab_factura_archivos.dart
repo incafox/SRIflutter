@@ -147,7 +147,7 @@ class _TabFacturaArchivosState extends State<TabFacturaArchivos> {
               ],
             ),
 
-            TextField(readOnly: true,controller: singleton.MyXmlSingleton().forDebug,)
+            // TextField(readOnly: true,controller: singleton.MyXmlSingleton().forDebug,)
           ],
         ),
       ),
