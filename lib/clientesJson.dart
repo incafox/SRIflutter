@@ -135,18 +135,23 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
               child: ListTile(
                 leading: IconButton(icon: Icon(Icons.add), 
                 onPressed: () {
-                  productoInfo.clienteElegido=Container(
-                    // width: 500,
-                    child: Column(
-                      children: <Widget>[
-                        Align(alignment: Alignment.topLeft,child: Text("Nombre: "+post.nombre_cli,)),
-                        Align(alignment:Alignment.topLeft,child: Text("Codigo: "+post.codigo_cli,maxLines: 1,)),
-                        Align(alignment: Alignment.topLeft,child: Text("R.U.C.: "+post.rucci_cli,maxLines: 1,)),
-                        Align(alignment: Alignment.topLeft, child: Text("email : "+post.telefo_cli,maxLines: 1,)),
-                        // Text(post.),
-                      ],
-                    ),
-                  );
+                  // productoInfo.clienteElegido=Container(
+                  //   // width: 500,
+                  //   child: Column(
+                  //     children: <Widget>[
+                  //       Align(alignment: Alignment.topLeft,child: Text("Nombre: "+post.nombre_cli,)),
+                  //       Align(alignment:Alignment.topLeft,child: Text("Codigo: "+post.codigo_cli,maxLines: 1,)),
+                  //       Align(alignment: Alignment.topLeft,child: Text("R.U.C.: "+post.rucci_cli,maxLines: 1,)),
+                  //       Align(alignment: Alignment.topLeft, child: Text("email : "+post.telefo_cli,maxLines: 1,)),
+                  //       // Text(post.),
+                  //     ],
+                  //   ),
+                  // );
+
+                  ClienteElegido cli = new ClienteElegido(nombre: post.nombre_cli,
+                  codigo: post.codigo_cli,ruc: post.rucci_cli,email: post.telefo_cli); 
+                  productoInfo.clienteActual = cli;
+
                 }),
                 title: Text(post.nombre_cli,textAlign: TextAlign.center),
                 isThreeLine: true,

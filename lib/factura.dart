@@ -285,33 +285,41 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
                   //   print (item);
                   // }
                   // print('SECOND CHILD');
-                  List<Widget> y = productoInfo.productos;
+                  // List<Widget> y = productoInfo.productos;
 
-                  print('size > ' + y.length.toString());
+                  // print('size > ' + y.length.toString());
 
-                  List <String> r = productoInfo.descripciones;
-                  List <String> co = productoInfo.costosUnitarios;
-                  List <String> ca = productoInfo.cantidades;
-                  List <String> to = productoInfo.totales;
+                  // List <String> r = productoInfo.descripciones;
+                  // List <String> co = productoInfo.costosUnitarios;
+                  // List <String> ca = productoInfo.cantidades;
+                  // List <String> to = productoInfo.totales;
                  
-                  for (var i = 0; i < 10; i++) {
-                    print('indice > ' + i.toString());
-                    print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
+                  // for (var i = 0; i < 10; i++) {
+                  //   print('indice > ' + i.toString());
+                  //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
+                  // }
+                  // // productoInfo.getDescrip();                
+                  // print ("final");
+                  // List<String> tmr = productoInfo.conceptos();
+                  // for (var item in tmr) {
+                  //   print (item);
+                  // }
+                  // print('el precio total');
+                  // print(productoInfo.getPrecioTotal());
+                  productoInfo.xml_controller_expanded.expanded = false;
+                  productoInfo.xml_enabler = true;
+                  double sinIm = 0;
+                  double conIm = 0;
+                  for (CartitaProducto i in productoInfo.productosDB) {
+                    if (i.activo) {
+                      sinIm += double.parse(i.finalPrecio.text);
+                      conIm += double.parse(i.totalPrecioConImpuesto.text);
+                    }
+                    // print("sin impuesto  " + finalPrice.text);
+                    // print("con impuesto  " + finalPriceConIM.text);
+                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                    productoInfo.xml_precio_final_con_im = conIm.toString();
                   }
-                  // productoInfo.getDescrip();                
-                  print ("final");
-                  List<String> tmr = productoInfo.conceptos();
-                  for (var item in tmr) {
-                    print (item);
-                  }
-                  print('el precio total');
-                  print(productoInfo.getPrecioTotal());
-
-
-
-
-
-
                   } ,
               )
               ,
@@ -321,6 +329,23 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
                 label: 'Mostrar XML',
                 labelStyle: TextStyle(fontSize: 16.0),
                 onTap: ()async{
+
+                  productoInfo.xml_controller_expanded.expanded = false;
+                  productoInfo.xml_enabler = true;
+                  double sinIm = 0;
+                  double conIm = 0;
+                  for (CartitaProducto i in productoInfo.productosDB) {
+                    if (i.activo) {
+                      sinIm += double.parse(i.finalPrecio.text);
+                      conIm += double.parse(i.totalPrecioConImpuesto.text);
+                    }
+                    // print("sin impuesto  " + finalPrice.text);
+                    // print("con impuesto  " + finalPriceConIM.text);
+                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                    productoInfo.xml_precio_final_con_im = conIm.toString();
+                    productoInfo.xml_precionfinalSin = sinIm.toString();
+                    productoInfo.xml_precionfinalCon = conIm.toString();
+                  }
 
 
                   return showDialog(

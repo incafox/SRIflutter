@@ -551,6 +551,35 @@ class CartaPrecioFinal extends StatelessWidget {
 
 // }
 
+
+class ClienteElegido extends StatelessWidget {
+
+  String nombre ;
+  String codigo ;
+  String ruc ;
+  String email ;  
+  ClienteElegido({this.nombre, this.codigo, this.ruc, this.email});
+
+  void updateData(String nom, String cod, String ruce, String ema){
+    this.nombre = nom;
+    this.codigo = cod;
+    this.ruc = ruce;
+    this.email = ema;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+       child: Column(children: <Widget>[
+         Text("" + this.nombre,style: TextStyle(fontSize: 16),),
+         Text("Codigo Cliente : " +this.codigo),
+         Text("R.U.C. : "+ this.ruc),
+         Text("email : " + this.email ),
+       ],),
+    );
+  }
+}
+
 class ProductosArrayInfo extends ChangeNotifier {
   // List<String> _lista = ['ola'];
   String _lista = 'lol';
@@ -1046,6 +1075,25 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_fecha = cn;
   }
 
+  String _xml_precio_final_sin_im = "";
+  get xml_precio_final_sin_im {
+    return this._xml_precio_final_sin_im;
+  }
+
+  set xml_precio_final_sin_im(String cn) {
+    this._xml_precio_final_sin_im = cn;
+  }
+
+
+  String _xml_precio_final_con_im = "";
+  get xml_precio_final_con_im {
+    return this._xml_precio_final_con_im;
+  }
+
+  set xml_precio_final_con_im(String cn) {
+    this._xml_precio_final_con_im = cn;
+  }
+
   String _xml_dirEstablecimiento = "";
   get xml_dirEstablecimiento {
     return this._xml_dirEstablecimiento;
@@ -1077,29 +1125,29 @@ class ProductosArrayInfo extends ChangeNotifier {
     String segunda = """
     <infoFactura>
     <fechaEmision>21/11/2019</fechaEmision>
-    <dirEstablecimiento>Customer Address, Petaling Jaya, Selangor, Malaysia</dirEstablecimiento>
-    <obligadoContabilidad>SI</obligadoContabilidad>
+    <dirEstablecimiento>${xml_dirEstablecimiento}</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
     <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
-    <razonSocialComprador>CONSUMIDOR FINAL</razonSocialComprador>
-    <identificacionComprador>1</identificacionComprador>
-    <totalSinImpuestos>1500.00</totalSinImpuestos>
+    <razonSocialComprador>${xml_razonSocial_comprador}</razonSocialComprador>
+    <identificacionComprador>9999999999999</identificacionComprador>
+    <totalSinImpuestos>${_xml_precionfinalSin}</totalSinImpuestos>
     <totalDescuento>0.00</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>2</codigoPorcentaje>
-        <baseImponible>1500.00</baseImponible>
+        <baseImponible>${xml_precionfinalSin}</baseImponible>
         <tarifa>12</tarifa>
-        <valor>180</valor>
+        <valor>${double.parse(xml_precionfinalCon)-double.parse(xml_precionfinalSin)}</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
-    <importeTotal>1680</importeTotal>
+    <importeTotal>${xml_precionfinalCon}</importeTotal>
     <moneda>dolar</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>1680</total>
+        <total>${xml_precionfinalCon}</total>
       </pago>
     </pagos>
   </infoFactura>
@@ -1110,7 +1158,7 @@ class ProductosArrayInfo extends ChangeNotifier {
         tempi+=item.xmlConcepto;
       }
     }
-    return primera+segunda+tempi;
+    return primera+segunda+ "<detalles>" + tempi + "</detalles> \n </factura>";
   }
 
   set xml_FINAL(String cn) {
@@ -1176,6 +1224,16 @@ class ProductosArrayInfo extends ChangeNotifier {
     return this._productosDB;
   }
 
+  //datos de cliente elegido
+  //complejo
+  ClienteElegido _clienteActual = ClienteElegido(codigo: "",email: "",nombre: "",ruc: "",);
+  set clienteActual(ClienteElegido cn){
+    this._clienteActual = cn;
+  }
+  get clienteActual{
+    return this._clienteActual;
+  }
+  //simple
   Container _clienteElegido = Container();
   set clienteElegido(Container cn) {
     this._clienteElegido = cn;
@@ -1239,6 +1297,14 @@ class ProductosArrayInfo extends ChangeNotifier {
   }
   set xml_enabler(bool cn) {
     this._xml_enabler = cn;
+  }
+
+  String _xml_razonSocial_comprador = "";
+  get xml_razonSocial_comprador {
+    return this._xml_razonSocial_comprador;
+  }
+  set xml_razonSocial_comprador(String cn) {
+    this._xml_razonSocial_comprador = cn;
   }
 
   ExpandableController _xml_controller_expanded = ExpandableController();

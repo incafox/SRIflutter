@@ -406,7 +406,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                     children: <Widget>[
                       //TITULO
                       Container(
-                        color: Colors.black45,
+                        color: Colors.black,
                         width: double.infinity,
                         height: 35.0,
                         child: Center(
@@ -433,7 +433,8 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                             width: 370,
                             child: Column(
                               children: <Widget>[
-                                productoInfo.clienteElegido,
+                                productoInfo.clienteActual,
+                                // productoInfo.clienteElegido,
                                 MaterialButton(
                                     textColor: Colors.white,
                                     child: Row(
@@ -497,7 +498,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                     children: <Widget>[
                       //TITULO
                       Container(
-                        color: Colors.black45,
+                        color: Colors.black,
                         width: double.infinity,
                         height: 35.0,
                         child: Center(
@@ -693,7 +694,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
 //                       //PARA CONTENIDO
 //                       Container(
 //                         //height: 200.0,
-//                         child: Column(
+//                         child: Column(total
 //                           children: <Widget>[
 //                             Container(
 //                               height: 35,
@@ -738,7 +739,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                     children: <Widget>[
                       //TITULO
                       Container(
-                        color: Colors.black45,
+                        color: Colors.black,
                         width: double.infinity,
                         height: 35.0,
                         child: Center(
@@ -760,17 +761,14 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                             RaisedButton(
                                 child: Text("Calcular Precio Total"),
                                 onPressed: () {
-                          productoInfo.xml_controller_expanded.expanded = false;
-
+                                  productoInfo
+                                      .xml_controller_expanded.expanded = false;
                                   productoInfo.xml_enabler = true;
                                   double sinIm = 0;
                                   double conIm = 0;
                                   for (CartitaProducto i
                                       in productoInfo.productosDB) {
                                     if (i.activo) {
-                                      // print(i.finalPrecio.text);
-                                      // print(i.totalPrecioConImpuesto.text);
-
                                       sinIm += double.parse(i.finalPrecio.text);
                                       conIm += double.parse(
                                           i.totalPrecioConImpuesto.text);
@@ -779,8 +777,11 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                                     print("con impuesto  " +
                                         finalPriceConIM.text);
                                     this.finalPrice.text = sinIm.toString();
-                                    this.finalPriceConIM.text =
-                                        conIm.toString();
+                                    this.finalPriceConIM.text = conIm.toString();
+                                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                                    productoInfo.xml_precionfinalSin = sinIm.toString();
+                                    productoInfo.xml_precionfinalCon = conIm.toString();
+                                    productoInfo.xml_precio_final_con_im = conIm.toString();
                                   }
                                 }),
 
@@ -843,53 +844,56 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
           // Text(productoInfo.xml_precionfinalCon),
           ExpandablePanel(
             controller: productoInfo.xml_controller_expanded,
-            header: Divider(),
-            collapsed: Container(
-              // height: 55,
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("Total sin impuesto :   "),
-                      Container(
-                                  width: 150,
-                                  child: TextField(
-                                    readOnly: true,
-                                    maxLines: 1,
-                                    controller: this.finalPrice,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                        // border: InputBorder.,
-                                        hintText: 'Cantidad'),
-                                  ),
-                                ),
-                    ],
-                  ),
-                            Row(
-                              children: <Widget>[
-                                Text("Total con impuesto :   "),
-                                Container(
-                                  width: 150,
-                                  child: TextField(
-                                    readOnly: true,
-                                    maxLines: 1,
-                                    controller: this.finalPriceConIM,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                        // border: InputBorder.,
-                                        hintText: 'Cantidad'),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                ],
+            header: null,
+            collapsed: Padding(
+              padding: const EdgeInsets.only(left: 5, right: 5),
+              child: Container(
+                // height: 55,
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text("       Total sin impuesto :   "),
+                        Container(
+                          width: 150,
+                          child: TextField(
+                            readOnly: true,
+                            maxLines: 1,
+                            controller: this.finalPrice,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                // border: InputBorder.,
+                                hintText: 'Cantidad'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text("       Total con impuesto :   "),
+                        Container(
+                          width: 150,
+                          child: TextField(
+                            readOnly: true,
+                            maxLines: 1,
+                            controller: this.finalPriceConIM,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                // border: InputBorder.,
+                                hintText: 'Cantidad'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             expanded: Container(
-              height: 55,
-              color: Colors.teal,
+              child: Card(),
+              height: 15,
+              color: Colors.white,
             ),
             tapHeaderToExpand: false,
             hasIcon: false,
