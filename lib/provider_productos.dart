@@ -104,7 +104,6 @@ class _StackProductosState extends State<StackProductos>
   bool get wantKeepAlive => true;
 }
 
-
 class PhotoImpuesto {
   final String descripcion;
   final String porcentaje;
@@ -138,18 +137,18 @@ Future<List<PhotoImpuesto>> fetchImpuesto(
   // Use the compute function to run parsePhotos in a separate isolate.
   return compute(parsePhotosImpuesto, response.body);
 }
-List<PhotoImpuesto> temporals = [];
 
+List<PhotoImpuesto> temporals = [];
 
 List<PhotoImpuesto> parsePhotosImpuesto(String responseBody) {
   // final productoInfo=Provider.of<ProductosArrayInfo>(context);
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
   //return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
-  temporals =
-      parsed.map<PhotoImpuesto>((json) => PhotoImpuesto.fromJson(json)).toList();
+  temporals = parsed
+      .map<PhotoImpuesto>((json) => PhotoImpuesto.fromJson(json))
+      .toList();
   return temporals;
 }
-
 
 class PhotoPrice {
   final String codigo;
@@ -195,6 +194,7 @@ List<PhotoPrice> parsePhotos(String responseBody) {
       parsed.map<PhotoPrice>((json) => PhotoPrice.fromJson(json)).toList();
   return temporalc;
 }
+
 // class CartitaProducto extends StatefulWidget{
 //   final String nombre;
 //   final String codigo;
@@ -221,9 +221,9 @@ class CartitaProducto extends StatelessWidget {
   ExpandableController control = ExpandableController();
   TextEditingController impuestoDescripcion = TextEditingController(text: "");
   TextEditingController impuestoPorcentaje = TextEditingController(text: "");
-  TextEditingController totalPrecioConImpuesto= TextEditingController(text: "");
-  TextEditingController cantidadImpuesto= TextEditingController(text: "");
-
+  TextEditingController totalPrecioConImpuesto =
+      TextEditingController(text: "");
+  TextEditingController cantidadImpuesto = TextEditingController(text: "");
 
   void _getALlPosts(String codigo) async {
     List<PhotoPrice> t = await fetchClientes(http.Client(), codigo);
@@ -235,26 +235,24 @@ class CartitaProducto extends StatelessWidget {
     this.impuestoPorcentaje.text = r[0].porcentaje;
     // this.impuestoCantidad
     this.tienePrecio = true;
-    if(this.impuestoPorcentaje.text != "0"){
-      
-      double temp = double.parse(this.finalPrecio.text)*(double.parse(this.impuestoPorcentaje.text)/100);
-      double resto =  temp;
+    if (this.impuestoPorcentaje.text != "0") {
+      double temp = double.parse(this.finalPrecio.text) *
+          (double.parse(this.impuestoPorcentaje.text) / 100);
+      double resto = temp;
       temp = double.parse(this.actualPrecio.text) + temp;
       this.cantidadImpuesto.text = resto.toString();
-      this.totalPrecioConImpuesto.text =  temp.toString();
-    }
-    else{
+      this.totalPrecioConImpuesto.text = temp.toString();
+    } else {
       this.cantidadImpuesto.text = "0";
       this.totalPrecioConImpuesto.text = this.finalPrecio.text;
     }
     // return t;
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final productoInfo=Provider.of<ProductosArrayInfo>(context);
-    
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
+
     // TODO: implement build
     this._getALlPosts(this.codigo);
     this.finalPrecio.text = this.actualPrecio.text;
@@ -262,7 +260,7 @@ class CartitaProducto extends StatelessWidget {
     // double t;
     // t = double.parse(this.actualPrecio.text);
     // this.finalPrecio.text = t.toString();
-  productoInfo.xml_enabler = false;
+    productoInfo.xml_enabler = false;
     this.xmlConcepto = """
                           <detalle>
                           <codigoPrincipal>${this.codigo}</codigoPrincipal>
@@ -342,28 +340,29 @@ class CartitaProducto extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
                     Text("cantidad : "),
-                    
+
                     Container(
                       width: 50,
                       child: TextFormField(
-                        onChanged: (val){
+                        onChanged: (val) {
                           productoInfo.xml_controller_expanded.expanded = true;
                           productoInfo.xml_enabler = false;
                           double t;
                           t = double.parse(val) *
                               double.parse(this.actualPrecio.text);
                           this.finalPrecio.text = t.toString();
-                          if(this.impuestoPorcentaje.text != "0"){
-                            
-                            double temp = double.parse(this.finalPrecio.text)*(double.parse(this.impuestoPorcentaje.text)/100);
-                            double resto =  temp;
-                            temp += double.parse(this.finalPrecio.text) ;
+                          if (this.impuestoPorcentaje.text != "0") {
+                            double temp = double.parse(this.finalPrecio.text) *
+                                (double.parse(this.impuestoPorcentaje.text) /
+                                    100);
+                            double resto = temp;
+                            temp += double.parse(this.finalPrecio.text);
                             this.cantidadImpuesto.text = resto.toString();
                             this.totalPrecioConImpuesto.text = temp.toString();
-                          }
-                          else{
+                          } else {
                             this.cantidadImpuesto.text = "0";
-                            this.totalPrecioConImpuesto.text = this.finalPrecio.text;
+                            this.totalPrecioConImpuesto.text =
+                                this.finalPrecio.text;
                           }
                           this.xmlConcepto = """
                           <detalle>
@@ -385,44 +384,43 @@ class CartitaProducto extends StatelessWidget {
                         </detalle>
                           """;
 
-                                double sinIm = 0;
-                                double conIm = 0;
-                              for (CartitaProducto i in productoInfo.productosDB) {
-                                if (i.activo){
-                                  // print(i.finalPrecio.text);
-                                  // print(i.totalPrecioConImpuesto.text);
-                                  
-                                  sinIm += double.parse(i.finalPrecio.text);
-                                  conIm += double.parse(i.totalPrecioConImpuesto.text);
-                                }
-                              //  print( "sin impuesto  " +finalPrice.text);
-                              //  print( "con impuesto  " +finalPriceConIM.text);
-                                // this.finalPrice.text = sinIm.toString();
-                                // this.finalPriceConIM.text = conIm.toString();
-                                productoInfo.xml_precionfinalSin = sinIm.toString();
-                                productoInfo.xml_precionfinalCon = conIm.toString();
-                              }
+                          double sinIm = 0;
+                          double conIm = 0;
+                          for (CartitaProducto i in productoInfo.productosDB) {
+                            if (i.activo) {
+                              // print(i.finalPrecio.text);
+                              // print(i.totalPrecioConImpuesto.text);
 
+                              sinIm += double.parse(i.finalPrecio.text);
+                              conIm +=
+                                  double.parse(i.totalPrecioConImpuesto.text);
+                            }
+                            //  print( "sin impuesto  " +finalPrice.text);
+                            //  print( "con impuesto  " +finalPriceConIM.text);
+                            // this.finalPrice.text = sinIm.toString();
+                            // this.finalPriceConIM.text = conIm.toString();
+                            productoInfo.xml_precionfinalSin = sinIm.toString();
+                            productoInfo.xml_precionfinalCon = conIm.toString();
+                          }
                         },
-                      controller: this.input,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
+                        controller: this.input,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
                           WhitelistingTextInputFormatter.digitsOnly
-                      ],
-                      // decoration: InputDecoration(
-                      //     labelText:"whatever you want", 
-                      //     hintText: "whatever you want",
-                      //     icon: Icon(Icons.phone_iphone)
-                      // )
-                  ),
-                    )
-                    ,
+                        ],
+                        // decoration: InputDecoration(
+                        //     labelText:"whatever you want",
+                        //     hintText: "whatever you want",
+                        //     icon: Icon(Icons.phone_iphone)
+                        // )
+                      ),
+                    ),
                     // Container(
                     //   width: 50,
                     //   child: TextField(
-                        
+
                     //     onChanged: (val) {
-                          
+
                     //     },
                     //     maxLines: 1,
                     //     controller: this.input,
@@ -463,40 +461,41 @@ class CartitaProducto extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Text(this.impuestoDescripcion.text),
             Wrap(
-               spacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: <Widget>[
-            Text("precio total con impuesto"),
-            Container(
-                      width: 100,
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        readOnly: true,
-                        maxLines: 1,
-                        controller: this.impuestoDescripcion,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            // border: InputBorder.,
-                            ),
-                      ),
-                    ),
-              Container(
-                      width: 90,
-                      child: TextField(
-                        readOnly: true,
-                        maxLines: 1,
-                        controller: this.totalPrecioConImpuesto,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            // border: InputBorder.,
-                            ),
-                      ),
-                    )
-            ],),
-            
+                Text("precio total con impuesto"),
+                Container(
+                  width: 100,
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    readOnly: true,
+                    maxLines: 1,
+                    controller: this.impuestoDescripcion,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        // border: InputBorder.,
+                        ),
+                  ),
+                ),
+                Container(
+                  width: 90,
+                  child: TextField(
+                    readOnly: true,
+                    maxLines: 1,
+                    controller: this.totalPrecioConImpuesto,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        // border: InputBorder.,
+                        ),
+                  ),
+                )
+              ],
+            ),
+
             // Text(this.totalPrecioConImpuesto.text)
           ],
         )),
@@ -505,17 +504,15 @@ class CartitaProducto extends StatelessWidget {
   }
 }
 
-
 class CartaPrecioFinal extends StatelessWidget {
   TextEditingController sinImpuestos = TextEditingController(text: "");
   TextEditingController conImpuestos = TextEditingController(text: "");
-  
-  void updatePricing(List<CartitaProducto> tmr){
+
+  void updatePricing(List<CartitaProducto> tmr) {
     double sinIm;
     double conIm;
     for (CartitaProducto item in tmr) {
-      if (item.activo)
-      {
+      if (item.activo) {
         sinIm += double.parse(item.finalPrecio.text);
         conIm += double.parse(item.totalPrecioConImpuesto.text);
       }
@@ -527,18 +524,17 @@ class CartaPrecioFinal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(children: <Widget>[
-        Text("total sin impuestos"),
-        Text(this.sinImpuestos.text),
-        Text("total con impuestos"),
-        Text(this.conImpuestos.text),
-
-      ],),
-
+      child: Column(
+        children: <Widget>[
+          Text("total sin impuestos"),
+          Text(this.sinImpuestos.text),
+          Text("total con impuestos"),
+          Text(this.conImpuestos.text),
+        ],
+      ),
     );
   }
 }
-
 
 // class StackCartitaProductos extends StatelessWidget{
 //   List<CartitaProducto> productos = [];
@@ -551,16 +547,14 @@ class CartaPrecioFinal extends StatelessWidget {
 
 // }
 
-
 class ClienteElegido extends StatelessWidget {
-
-  String nombre ;
-  String codigo ;
-  String ruc ;
-  String email ;  
+  String nombre;
+  String codigo;
+  String ruc;
+  String email;
   ClienteElegido({this.nombre, this.codigo, this.ruc, this.email});
 
-  void updateData(String nom, String cod, String ruce, String ema){
+  void updateData(String nom, String cod, String ruce, String ema) {
     this.nombre = nom;
     this.codigo = cod;
     this.ruc = ruce;
@@ -570,12 +564,17 @@ class ClienteElegido extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-       child: Column(children: <Widget>[
-         Text("" + this.nombre,style: TextStyle(fontSize: 16),),
-         Text("Codigo Cliente : " +this.codigo),
-         Text("R.U.C. : "+ this.ruc),
-         Text("email : " + this.email ),
-       ],),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "" + this.nombre,
+            style: TextStyle(fontSize: 16),
+          ),
+          Text("Codigo Cliente : " + this.codigo),
+          Text("R.U.C. : " + this.ruc),
+          Text("email : " + this.email),
+        ],
+      ),
     );
   }
 }
@@ -1084,7 +1083,6 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_precio_final_sin_im = cn;
   }
 
-
   String _xml_precio_final_con_im = "";
   get xml_precio_final_con_im {
     return this._xml_precio_final_con_im;
@@ -1138,7 +1136,7 @@ class ProductosArrayInfo extends ChangeNotifier {
         <codigoPorcentaje>2</codigoPorcentaje>
         <baseImponible>${xml_precionfinalSin}</baseImponible>
         <tarifa>12</tarifa>
-        <valor>${double.parse(xml_precionfinalCon)-double.parse(xml_precionfinalSin)}</valor>
+        <valor>${double.parse(xml_precionfinalCon) - double.parse(xml_precionfinalSin)}</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
@@ -1152,13 +1150,17 @@ class ProductosArrayInfo extends ChangeNotifier {
     </pagos>
   </infoFactura>
     """;
-    String tempi="";
+    String tempi = "";
     for (CartitaProducto item in _productosDB) {
-      if (item.activo){
-        tempi+=item.xmlConcepto;
+      if (item.activo) {
+        tempi += item.xmlConcepto;
       }
     }
-    return primera+segunda+ "<detalles>" + tempi + "</detalles> \n </factura>";
+    return primera +
+        segunda +
+        "<detalles>" +
+        tempi +
+        "</detalles> \n </factura>";
   }
 
   set xml_FINAL(String cn) {
@@ -1226,13 +1228,20 @@ class ProductosArrayInfo extends ChangeNotifier {
 
   //datos de cliente elegido
   //complejo
-  ClienteElegido _clienteActual = ClienteElegido(codigo: "",email: "",nombre: "",ruc: "",);
-  set clienteActual(ClienteElegido cn){
+  ClienteElegido _clienteActual = ClienteElegido(
+    codigo: "",
+    email: "",
+    nombre: "",
+    ruc: "",
+  );
+  set clienteActual(ClienteElegido cn) {
     this._clienteActual = cn;
   }
-  get clienteActual{
+
+  get clienteActual {
     return this._clienteActual;
   }
+
   //simple
   Container _clienteElegido = Container();
   set clienteElegido(Container cn) {
@@ -1261,57 +1270,114 @@ class ProductosArrayInfo extends ChangeNotifier {
   }
 
   CartaPrecioFinal _preciosFinalesTotal = CartaPrecioFinal();
-  get preciosFinalesTotal{
+  get preciosFinalesTotal {
     return this._preciosFinalesTotal;
   }
-  set preciosFinalesTotal(CartaPrecioFinal cn){
+
+  set preciosFinalesTotal(CartaPrecioFinal cn) {
     this._preciosFinalesTotal = cn;
   }
 
-  void actualiza_total(){
+  void actualiza_total() {
     this._preciosFinalesTotal.updatePricing(productosDB);
   }
-
 
   String _xml_precionfinalSin = "";
   get xml_precionfinalSin {
     return this._xml_precionfinalSin;
   }
+
   set xml_precionfinalSin(String cn) {
     this._xml_precionfinalSin = cn;
   }
-
 
   String _xml_precionfinalCon = "";
   get xml_precionfinalCon {
     return this._xml_precionfinalCon;
   }
+
   set xml_precionfinalCon(String cn) {
     this._xml_precionfinalCon = cn;
   }
 
-
   bool _xml_enabler = false;
-  get xml_enabler{
+  get xml_enabler {
     return this._xml_enabler;
   }
+
   set xml_enabler(bool cn) {
     this._xml_enabler = cn;
   }
 
-  String _xml_razonSocial_comprador = "";
+  String _xml_razonSocial_comprador = "9999999999999";
   get xml_razonSocial_comprador {
     return this._xml_razonSocial_comprador;
   }
+
   set xml_razonSocial_comprador(String cn) {
     this._xml_razonSocial_comprador = cn;
   }
 
   ExpandableController _xml_controller_expanded = ExpandableController();
-  get xml_controller_expanded{
+  get xml_controller_expanded {
     return this._xml_controller_expanded;
   }
+
   set xml_controller_expanded(ExpandableController cn) {
     this._xml_controller_expanded = cn;
+  }
+
+  // Future<List<PhotoSRI>> fetchXML(
+  Future<String> fetchXML(
+      http.Client client, String empresa, String xml) async {
+    // Map map = new Map<String, dynamic>();
+    // map["empresa"] = empreCod;
+    Map data = {'empresa': empresa, 'xml': xml};
+    //encode Map to JSON
+    var body = json.encode(data);
+    print('asumiendo post > ' + body.toString());
+    final response = await client.post(
+        'http://167.172.203.137/services/mssql/send',
+        headers: {"Content-Type": "application/json"},
+        body: body);
+    client.close();
+    return response.body.toString();
+    // return compute(parsePhotos, response.body);
+  }
+
+  // A function that converts a response body into a List<Photo>.
+  // List<PhotoSRI> parsePhotos(String responseBody) {
+  //   // final productoInfo=Provider.of<ProductosArrayInfo>(context);
+  //   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  //   //return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
+  //   temporal = parsed.map<PhotoSRI>((json) => PhotoSRI.fromJson(json)).toList();
+  //   return temporal;
+  // }
+
+  // List<PhotoSRI> _temporal = [];
+  // get temporal {
+  //   return this._temporal;
+  // }
+
+  // set temporal(List<PhotoSRI> cn) {
+  //   this._temporal = cn;
+  // }
+}
+
+class PhotoSRI {
+  final String empresa;
+
+  final String xml;
+//  Photo({this.albumId, this.id, this.title, this.url, this.thumbnailUrl});
+  PhotoSRI({
+    this.empresa,
+    this.xml,
+  }); //this.cod_corregir, this.nombre_principal,
+
+  factory PhotoSRI.fromJson(Map<String, dynamic> json) {
+    return PhotoSRI(
+      empresa: json['empresa'],
+      xml: json['xml'],
+    );
   }
 }

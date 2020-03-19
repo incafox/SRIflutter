@@ -57,7 +57,6 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
     //   //"def :$text $index",
     //   );
     // });
-
     // final productoInfo=Provider.of<ProductosArrayInfo>(context);
     // posts = productoInfo.productosJson;
     // var random = new Random();

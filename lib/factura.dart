@@ -22,23 +22,18 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_collapse/flutter_collapse.dart';
 import 'form.dart' as formulario;
 
-
 //vista pdf de factura
 import 'pdf_viewer.dart' as ppdf;
 
 //vista pdf de ticket
 import 'pdf_viewer_ticket.dart' as ticket;
 
-
-
 import 'productos.dart';
 import 'package:pdf/pdf.dart' as pdfCreator;
-
 
 //tabs content
 import 'tab_factura_editar.dart' as tabFacturaEditar;
 import 'tab_factura_archivos.dart' as tanFacturaArchivos;
-
 
 // class "Client" for ORM example
 class Client {
@@ -49,15 +44,16 @@ class Client {
   Client.fromJson(Map<String, dynamic> json) {
     client_id = json['client_id'];
     client_name = json['client_name'];
-  }  
+  }
 
-  Map<String, dynamic> toJson() {  
+  Map<String, dynamic> toJson() {
     return {
       'client_id': client_id,
       'client_name': client_name,
     };
   }
 }
+
 // class "Invoice" for ORM example
 class Invoice {
   int client_id;
@@ -66,9 +62,9 @@ class Invoice {
   Invoice.fromJson(Map<String, dynamic> json) {
     client_id = json['client_id'];
     inv_number = json['inv_number'];
-  }  
+  }
 
-  Map<String, dynamic> toJson() {  
+  Map<String, dynamic> toJson() {
     return {
       'client_id': client_id,
       'inv_number': inv_number,
@@ -82,20 +78,20 @@ class FacturaPage extends StatefulWidget {
   @override
   _FacturaPageState createState() => _FacturaPageState();
 }
-//with AutomaticKeepAliveClientMixin
-class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClientMixin<FacturaPage> {
 
+//with AutomaticKeepAliveClientMixin
+class _FacturaPageState extends State<FacturaPage>
+    with AutomaticKeepAliveClientMixin<FacturaPage> {
   //final String title = widget.title;
-  ppdf.MyApp  pdf_factura = new ppdf.MyApp();
+  ppdf.MyApp pdf_factura = new ppdf.MyApp();
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
   ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
-  tabFacturaEditar.TabFacturaEditar tabFacturax = new tabFacturaEditar.TabFacturaEditar();
+  tabFacturaEditar.TabFacturaEditar tabFacturax =
+      new tabFacturaEditar.TabFacturaEditar();
 
   //FacturaPage({this.title});
-   // Establish a connection
+  // Establish a connection
 //  SqlConnection connection = SqlConnection(host:"SERVERNAME", db:"DBNAME", user:"USERNAME", password:"PASSWORD");
-
-  
 
   Widget roundedButton(String buttonLabel, Color bgColor, Color textColor) {
     var loginBtn = new Container(
@@ -122,38 +118,43 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
   }
 
   Future<bool> _onBackPressed() {
-    final productoInfo=Provider.of<ProductosArrayInfo>(context,listen: false);
+    final productoInfo =
+        Provider.of<ProductosArrayInfo>(context, listen: false);
     // List<String> r = [];
     // r.clear();
     // productoInfo.productosDB = ["",""];
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Salir?', textAlign: TextAlign.center,),
-        content: new Text('Deseas salir realmente?', textAlign: TextAlign.center,),
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () => Navigator.of(context).pop(false),
-            child:roundedButton("No", Colors.red,
-                const Color(0xFFFFFFFF)),
-            //FlatButton(color: Colors.green,child: Text('NO'),),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text(
+              'Salir?',
+              textAlign: TextAlign.center,
+            ),
+            content: new Text(
+              'Deseas salir realmente?',
+              textAlign: TextAlign.center,
+            ),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: roundedButton("No", Colors.red, const Color(0xFFFFFFFF)),
+                //FlatButton(color: Colors.green,child: Text('NO'),),
+              ),
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(true),
+                child: roundedButton(
+                    " Yes ", Colors.green, const Color(0xFFFFFFFF)),
+                //FlatButton(color: Colors.red,child: Text('SI'),),
+              ),
+            ],
           ),
-          new GestureDetector(
-            onTap: () => Navigator.of(context).pop(true),
-            child: roundedButton(" Yes ", Colors.green,
-                const Color(0xFFFFFFFF)),
-            //FlatButton(color: Colors.red,child: Text('SI'),),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final productoInfo=Provider.of<ProductosArrayInfo>(context);
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
 
     Widget tabProds = TabProductos();
     //this.pdf_factura.
@@ -161,255 +162,263 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
     // AutomaticKeepAlive()
     super.build(context);
     return WillPopScope(
-          onWillPop: _onBackPressed,
-          child: Scaffold(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
           body: DefaultTabController(
-        length: 4,
-        child: Scaffold(
-            appBar: AppBar(backgroundColor: Colors.blue,elevation: 20,
-              bottom: TabBar(
-                tabs: [
-                  Tab(
-                    icon: Icon(Icons.edit),
-                    text: 'Editar',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.picture_as_pdf),
-                    text: 'Ticket',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.picture_as_pdf),
-                    text: 'Factura',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.pageview),
-                    text: 'Resultado',
-                  ),
+            length: 4,
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.blue, elevation: 20,
+                bottom: TabBar(
+                  tabs: [
+                    Tab(
+                      icon: Icon(Icons.edit),
+                      text: 'Editar',
+                    ),
+                    Tab(
+                      icon: Icon(Icons.picture_as_pdf),
+                      text: 'Ticket',
+                    ),
+                    Tab(
+                      icon: Icon(Icons.picture_as_pdf),
+                      text: 'Factura',
+                    ),
+                    Tab(
+                      icon: Icon(Icons.pageview),
+                      text: 'Resultado',
+                    ),
+                  ],
+                ),
+                title: Text('Crear Nueva Factura'),
+                //backgroundColor: Colors.red,
+                centerTitle: true,
+                actions: <Widget>[
+                  // PopupMenuButton(color: Colors.deepOrangeAccent,
+                  //   itemBuilder: (BuildContext context) {
+                  //     return choices.skip(2).map((Choice choice) {
+                  //       return PopupMenuItem<Choice>(
+                  //         value: choice,
+                  //         child: Text(choice.title,style: TextStyle(color: Colors.white),),
+                  //       );
+                  //     }).toList();
+                  //   },
+                  // )
                 ],
               ),
-              title: Text('Crear Nueva Factura'),
-              //backgroundColor: Colors.red,
-              centerTitle: true,actions: <Widget>[
+              body: TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  //tabFacturaEditar.TabFacturaEditar(),
 
-                // PopupMenuButton(color: Colors.deepOrangeAccent,
-                //   itemBuilder: (BuildContext context) {
-                //     return choices.skip(2).map((Choice choice) {
-                //       return PopupMenuItem<Choice>(
-                //         value: choice,
-                //         child: Text(choice.title,style: TextStyle(color: Colors.white),),
-                //       );
-                //     }).toList();
-                //   },
-                // )
+                  tabFacturax,
 
-              ],
-            ),
-            body: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              children: [
+                  this.pdf_factura,
+                  this.pdf_ticket,
 
-                 //tabFacturaEditar.TabFacturaEditar(),
-                 
-                 tabFacturax,
-
-                this.pdf_factura,
-                this.pdf_ticket,
-
-                tanFacturaArchivos.TabFacturaArchivos()
-                //Icon(Icons.directions_car),
-                //Icon(Icons.directions_transit),
-                //Icon(Icons.directions_bike),
-              ],
-            ),
-
-        ),
-      )  ,
-          floatingActionButton:
-      Padding(
-      padding: const EdgeInsets.only(bottom: 0.0),
-          child : SpeedDial(
-
-            // both default to 16
-            marginRight: 18,
-            marginBottom: 10,
-            animatedIcon: AnimatedIcons.menu_close,
-            animatedIconTheme: IconThemeData(size: 35.0),
-            // this is ignored if animatedIcon is non null
-            // child: Icon(Icons.add),
-            visible:  true,//_dialVisible,
-            // If true user is forced to close dial manually 
-            // by tapping main button and overlay is not rendered.
-            closeManually: false,
-            curve: Curves.decelerate,
-            overlayColor: Colors.black54,
-            overlayOpacity: 0.5,
-            onOpen: () => print('OPENING DIAL'),
-            onClose: () => print('DIAL CLOSED'),
-            tooltip: 'Speed Dial',
-            heroTag: 'speed-dial-hero-tag',
-            backgroundColor: Colors.yellow,
-            foregroundColor: Colors.black,
-            elevation: 4.0,
-            shape: CircleBorder(),
-            children: [
-              SpeedDialChild(
-                child: Icon(Icons.send),
-                backgroundColor: Colors.green,
-                label: 'Enviar Correo',
-                labelStyle: TextStyle(fontSize: 16.0),
-                onTap: ()async {
-                  final Email email = Email(
-                  body: 'Envio adjunto factura',
-                  subject: 'Factura electronica',
-                  recipients: [productoInfo.cliente_email], //el que va a recibir
-                  // cc: ['cc@example.com'],
-                  // bcc: ['bcc@example.com'],
-                  //attachmentPath: '/path/to/attachment.zip',
-                  isHTML: false,
-                );
-
-                await FlutterEmailSender.send(email);
-
-
-                }
+                  tanFacturaArchivos.TabFacturaArchivos()
+                  //Icon(Icons.directions_car),
+                  //Icon(Icons.directions_transit),
+                  //Icon(Icons.directions_bike),
+                ],
               ),
-              SpeedDialChild(
-                child: Icon(Icons.cloud_upload),
-                backgroundColor: Colors.red,
-                label: 'Enviar SRI',
-                labelStyle: TextStyle(fontSize: 16.0),
-                onTap: ()async{
-                  // StackProductos x = productoInfo.stack;  // getDescripciones();
-                  // List<String> r = x.globalKey.currentState.getProductos();
-                  // for (var item in r) {
-                  //   print (item);
-                  // }
-                  // print('SECOND CHILD');
-                  // List<Widget> y = productoInfo.productos;
-
-                  // print('size > ' + y.length.toString());
-
-                  // List <String> r = productoInfo.descripciones;
-                  // List <String> co = productoInfo.costosUnitarios;
-                  // List <String> ca = productoInfo.cantidades;
-                  // List <String> to = productoInfo.totales;
-                 
-                  // for (var i = 0; i < 10; i++) {
-                  //   print('indice > ' + i.toString());
-                  //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
-                  // }
-                  // // productoInfo.getDescrip();                
-                  // print ("final");
-                  // List<String> tmr = productoInfo.conceptos();
-                  // for (var item in tmr) {
-                  //   print (item);
-                  // }
-                  // print('el precio total');
-                  // print(productoInfo.getPrecioTotal());
-                  productoInfo.xml_controller_expanded.expanded = false;
-                  productoInfo.xml_enabler = true;
-                  double sinIm = 0;
-                  double conIm = 0;
-                  for (CartitaProducto i in productoInfo.productosDB) {
-                    if (i.activo) {
-                      sinIm += double.parse(i.finalPrecio.text);
-                      conIm += double.parse(i.totalPrecioConImpuesto.text);
-                    }
-                    // print("sin impuesto  " + finalPrice.text);
-                    // print("con impuesto  " + finalPriceConIM.text);
-                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
-                    productoInfo.xml_precio_final_con_im = conIm.toString();
-                  }
-                  } ,
-              )
-              ,
-              SpeedDialChild(
-                child: Icon(Icons.cloud_upload),
-                backgroundColor: Colors.blue,
-                label: 'Mostrar XML',
-                labelStyle: TextStyle(fontSize: 16.0),
-                onTap: ()async{
-
-                  productoInfo.xml_controller_expanded.expanded = false;
-                  productoInfo.xml_enabler = true;
-                  double sinIm = 0;
-                  double conIm = 0;
-                  for (CartitaProducto i in productoInfo.productosDB) {
-                    if (i.activo) {
-                      sinIm += double.parse(i.finalPrecio.text);
-                      conIm += double.parse(i.totalPrecioConImpuesto.text);
-                    }
-                    // print("sin impuesto  " + finalPrice.text);
-                    // print("con impuesto  " + finalPriceConIM.text);
-                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
-                    productoInfo.xml_precio_final_con_im = conIm.toString();
-                    productoInfo.xml_precionfinalSin = sinIm.toString();
-                    productoInfo.xml_precionfinalCon = conIm.toString();
-                  }
-
-
-                  return showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  // Retrieve the text the user has entered by using the
-                  // TextEditingController.
-                  //content: Text(singleton.MyXmlSingleton().forDebug.text),
-                  content:
-                  SingleChildScrollView(
-                    child:
-                    Text(productoInfo.xml_FINAL, style: TextStyle(fontSize: 8),)
-                    ,)
-                  ,
-                );
-              },
-            );
-                  // StackProductos x = productoInfo.stack;  // getDescripciones();
-                  // List<String> r = x.globalKey.currentState.getProductos();
-                  // for (var item in r) {
-                  //   print (item);
-                  // }
-                  // print('SECOND CHILD');
-                  // List<Widget> y = productoInfo.productos;
-
-                  // print('size > ' + y.length.toString());
-
-                  // List <String> r = productoInfo.descripciones;
-                  // List <String> co = productoInfo.costosUnitarios;
-                  // List <String> ca = productoInfo.cantidades;
-                  // List <String> to = productoInfo.totales;
-                 
-                  // for (var i = 0; i < 10; i++) {
-                  //   print('indice > ' + i.toString());
-                  //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
-                  // }
-                  // // productoInfo.getDescrip();                
-                  // print ("final");
-                  // List<String> tmr = productoInfo.conceptos();
-                  // for (var item in tmr) {
-                  //   print (item);
-                  // }
-                  // print('el precio total');
-                  // print(productoInfo.getPrecioTotal());
-
-
-
-
-
-
-                  } ,
-              )
-
-              // SpeedDialChild(
-              //   child: Icon(Icons.keyboard_voice),
-              //   backgroundColor: Colors.green,
-              //   label: 'Third',
-              //   labelStyle: TextStyle(fontSize: 18.0),
-              //   onTap: () => print('THIRD CHILD'),
-              // ),
-            ],
+            ),
           ),
-            
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 0.0),
+            child: SpeedDial(
+              // both default to 16
+              marginRight: 18,
+              marginBottom: 10,
+              animatedIcon: AnimatedIcons.menu_close,
+              animatedIconTheme: IconThemeData(size: 35.0),
+              // this is ignored if animatedIcon is non null
+              // child: Icon(Icons.add),
+              visible: true, //_dialVisible,
+              // If true user is forced to close dial manually
+              // by tapping main button and overlay is not rendered.
+              closeManually: false,
+              curve: Curves.decelerate,
+              overlayColor: Colors.black54,
+              overlayOpacity: 0.5,
+              onOpen: () => print('OPENING DIAL'),
+              onClose: () => print('DIAL CLOSED'),
+              tooltip: 'Speed Dial',
+              heroTag: 'speed-dial-hero-tag',
+              backgroundColor: Colors.yellow,
+              foregroundColor: Colors.black,
+              elevation: 4.0,
+              shape: CircleBorder(),
+              children: [
+                SpeedDialChild(
+                    child: Icon(Icons.send),
+                    backgroundColor: Colors.green,
+                    label: 'Enviar Correo',
+                    labelStyle: TextStyle(fontSize: 16.0),
+                    onTap: () async {
+                      final Email email = Email(
+                        body: 'Envio adjunto factura',
+                        subject: 'Factura electronica',
+                        recipients: [
+                          productoInfo.cliente_email
+                        ], //el que va a recibir
+                        // cc: ['cc@example.com'],
+                        // bcc: ['bcc@example.com'],
+                        //attachmentPath: '/path/to/attachment.zip',
+                        isHTML: false,
+                      );
+
+                      await FlutterEmailSender.send(email);
+                    }),
+                SpeedDialChild(
+                  child: Icon(Icons.cloud_upload),
+                  backgroundColor: Colors.red,
+                  label: 'Enviar SRI',
+                  labelStyle: TextStyle(fontSize: 16.0),
+                  onTap: () async {
+                    // StackProductos x = productoInfo.stack;  // getDescripciones();
+                    // List<String> r = x.globalKey.currentState.getProductos();
+                    // for (var item in r) {
+                    //   print (item);
+                    // }
+                    // print('SECOND CHILD');
+                    // List<Widget> y = productoInfo.productos;
+
+                    // print('size > ' + y.length.toString());
+
+                    // List <String> r = productoInfo.descripciones;
+                    // List <String> co = productoInfo.costosUnitarios;
+                    // List <String> ca = productoInfo.cantidades;
+                    // List <String> to = productoInfo.totales;
+
+                    // for (var i = 0; i < 10; i++) {
+                    //   print('indice > ' + i.toString());
+                    //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
+                    // }
+                    // // productoInfo.getDescrip();
+                    // print ("final");
+                    // List<String> tmr = productoInfo.conceptos();
+                    // for (var item in tmr) {
+                    //   print (item);
+                    // }
+                    // print('el precio total');
+                    // print(productoInfo.getPrecioTotal());
+                    productoInfo.xml_controller_expanded.expanded = false;
+                    productoInfo.xml_enabler = true;
+                    double sinIm = 0;
+                    double conIm = 0;
+                    for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo) {
+                        sinIm += double.parse(i.finalPrecio.text);
+                        conIm += double.parse(i.totalPrecioConImpuesto.text);
+                      }
+                      // print("sin impuesto  " + finalPrice.text);
+                      // print("con impuesto  " + finalPriceConIM.text);
+                      productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                      productoInfo.xml_precio_final_con_im = conIm.toString();
+                      productoInfo.xml_precionfinalSin = sinIm.toString();
+                      productoInfo.xml_precionfinalCon = conIm.toString();
+                    }
+                    String t = await productoInfo.fetchXML(
+                        http.Client(),
+                        productoInfo.xml_empresaElegida,
+                        productoInfo.xml_FINAL);
+                    return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          // Retrieve the text the user has entered by using the
+                          // TextEditingController.
+                          //content: Text(singleton.MyXmlSingleton().forDebug.text),
+                          content: SingleChildScrollView(
+                            child: Text(
+                              t,
+                              style: TextStyle(fontSize: 8),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                SpeedDialChild(
+                  child: Icon(Icons.cloud_upload),
+                  backgroundColor: Colors.blue,
+                  label: 'Mostrar XML',
+                  labelStyle: TextStyle(fontSize: 16.0),
+                  onTap: () async {
+                    productoInfo.xml_controller_expanded.expanded = false;
+                    productoInfo.xml_enabler = true;
+                    double sinIm = 0;
+                    double conIm = 0;
+                    for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo) {
+                        sinIm += double.parse(i.finalPrecio.text);
+                        conIm += double.parse(i.totalPrecioConImpuesto.text);
+                      }
+                      // print("sin impuesto  " + finalPrice.text);
+                      // print("con impuesto  " + finalPriceConIM.text);
+                      productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                      productoInfo.xml_precio_final_con_im = conIm.toString();
+                      productoInfo.xml_precionfinalSin = sinIm.toString();
+                      productoInfo.xml_precionfinalCon = conIm.toString();
+                    }
+
+                    return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          // Retrieve the text the user has entered by using the
+                          // TextEditingController.
+                          //content: Text(singleton.MyXmlSingleton().forDebug.text),
+                          content: SingleChildScrollView(
+                            child: Text(
+                              productoInfo.xml_FINAL,
+                              style: TextStyle(fontSize: 8),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                    // StackProductos x = productoInfo.stack;  // getDescripciones();
+                    // List<String> r = x.globalKey.currentState.getProductos();
+                    // for (var item in r) {
+                    //   print (item);
+                    // }
+                    // print('SECOND CHILD');
+                    // List<Widget> y = productoInfo.productos;
+
+                    // print('size > ' + y.length.toString());
+
+                    // List <String> r = productoInfo.descripciones;
+                    // List <String> co = productoInfo.costosUnitarios;
+                    // List <String> ca = productoInfo.cantidades;
+                    // List <String> to = productoInfo.totales;
+
+                    // for (var i = 0; i < 10; i++) {
+                    //   print('indice > ' + i.toString());
+                    //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
+                    // }
+                    // // productoInfo.getDescrip();
+                    // print ("final");
+                    // List<String> tmr = productoInfo.conceptos();
+                    // for (var item in tmr) {
+                    //   print (item);
+                    // }
+                    // print('el precio total');
+                    // print(productoInfo.getPrecioTotal());
+                  },
+                )
+
+                // SpeedDialChild(
+                //   child: Icon(Icons.keyboard_voice),
+                //   backgroundColor: Colors.green,
+                //   label: 'Third',
+                //   labelStyle: TextStyle(fontSize: 18.0),
+                //   onTap: () => print('THIRD CHILD'),
+                // ),
+              ],
+            ),
+
 //         FloatingActionButton(
 //           backgroundColor: Colors.green,onPressed: () async{
 //           SharedPreferences pref = await SharedPreferences.getInstance();
@@ -460,19 +469,13 @@ class _FacturaPageState extends State<FacturaPage> with AutomaticKeepAliveClient
 //           tooltip: 'Show me the value!',
 //           child: Icon(Icons.send),
 //         ),
-
-
-
-
-       )
-      ),
+          )),
     );
   }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-  
 }
 /*
 class ScreenEditar extends StatefulWidget {
@@ -582,8 +585,6 @@ class ScreenEditar extends StatelessWidget {
             },
             onSaved: (value) => url = value,
           ),
-
-
           Padding(
             padding: EdgeInsets.all(20.0),
             child: RaisedButton(
@@ -591,18 +592,15 @@ class ScreenEditar extends StatelessWidget {
                   borderRadius: new BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.red)),
               onPressed: () {
-
                 //mediante funcion de otro .dart con parametros todos los datos de
                 //del form, generar el xml, codificar y enviar
               },
               color: Colors.red,
               textColor: Colors.white,
-              child: Text("Debug".toUpperCase(),
-                  style: TextStyle(fontSize: 17)),
+              child:
+                  Text("Debug".toUpperCase(), style: TextStyle(fontSize: 17)),
             ),
           ),
-
-
         ],
       ),
     );
@@ -636,7 +634,6 @@ class ScreenPreview extends StatelessWidget {
   }
 }
 
-
 //para los resultados
 class NewScreen extends StatelessWidget {
   const NewScreen({
@@ -667,15 +664,13 @@ class NewScreen extends StatelessWidget {
                     borderRadius: new BorderRadius.circular(18.0),
                     side: BorderSide(color: Colors.red)),
                 onPressed: () {
-                  print (singleton.MyXmlSingleton().infoTributaria);
+                  print(singleton.MyXmlSingleton().infoTributaria);
                   //singleton.MyXmlSingleton().ruc = 'tmr';
-
-
                 },
                 color: Colors.red,
                 textColor: Colors.white,
-                child: Text("Debug".toUpperCase(),
-                    style: TextStyle(fontSize: 17)),
+                child:
+                    Text("Debug".toUpperCase(), style: TextStyle(fontSize: 17)),
               ),
             ),
             CardSettingsHeader(
@@ -849,12 +844,12 @@ class NewScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 12)),
                   ),
                 )
-
-
               ],
             ),
-
-            TextField(readOnly: true,controller: singleton.MyXmlSingleton().forDebug,)
+            TextField(
+              readOnly: true,
+              controller: singleton.MyXmlSingleton().forDebug,
+            )
           ],
         ),
       ),
