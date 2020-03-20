@@ -39,7 +39,7 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
     // if (text.length == 5) throw Error();
     // if (text.length == 6) return [];
     // List<Post> posts = [];
-    List<Photo> t = await fetchClientes(http.Client(), text,"10004");
+    List<Photo> t = await fetchClientes(http.Client(), text,"10004");//cambiar
     //List<Photo> t = await fetchPhotos(http.Client());
     //print("gol > "+temporal.length.toString());
     // List<Photo> temi = [];

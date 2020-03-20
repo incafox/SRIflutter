@@ -322,6 +322,10 @@ class _FacturaPageState extends State<FacturaPage>
                         http.Client(),
                         productoInfo.xml_empresaElegida,
                         productoInfo.xml_FINAL);
+
+                    // String response = await productoInfo.fetchXML(http.Client(), productoInfo.xml_empresaElegida, productoInfo.xml_FINAL);
+
+                    
                     return showDialog(
                       context: context,
                       builder: (context) {

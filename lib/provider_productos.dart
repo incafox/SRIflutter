@@ -1332,7 +1332,7 @@ class ProductosArrayInfo extends ChangeNotifier {
       http.Client client, String empresa, String xml) async {
     // Map map = new Map<String, dynamic>();
     // map["empresa"] = empreCod;
-    Map data = {'empresa': empresa, 'xml': xml};
+    Map data = {'empresa_id': empresa, 'xml': xml};
     //encode Map to JSON
     var body = json.encode(data);
     print('asumiendo post > ' + body.toString());
