@@ -1345,15 +1345,25 @@ class ProductosArrayInfo extends ChangeNotifier {
     // return compute(parsePhotos, response.body);
   }
 
-  Future<http.Response> sendXML(String title) {
+  Future<http.Response> sendXMLJSON(String empresa, String xml) {
+  return http.post(
+    'http://167.172.203.137/services/mssql/send',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'empresa_id': empresa,
+    }),
+  );
+}
+
+  Future<http.Response> sendXML(String empresa, String xml) {
+    var map = new Map<String, dynamic>();
+    map['empresa_id'] = 'passssword';
+    map['xml'] = 'passwdsadard';
     return http.post(
       'http://167.172.203.137/services/mssql/send',
-      headers: <String, String>{
-        // 'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'title': title,
-      }),
+      body: map,
     );
   }
   // A function that converts a response body into a List<Photo>.

@@ -318,10 +318,11 @@ class _FacturaPageState extends State<FacturaPage>
                       productoInfo.xml_precionfinalSin = sinIm.toString();
                       productoInfo.xml_precionfinalCon = conIm.toString();
                     }
-                    String t = await productoInfo.fetchXML(
-                        http.Client(),
-                        productoInfo.xml_empresaElegida,
-                        productoInfo.xml_FINAL);
+                    // String t = await productoInfo.fetchXML(
+                    //     http.Client(),
+                    //     productoInfo.xml_empresaElegida,   
+                    //     productoInfo.xml_FINAL);
+                    http.Response t = await productoInfo.sendXML(productoInfo.xml_empresaElegida,  productoInfo.xml_FINAL);
 
                     // String response = await productoInfo.fetchXML(http.Client(), productoInfo.xml_empresaElegida, productoInfo.xml_FINAL);
 
@@ -335,7 +336,7 @@ class _FacturaPageState extends State<FacturaPage>
                           //content: Text(singleton.MyXmlSingleton().forDebug.text),
                           content: SingleChildScrollView(
                             child: Text(
-                              t,
+                              t.body.toString(),
                               style: TextStyle(fontSize: 8),
                             ),
                           ),
