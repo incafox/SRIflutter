@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 // void main() => runApp(MyApp());
 
@@ -123,27 +126,40 @@ class _MyAppState extends State<MyApp> {
     setState(() => _isLoading = false);
   }
 
-  changePDF(value) async {
+  createPDF() async {
     setState(() => _isLoading = true);
-      //genera el pdf nombre
-      final p = await http.get('http://167.172.203.137/getpdfticketname');
-      print(p.body.toString());
-      String nombreTicket = p.body.toString();
+    //genera el pdf nombre
+    final p = await http.post('http://167.172.203.137/getpdfticketname',
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{}));
+    print(p.body.toString());
+    String nombreTicket = p.body.toString();
 
-    if (value == 1) {
-      document = await PDFDocument.fromAsset('assets/sample2.pdf');
-    } else if (value == 2) {
-      document = await PDFDocument.fromURL(
-        "http://167.172.203.137/getpdfticket/"+nombreTicket);
-          // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
-    } else {
-      document = await PDFDocument.fromAsset('assets/sample.pdf');
-    }
+    document = await PDFDocument.fromURL(
+        "http://167.172.203.137/getpdfticket/" + nombreTicket);
+    // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
     setState(() => _isLoading = false);
+  }
+
+  Future<http.Response> createAlbum(String title) {
+    return http.post(
+      'https://jsonplaceholder.typicode.com/albums',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'title': title,
+      }),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
+
     return Scaffold(
       // drawer: Drawer(
       //   child: Column(
@@ -179,8 +195,43 @@ class _MyAppState extends State<MyApp> {
                 "Generar PDF",
                 style: TextStyle(color: Colors.white),
               ),
-              onPressed: () {
-                changePDF(2);
+              onPressed: () async {
+                // createPDF();
+                Map<String, dynamic> producto = {} ;
+                List<Map<String, dynamic>> send=[] ;
+                send.add(myObject) ;
+
+
+
+                setState(() => _isLoading = true);
+                for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo) {
+                          
+                      }
+                    }
+
+                
+                //genera el pdf nombre
+                final p =
+                    await http.post('http://167.172.203.137/getpdfticketname',
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        },
+                        body: jsonEncode(<String, String>{
+                          'empresa_id':productoInfo.xml_empresaElegida,
+                          'xml':productoInfo.xml_FINAL,
+                          'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
+                          'totalCon':productoInfo.xml_precionfinalCon,
+                          'totalSin' : productoInfo.xml_precionfinalSin,
+                          'conceptos': 
+                        }));
+                print(p.body.toString());
+                String nombreTicket = p.body.toString();
+
+                document = await PDFDocument.fromURL(
+                    "http://167.172.203.137/getpdfticket/" + nombreTicket);
+                // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
+                setState(() => _isLoading = false);
               }),
         ),
       ),

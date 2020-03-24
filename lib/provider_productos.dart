@@ -1115,7 +1115,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     <codDoc>${xml_codDoc}</codDoc>
     <estab>${xml_estab}</estab>
     <ptoEmi>${xml_ptoEmi}</ptoEmi>
-    <secuencial>${xml_secuencial}</secuencial>
+    <secuencial>000000123</secuencial>
     <dirMatriz>${xml_dirMatriz}</dirMatriz>
   </infoTributaria>
     """;
@@ -1356,11 +1356,11 @@ class ProductosArrayInfo extends ChangeNotifier {
     }),
   );
 }
-
+//post requests con FORM
   Future<http.Response> sendXML(String empresa, String xml) {
     var map = new Map<String, dynamic>();
-    map['empresa_id'] = 'passssword';
-    map['xml'] = 'passwdsadard';
+    map['empresa_id'] = empresa;
+    map['xml'] = xml;
     return http.post(
       'http://167.172.203.137/services/mssql/send',
       body: map,
