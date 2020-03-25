@@ -212,7 +212,7 @@ class CartitaProducto extends StatelessWidget {
   bool activo = true;
   bool tienePrecio = false;
   double precio = 0;
-  int cantidad;
+  int cantidad=1;
   String xmlConcepto = "";
 
   TextEditingController input = TextEditingController(text: "1");
@@ -280,7 +280,6 @@ class CartitaProducto extends StatelessWidget {
                           </impuestos>
                         </detalle>
                           """;
-
     return ExpandablePanel(
       controller: control,
       tapBodyToCollapse: true, hasIcon: false,
@@ -340,7 +339,6 @@ class CartitaProducto extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
                     Text("cantidad : "),
-
                     Container(
                       width: 50,
                       child: TextFormField(
@@ -467,7 +465,7 @@ class CartitaProducto extends StatelessWidget {
               spacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: <Widget>[
-                Text("precio total con impuesto"),
+                Text("tipo de impuesto"),
                 Container(
                   width: 100,
                   child: TextField(
@@ -477,25 +475,22 @@ class CartitaProducto extends StatelessWidget {
                     controller: this.impuestoDescripcion,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                        // border: InputBorder.,
                         ),
                   ),
                 ),
-                Container(
-                  width: 90,
-                  child: TextField(
-                    readOnly: true,
-                    maxLines: 1,
-                    controller: this.totalPrecioConImpuesto,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        // border: InputBorder.,
-                        ),
-                  ),
-                )
+                // Container(
+                //   width: 90,
+                //   child: TextField(
+                //     readOnly: true,
+                //     maxLines: 1,
+                //     controller: this.totalPrecioConImpuesto,
+                //     keyboardType: TextInputType.number,
+                //     decoration: InputDecoration(
+                //         ),
+                //   ),
+                // )
               ],
             ),
-
             // Text(this.totalPrecioConImpuesto.text)
           ],
         )),

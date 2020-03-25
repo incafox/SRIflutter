@@ -355,18 +355,52 @@ class _FacturaPageState extends State<FacturaPage>
                     productoInfo.xml_enabler = true;
                     double sinIm = 0;
                     double conIm = 0;
+                    double total0=0;
+                    //calcula el total
                     for (CartitaProducto i in productoInfo.productosDB) {
-                      if (i.activo) {
+                      if (i.activo ) {
                         sinIm += double.parse(i.finalPrecio.text);
-                        conIm += double.parse(i.totalPrecioConImpuesto.text);
+                        // conIm += double.parse(i.totalPrecioConImpuesto.text);
                       }
-                      // print("sin impuesto  " + finalPrice.text);
-                      // print("con impuesto  " + finalPriceConIM.text);
-                      productoInfo.xml_precio_final_sin_im = sinIm.toString();
-                      productoInfo.xml_precio_final_con_im = conIm.toString();
-                      productoInfo.xml_precionfinalSin = sinIm.toString();
-                      productoInfo.xml_precionfinalCon = conIm.toString();
+                      if (i.activo && i.impuestoPorcentaje.text =='0'){
+                        total0 += double.parse(i.finalPrecio.text);   
+                      }
+                      // productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                      // productoInfo.xml_precio_final_con_im = conIm.toString();
+                      // productoInfo.xml_precionfinalSin = sinIm.toString();
+                      // productoInfo.xml_precionfinalCon = conIm.toString();
                     }
+                    
+                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                    productoInfo.xml_precionfinalSin = sinIm.toString();
+                    
+                    double temp3 = 0;
+                    double total12 =0;
+                    //calcula los de 12
+                    for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo && i.impuestoPorcentaje.text=="12") {
+                        temp3 += double.parse(i.finalPrecio.text);
+                        // conIm += double.parse(i.totalPrecioConImpuesto.text);
+                      }
+                    }
+                    total12 = (temp3 * 0.12) + temp3; 
+
+                    double temp4 = 0;
+                    double total14 = 0;
+                    //calcula los de 14                    
+                    for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo && i.impuestoPorcentaje.text=="14") {
+                        temp4 += double.parse(i.finalPrecio.text);
+                        // conIm += double.parse(i.totalPrecioConImpuesto.text);
+                      }
+                    }
+
+                    total14 = (temp4*0.14) + temp4;
+
+                    conIm = total0+total12+total14;
+
+                     productoInfo.xml_precio_final_con_im = conIm.toString();
+                    productoInfo.xml_precionfinalCon = conIm.toString();
 
                     return showDialog(
                       context: context,

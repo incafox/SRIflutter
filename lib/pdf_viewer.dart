@@ -197,18 +197,24 @@ class _MyAppState extends State<MyApp> {
               ),
               onPressed: () async {
                 // createPDF();
-                Map<String, dynamic> producto = {} ;
                 List<Map<String, dynamic>> send=[] ;
-                send.add(myObject) ;
 
 
 
                 setState(() => _isLoading = true);
                 for (CartitaProducto i in productoInfo.productosDB) {
                       if (i.activo) {
-                          
-                      }
-                    }
+                        Map<String, dynamic> producto = {
+                          "nombre":i.nombre,
+                          "unitario":i.actualPrecio.text,
+                          "cantidad":i.cantidad.toString(),
+                          "total": i.finalPrecio.text,
+                          "impuesto": i.impuestoDescripcion.text,
+                          // "dscsf": send
+                        } ;
+                        send.add(producto) ;
+                  }
+                }
 
                 
                 //genera el pdf nombre
@@ -219,11 +225,12 @@ class _MyAppState extends State<MyApp> {
                         },
                         body: jsonEncode(<String, String>{
                           'empresa_id':productoInfo.xml_empresaElegida,
-                          'xml':productoInfo.xml_FINAL,
+                          //'xml':productoInfo.xml_FINAL,
                           'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
                           'totalCon':productoInfo.xml_precionfinalCon,
                           'totalSin' : productoInfo.xml_precionfinalSin,
-                          'conceptos': 
+                          'conceptos': jsonEncode(send),
+                          'total':productoInfo.xml_precionfinalCon
                         }));
                 print(p.body.toString());
                 String nombreTicket = p.body.toString();
