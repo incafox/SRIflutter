@@ -232,7 +232,7 @@ class _MyAppState extends State<MyApp> {
                           'conceptos': jsonEncode(send),
                           'total':productoInfo.xml_precionfinalCon
                         }));
-                print(p.body.toString());
+                print(p.body.toString());  
                 String nombreTicket = p.body.toString();
 
                 document = await PDFDocument.fromURL(
