@@ -343,6 +343,7 @@ class CartitaProducto extends StatelessWidget {
                       width: 50,
                       child: TextFormField(
                         onChanged: (val) {
+                          this.cantidad = int.parse(val);
                           productoInfo.xml_controller_expanded.expanded = true;
                           productoInfo.xml_enabler = false;
                           double t;
