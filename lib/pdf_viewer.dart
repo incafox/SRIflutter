@@ -206,8 +206,8 @@ class _MyAppState extends State<MyApp> {
                       if (i.activo) {
                         Map<String, dynamic> producto = {
                           "nombre":i.nombre,
-                          "unitario":i.actualPrecio.text,
                           "cantidad":i.cantidad.toString(),
+                          "unitario":i.actualPrecio.text,
                           "total": i.finalPrecio.text,
                           "impuesto": i.impuestoDescripcion.text,
                           // "dscsf": send
