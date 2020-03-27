@@ -51,7 +51,7 @@ class _ReenviarPageState extends State<ReenviarPage> with AutomaticKeepAliveClie
   //final String title = widget.title;
   // PdfView  pdf_factura = new PdfView();
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
-  ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+  ticket.MyApp pdf_ticket = new ticket.MyApp();
   tabFacturaEditar.TabFacturaEditar tabFacturax = new tabFacturaEditar.TabFacturaEditar();
   //FacturaPage({this.title});
 
