@@ -226,6 +226,9 @@ class _MyAppState extends State<MyApp> {
                         body: jsonEncode(<String, String>{
                           'empresa_id':productoInfo.xml_empresaElegida,
                           'ruc': productoInfo.xml_ruc,
+                          'secuencial':productoInfo.xml_secuencial,
+                          'dirMatriz':productoInfo.xml_dirMatriz,
+                          // 'fecha':productoInfo,
                           //'xml':productoInfo.xml_FINAL,
                           'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
                           'totalCon':productoInfo.xml_precionfinalCon,
