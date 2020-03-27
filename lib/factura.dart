@@ -85,7 +85,7 @@ class _FacturaPageState extends State<FacturaPage>
   //final String title = widget.title;
   ppdf.MyApp pdf_factura = new ppdf.MyApp();
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
-  ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+  ticket.MyApp pdf_ticket = new ticket.MyApp();
   tabFacturaEditar.TabFacturaEditar tabFacturax =
       new tabFacturaEditar.TabFacturaEditar();
 
