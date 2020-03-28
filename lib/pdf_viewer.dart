@@ -216,7 +216,6 @@ class _MyAppState extends State<MyApp> {
                   }
                 }
 
-                productoInfo.construye_xml();
                 
                 //genera el pdf nombre
                 final p =
@@ -225,19 +224,13 @@ class _MyAppState extends State<MyApp> {
                           'Content-Type': 'application/json; charset=UTF-8',
                         },
                         body: jsonEncode(<String, String>{
-                          'tipo_pdf' : '1', //tipo 1 para ticket
-                          'ambiente': productoInfo.xml_ambiente,
                           'empresa_id':productoInfo.xml_empresaElegida,
                           'ruc': productoInfo.xml_ruc,
-                          'rucComprador': productoInfo.xml_ruc,
-                          'fecha':productoInfo.xml_fecha,
                           'secuencial':productoInfo.xml_secuencial,
-                          'clave':productoInfo.xml_claveAcceso,
                           'dirMatriz':productoInfo.xml_dirMatriz,
                           // 'fecha':productoInfo,
                           //'xml':productoInfo.xml_FINAL,
                           'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
-                          'razonSocial':productoInfo.xml_razonSocial,
                           'totalCon':productoInfo.xml_precionfinalCon,
                           'totalSin' : productoInfo.xml_precionfinalSin,
                           'conceptos': jsonEncode(send),

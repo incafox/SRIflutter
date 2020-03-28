@@ -1,0 +1,4 @@
+#Fri Mar 27 17:33:15 PET 2020
+base.0=/home/abraham/flutter/SRIflutter/build/app/intermediates/dex/release/mergeDexRelease/out/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

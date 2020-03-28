@@ -1097,27 +1097,8 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_dirEstablecimiento = cn;
   }
 
-
-  String getSecuencial(){
-    secuencial = "test";
-
-    return secuencial;
-  }
-
-  void construye_xml(){
-     //obtiene el numero secuencial
-    this.xml_secuencial = this.getSecuencial();
-    //instala fecha 
-    this.xml_fecha = DateTime.now().toString();
-    //genera la clave de acceso
-    this.xml_claveAcceso = "probando";
-  }
-
   String _xml_FINAL = "";
-  get xml_FINAL async{
-
-   this.construye_xml();
-
+  get xml_FINAL {
     String primera = """
 <?xml version="1.0" encoding="UTF-8"?>
 <factura id="comprobante" version="1.0.0">
@@ -1126,23 +1107,23 @@ class ProductosArrayInfo extends ChangeNotifier {
     <tipoEmision>${xml_tipoEmision}</tipoEmision>
     <razonSocial>${xml_razonSocial}</razonSocial>
     <ruc>${xml_ruc}</ruc>
-    <claveAcceso>${xml_claveAcceso}</claveAcceso>
+    <claveAcceso>vacio</claveAcceso>
     <codDoc>${xml_codDoc}</codDoc>
     <estab>${xml_estab}</estab>
     <ptoEmi>${xml_ptoEmi}</ptoEmi>
-    <secuencial>${xml_secuencial}</secuencial>
+    <secuencial>000000123</secuencial>
     <dirMatriz>${xml_dirMatriz}</dirMatriz>
   </infoTributaria>
     """;
 
     String segunda = """
     <infoFactura>
-    <fechaEmision>${xml_fecha}</fechaEmision>
+    <fechaEmision>21/11/2019</fechaEmision>
     <dirEstablecimiento>${xml_dirEstablecimiento}</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
     <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
     <razonSocialComprador>${xml_razonSocial_comprador}</razonSocialComprador>
-    <identificacionComprador>${xml_razonSocial_comprador}</identificacionComprador>
+    <identificacionComprador>9999999999999</identificacionComprador>
     <totalSinImpuestos>${_xml_precionfinalSin}</totalSinImpuestos>
     <totalDescuento>0.00</totalDescuento>
     <totalConImpuestos>
