@@ -68,10 +68,21 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
     // for (Empresas item in productoInfo.empresas) {
     //   print("build >> " + item.nombre.toString());
     // }
+    List<String> tempCodigos =[]; //productoInfo.getCodigosEmpresas();
 
-    List<String> tempCodigos = productoInfo.getCodigosEmpresas();
-
-    List<String> tempNombres = productoInfo.getNombresEmpresas();
+    List<String> tempNombres =[]; //productoInfo.getNombresEmpresas();
+    int i = 0;
+    for (Empresas item in productoInfo.empresas) {
+      tempNombres.add(i.toString()+ ". " + item.nombre.toString().toLowerCase());
+      tempCodigos.add(item.codigo.toString());
+      // print(" empresa codigo >> " + item.codigo.toString());
+      i++;
+    }
+    // for (var i in tempCodigos){
+    //   print("tempcodigo >>> " + i);
+    // }
+    print (tempCodigos);
+    print (tempNombres);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -85,6 +96,7 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
         onChanged: (() {
           // productoInfo.modifyProduct(this.index, this.controller_descripcion.text);
           // productoInfo.lista = this.controller_descripcion.text;
+
         }),
         //key: _formKey,
         child: CardSettings(
@@ -97,30 +109,31 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
             ),
             CardSettingsListPicker(
               contentAlign: TextAlign.center,
-              values: tempCodigos, // ['0','12','14'],
+              values: tempCodigos,
               //hintText: 'ada',
               //hintText: 'Seleccione',
               label: 'Empresa',
-              initialValue: '1',
-              options: tempNombres, //['0%','12%','14%'],
+              //initialValue: '1',
+              options: tempNombres,// ['ciento 1','ciento 4'], //['0%','12%','14%'],
               onChanged: ((value) async {
                 productoInfo.empresa = value;
                 List<Agencias> tmp = await fetchAgencias(http.Client(), value);
                 productoInfo.agencias = tmp;
-                print ('consultando + empresa >> ' + value.toString());
-                for (Agencias item in tmp) {
-                  print("build agencia >> " + item.nombre.toString());
-                }
-                print('[valor] ' + value);
+                // print ('consultando + empresa >> ' + value.toString());
+                // for (Agencias item in tmp) {
+                //   // print("build agencia >> " + item.nombre.toString());
+                // }
                 this.controller_impuesto.text = value.toString();
-                print("rec >>>> ");
-                double im = double.parse(this.controller_impuesto.text) / 100.0;
-                print("puro > " + im.toString());
-                print(" tecto " + this.controller_impuesto.text);
-                im = im * double.parse(this.controller_total.text);
-                this.controller_impuesto.text = im.toString();
+                print("controller >>>> " + this.controller_impuesto.text);
+                // double im = double.parse(this.controller_impuesto.text) / 100.0;
+                // print("puro > " + im.toString());
+                // print(" tecto " + this.controller_impuesto.text);
+                // im = im * double.parse(this.controller_total.text);
+                // this.controller_impuesto.text = im.toString();
                 productoInfo.xml_empresaElegida = value;
-                print(" im " + im.toString());
+                print('[picker elegido] ' + productoInfo.xml_empresaElegida);
+                
+                // print(" im " + im.toString());
                 setState(() {
                   this._agenciaVisible=true;
                 });
@@ -498,7 +511,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navigator.pushReplacement(//ProductosJsonSearchPage MyApp
           //         context, MaterialPageRoute(builder: (context) => MyApp()));
 
-          List<Photo> temp = await fetchPhotos(http.Client());
+          List<Photo> temp = await fetchPhotos(http.Client());//fetch usuarios
           for (Photo item in temp) {
             print("datos puestos : ");
             print(this._user.text);
@@ -511,7 +524,8 @@ class _LoginScreenState extends State<LoginScreen> {
               productoInfo.empresas = await fetchEmpresas(http.Client());
               print("empresitas = " + empresitas.length.toString());
               for (Empresas item in productoInfo.empresas) {
-                print("primer >> " + item.nombre.toString());
+                print(" empresa nombre >> " + item.nombre.toString());
+                print(" empresa codigo >> " + item.codigo.toString());
               }
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => SecondScrenLogin()));

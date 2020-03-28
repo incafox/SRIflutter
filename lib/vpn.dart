@@ -53,7 +53,7 @@ class _VPNPageState extends State<VPNPage> with AutomaticKeepAliveClientMixin<VP
   // PdfView  pdf_factura = new PdfView();
   bool visible = false;
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
-  ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+  // ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
   tabFacturaEditar.TabFacturaEditar tabFacturax = new tabFacturaEditar.TabFacturaEditar();
 
   //FacturaPage({this.title});

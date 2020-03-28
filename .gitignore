@@ -1,3 +1,4 @@
+android/app/build.gradle
 # Miscellaneous
 *.class
 *.log
