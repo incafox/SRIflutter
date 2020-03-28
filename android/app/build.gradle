@@ -26,19 +26,11 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 
-<<<<<<< HEAD
-// def keystoreProperties = new Properties()
-// def keystorePropertiesFile = rootProject.file('key.properties')
-// if (keystorePropertiesFile.exists()) {
-//     // keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-// }
-=======
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
->>>>>>> parent of 8ca1207... fixes
 
 
 android {
@@ -62,16 +54,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-<<<<<<< HEAD
-    // signingConfigs {
-    //     release {
-    //         keyAlias keystoreProperties['keyAlias']
-    //         keyPassword keystoreProperties['keyPassword']
-    //         storeFile file(keystoreProperties['storeFile'])
-    //         storePassword keystoreProperties['storePassword']
-    //     }
-    // }
-=======
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -80,7 +62,6 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
->>>>>>> parent of 8ca1207... fixes
 
     buildTypes {
         release {
@@ -97,13 +78,8 @@ android {
 //            }
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-<<<<<<< HEAD
-            signingConfig signingConfigs.debug
-            // signingConfig signingConfigs.release
-=======
             //signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
->>>>>>> parent of 8ca1207... fixes
         }
     }
 }
@@ -117,11 +93,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-<<<<<<< HEAD
-    // implementation files('libs/firmaXadesBes.jar')
-    // implementation fileTree(dir: 'libs', includes: ['*.jar'])
-=======
     implementation files('libs/firmaXadesBes.jar')
     implementation fileTree(dir: 'libs', includes: ['*.jar'])
->>>>>>> parent of 8ca1207... fixes
 }
