@@ -1098,6 +1098,7 @@ class ProductosArrayInfo extends ChangeNotifier {
   }
 
   void genera_todo(){
+    //aca arrega detalles del xml
     this.xml_ambiente = "1";
     this.xml_secuencial = "456787654";
     this.xml_fecha= DateTime.now().toString();
@@ -1106,6 +1107,8 @@ class ProductosArrayInfo extends ChangeNotifier {
 
   String _xml_FINAL = "";
   get xml_FINAL {
+    this.genera_todo();
+
     String primera = """
 <?xml version="1.0" encoding="UTF-8"?>
 <factura id="comprobante" version="1.0.0">
