@@ -1097,6 +1097,13 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_dirEstablecimiento = cn;
   }
 
+  void genera_todo(){
+    this.xml_ambiente = "1";
+    this.xml_secuencial = "456787654";
+    this.xml_fecha= DateTime.now().toString();
+    
+  }
+
   String _xml_FINAL = "";
   get xml_FINAL {
     String primera = """
@@ -1111,14 +1118,14 @@ class ProductosArrayInfo extends ChangeNotifier {
     <codDoc>${xml_codDoc}</codDoc>
     <estab>${xml_estab}</estab>
     <ptoEmi>${xml_ptoEmi}</ptoEmi>
-    <secuencial>000000123</secuencial>
+    <secuencial>${xml_secuencial}</secuencial>
     <dirMatriz>${xml_dirMatriz}</dirMatriz>
   </infoTributaria>
     """;
 
     String segunda = """
     <infoFactura>
-    <fechaEmision>21/11/2019</fechaEmision>
+    <fechaEmision>${xml_fecha}</fechaEmision>
     <dirEstablecimiento>${xml_dirEstablecimiento}</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
     <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
