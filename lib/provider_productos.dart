@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 import 'form_descripcion.dart';
 import 'package:flutter_final_sri/productosJson.dart';
@@ -212,7 +213,7 @@ class CartitaProducto extends StatelessWidget {
   bool activo = true;
   bool tienePrecio = false;
   double precio = 0;
-  int cantidad=1;
+  int cantidad = 1;
   String xmlConcepto = "";
 
   TextEditingController input = TextEditingController(text: "1");
@@ -254,9 +255,12 @@ class CartitaProducto extends StatelessWidget {
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
 
     // TODO: implement build
-    this._getALlPosts(this.codigo);
-    this.finalPrecio.text = this.actualPrecio.text;
-    this.totalPrecioConImpuesto.text = this.actualPrecio.text;
+    //pide info al server si la cantidad es 1 
+    if (this.cantidad == 1) {
+      this._getALlPosts(this.codigo);
+      this.finalPrecio.text = this.actualPrecio.text;
+      this.totalPrecioConImpuesto.text = this.actualPrecio.text;
+    }
     // double t;
     // t = double.parse(this.actualPrecio.text);
     // this.finalPrecio.text = t.toString();
@@ -267,7 +271,7 @@ class CartitaProducto extends StatelessWidget {
                           <descripcion>${this.nombre}</descripcion>
                           <cantidad>1</cantidad>
                           <precioUnitario>${this.actualPrecio.text}</precioUnitario>
-                          <descuento>none</descuento>
+                          <descuento>0</descuento>
                           <precioTotalSinImpuesto>${this.finalPrecio.text}</precioTotalSinImpuesto>
                           <impuestos>
                             <impuesto>
@@ -382,14 +386,12 @@ class CartitaProducto extends StatelessWidget {
                           </impuestos>
                         </detalle>
                           """;
-
                           double sinIm = 0;
                           double conIm = 0;
                           for (CartitaProducto i in productoInfo.productosDB) {
                             if (i.activo) {
                               // print(i.finalPrecio.text);
                               // print(i.totalPrecioConImpuesto.text);
-
                               sinIm += double.parse(i.finalPrecio.text);
                               conIm +=
                                   double.parse(i.totalPrecioConImpuesto.text);
@@ -417,9 +419,7 @@ class CartitaProducto extends StatelessWidget {
                     // Container(
                     //   width: 50,
                     //   child: TextField(
-
                     //     onChanged: (val) {
-
                     //     },
                     //     maxLines: 1,
                     //     controller: this.input,
@@ -475,8 +475,7 @@ class CartitaProducto extends StatelessWidget {
                     maxLines: 1,
                     controller: this.impuestoDescripcion,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        ),
+                    decoration: InputDecoration(),
                   ),
                 ),
                 // Container(
@@ -1007,6 +1006,15 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_ruc = cn;
   }
 
+  String _xml_ruc_comprador = "";
+  get xml_ruc_comprador {
+    return this._xml_ruc_comprador;
+  }
+
+  set xml_ruc_comprador(String cn) {
+    this._xml_ruc_comprador = cn;
+  }
+
   String _xml_claveAcceso = "";
   get xml_claveAcceso {
     return this._xml_claveAcceso;
@@ -1097,12 +1105,64 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_dirEstablecimiento = cn;
   }
 
-  void genera_todo(){
+  void genera_todo() {
     //aca arrega detalles del xml
     this.xml_ambiente = "1";
-    this.xml_secuencial = "456787654";
-    this.xml_fecha= DateTime.now().toString();
-    
+    this.xml_tipoEmision = "1";
+    this.xml_secuencial = "00456787654";
+    DateTime now = DateTime.now();
+    this.xml_fecha = DateFormat('dd/MM/yyyy').format(now);
+    this._xml_dirEstablecimiento = this._xml_dirMatriz;
+
+    //procede a generar la clave de acceso
+    String cadena48 = "";
+    cadena48 += this.xml_fecha;
+    cadena48.replaceAll("/", "");
+    cadena48 += this.codDoc;
+    cadena48 += this.xml_ruc;
+    cadena48 += this.xml_ambiente;
+    cadena48 += "xxxxxx";
+    cadena48 += xml_secuencial;
+    cadena48 += "12345678"; // depende de uno
+    cadena48 += this.xml_tipoEmision;
+    cadena48 += digitoVerificador(cadena48);
+    print("rclave de acceso >> " + cadena48);
+    this.xml_claveAcceso = cadena48;
+  }
+
+  String digitoVerificador(cadena48) {
+    int res = 0;
+    List<int> cadena = [];
+    // List<int> numeros = [];
+    int acum = 0;
+    String temporal = cadena48.toString();
+    print(temporal);
+    int multiplicador = 2;
+    for (int i = temporal.length; i == 0; i--) {
+      cadena.add(int.parse(temporal[i]) * multiplicador);
+      print("multiplicador >> " + multiplicador.toString());
+      print("numero  >> " + temporal[i]);
+      print("resultado  >> " +
+          (int.parse(temporal[i]) * multiplicador).toString());
+      acum += int.parse(temporal[i]) * multiplicador;
+      multiplicador++;
+      if (multiplicador == 7) {
+        multiplicador = 2;
+      }
+    }
+    int result = acum % 11;
+    result = 11 - result;
+
+    res = result;
+    //cadena = cadena.reversed();
+    //final
+    if (res == 11) {
+      res = 0;
+    }
+    if (res == 10) {
+      res = 1;
+    }
+    return res.toString();
   }
 
   String _xml_FINAL = "";
@@ -1130,7 +1190,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     <infoFactura>
     <fechaEmision>${xml_fecha}</fechaEmision>
     <dirEstablecimiento>${xml_dirEstablecimiento}</dirEstablecimiento>
-    <obligadoContabilidad>NO</obligadoContabilidad>
+    <obligadoContabilidad>SI</obligadoContabilidad>
     <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
     <razonSocialComprador>${xml_razonSocial_comprador}</razonSocialComprador>
     <identificacionComprador>9999999999999</identificacionComprador>
@@ -1185,6 +1245,10 @@ class ProductosArrayInfo extends ChangeNotifier {
   List<CartitaProducto> _productosDB = [];
   void delete(int index) {
     this._productosDB.removeAt(index);
+  }
+
+  void clearProductosDB() {
+    this._productosDB.clear();
   }
 
   set productosDB(List<String> cn) {
@@ -1352,16 +1416,17 @@ class ProductosArrayInfo extends ChangeNotifier {
   }
 
   Future<http.Response> sendXMLJSON(String empresa, String xml) {
-  return http.post(
-    'http://167.172.203.137/services/mssql/send',
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'empresa_id': empresa,
-    }),
-  );
-}
+    return http.post(
+      'http://167.172.203.137/services/mssql/send',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'empresa_id': empresa,
+      }),
+    );
+  }
+
 //post requests con FORM
   Future<http.Response> sendXML(String empresa, String xml) {
     var map = new Map<String, dynamic>();

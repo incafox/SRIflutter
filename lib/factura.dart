@@ -162,7 +162,36 @@ class _FacturaPageState extends State<FacturaPage>
     // AutomaticKeepAlive()
     super.build(context);
     return WillPopScope(
-      onWillPop: _onBackPressed,
+      onWillPop: (){
+        productoInfo.clearProductosDB();
+        return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text(
+              'Salir?',
+              textAlign: TextAlign.center,
+            ),
+            content: new Text(
+              'Deseas salir realmente?',
+              textAlign: TextAlign.center,
+            ),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: roundedButton("No", Colors.red, const Color(0xFFFFFFFF)),
+                //FlatButton(color: Colors.green,child: Text('NO'),),
+              ),
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(true),
+                child: roundedButton(
+                    " Yes ", Colors.green, const Color(0xFFFFFFFF)),
+                //FlatButton(color: Colors.red,child: Text('SI'),),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+      } ,//_onBackPressed,
       child: Scaffold(
           body: DefaultTabController(
             length: 4,
@@ -300,8 +329,6 @@ class _FacturaPageState extends State<FacturaPage>
                     // for (var item in tmr) {
                     //   print (item);
                     // }
-                    // print('el precio total');
-                    // print(productoInfo.getPrecioTotal());
                     productoInfo.xml_controller_expanded.expanded = false;
                     productoInfo.xml_enabler = true;
                     double sinIm = 0;
@@ -402,6 +429,8 @@ class _FacturaPageState extends State<FacturaPage>
                      productoInfo.xml_precio_final_con_im = conIm.toString();
                     productoInfo.xml_precionfinalCon = conIm.toString();
 
+
+                    print (productoInfo.xml_FINAL);
                     return showDialog(
                       context: context,
                       builder: (context) {

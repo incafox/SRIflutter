@@ -110,7 +110,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>{
   bool _isLoading = true;
   PDFDocument document;
 
@@ -210,6 +210,7 @@ class _MyAppState extends State<MyApp> {
                           "cantidad":i.cantidad.toString(),
                           "total": i.finalPrecio.text,
                           "impuesto": i.impuestoDescripcion.text,
+                          "codigo": i.codigo
                           // "dscsf": send
                         } ;
                         send.add(producto) ;
@@ -224,9 +225,22 @@ class _MyAppState extends State<MyApp> {
                           'Content-Type': 'application/json; charset=UTF-8',
                         },
                         body: jsonEncode(<String, String>{
+                          'tipo_pdf':'2',
+                          'ambiente':productoInfo.xml_ambiente,
+                          'dirSucursal':productoInfo.xml_dirEstablecimiento,
                           'empresa_id':productoInfo.xml_empresaElegida,
+                          'ruc': productoInfo.xml_ruc,
+                          'rucComprador': productoInfo.xml_ruc_comprador,
+                          'clave': productoInfo.xml_claveAcceso,
+                          'secuencial':productoInfo.xml_secuencial,
+                          'dirMatriz':productoInfo.xml_dirMatriz,
+                          'fecha':productoInfo.xml_fecha,
+                          'secuencial':productoInfo.xml_secuencial,
+                          'fecha' : productoInfo.xml_fecha,
+                          // 'fecha':productoInfo,
                           //'xml':productoInfo.xml_FINAL,
                           'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
+                          'razonSocial':productoInfo.xml_razonSocial,
                           'totalCon':productoInfo.xml_precionfinalCon,
                           'totalSin' : productoInfo.xml_precionfinalSin,
                           'conceptos': jsonEncode(send),
@@ -251,6 +265,10 @@ class _MyAppState extends State<MyApp> {
                 )),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 // import 'dart:io';

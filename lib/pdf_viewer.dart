@@ -110,7 +110,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp> {
   bool _isLoading = true;
   PDFDocument document;
 
@@ -155,51 +155,11 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-
+  Future<void> enviaTicket(BuildContext contextxxx)async{
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
 
-    return Scaffold(
-      // drawer: Drawer(
-      //   child: Column(
-      //     children: <Widget>[
-      //       // SizedBox(height: 36),
-      //       ListTile(
-      //         title: Text('Load from Assets'),
-      //         onTap: () {
-      //           changePDF(1);
-      //         },
-      //       ),
-      //       ListTile(
-      //         title: Text('Restore default'),
-      //         onTap: () {
-      //           changePDF(3);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40.0),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          leading: Container(),
-          centerTitle: true,
-          title: RaisedButton(
-              shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0),
-              ),
-              color: Colors.red,
-              child: Text(
-                "Generar PDF",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () async {
-                // createPDF();
+    // createPDF();
                 List<Map<String, dynamic>> send=[] ;
-
-
 
                 setState(() => _isLoading = true);
                 for (CartitaProducto i in productoInfo.productosDB) {
@@ -224,8 +184,91 @@ class _MyAppState extends State<MyApp> {
                           'Content-Type': 'application/json; charset=UTF-8',
                         },
                         body: jsonEncode(<String, String>{
+                          'tipo_pdf':'1',
                           'empresa_id':productoInfo.xml_empresaElegida,
                           'ruc': productoInfo.xml_ruc,
+                          'rucComprador': "ruc==comprador",
+                          'clave': productoInfo.xml_claveAcceso,
+                          'secuencial':productoInfo.xml_secuencial,
+                          'dirMatriz':productoInfo.xml_dirMatriz,
+                          'fecha':productoInfo.xml_fecha,
+                          'secuencial':productoInfo.xml_secuencial,
+                          // 'fecha':productoInfo,
+                          //'xml':productoInfo.xml_FINAL,
+                          'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
+                          'razonSocial':productoInfo.xml_razonSocial,
+                          'totalCon':productoInfo.xml_precionfinalCon,
+                          'totalSin' : productoInfo.xml_precionfinalSin,
+                          'conceptos': jsonEncode(send),
+                          'total':productoInfo.xml_precionfinalCon
+                        }));
+                print(p.body.toString());  
+                String nombreTicket = p.body.toString();
+
+                document = await PDFDocument.fromURL(
+                    "http://167.172.203.137/getpdfticket/" + nombreTicket);
+                // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
+                setState(() => _isLoading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
+
+
+      
+
+    // enviaTicket(context);
+
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40.0),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          leading: Container(),
+          centerTitle: true,
+          title: RaisedButton(
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0),
+              ),
+              color: Colors.red,
+              child: Text(
+                "Generar PDF",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () async {
+                // createPDF();
+                List<Map<String, dynamic>> send=[] ;
+
+                setState(() => _isLoading = true);
+                for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo) {
+                        Map<String, dynamic> producto = {
+                          "nombre":i.nombre,
+                          "cantidad":i.cantidad.toString(),
+                          "unitario":i.actualPrecio.text,
+                          "total": i.finalPrecio.text,
+                          "impuesto": i.impuestoDescripcion.text,
+                          // "dscsf": send
+                        } ;
+                        send.add(producto) ;
+                  }
+                }
+
+                
+                //genera el pdf nombre
+                final p =
+                    await http.post('http://167.172.203.137/getpdfticketname',
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        },
+                        body: jsonEncode(<String, String>{
+                          'tipo_pdf':'1',
+                          'empresa_id':productoInfo.xml_empresaElegida,
+                          'ruc': productoInfo.xml_ruc,
+                          'rucComprador': "ruc==comprador",
+                          'clave': productoInfo.xml_claveAcceso,
                           'secuencial':productoInfo.xml_secuencial,
                           'dirMatriz':productoInfo.xml_dirMatriz,
                           'fecha':productoInfo.xml_fecha,
@@ -258,6 +301,10 @@ class _MyAppState extends State<MyApp> {
                 )),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 // import 'dart:io';

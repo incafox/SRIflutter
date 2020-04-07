@@ -48,16 +48,13 @@ class VPNPage extends StatefulWidget {
 }
 //with AutomaticKeepAliveClientMixin
 class _VPNPageState extends State<VPNPage> with AutomaticKeepAliveClientMixin<VPNPage> {
-
   //final String title = widget.title;
   // PdfView  pdf_factura = new PdfView();
   bool visible = false;
   //ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
-  ticket.PdfViewTicket pdf_ticket = new ticket.PdfViewTicket();
+  ticket.MyApp pdf_ticket = new ticket.MyApp();
   tabFacturaEditar.TabFacturaEditar tabFacturax = new tabFacturaEditar.TabFacturaEditar();
-
   //FacturaPage({this.title});
-
   Widget roundedButton(String buttonLabel, Color bgColor, Color textColor) {
     var loginBtn = new Container(
       padding: EdgeInsets.all(5.0),

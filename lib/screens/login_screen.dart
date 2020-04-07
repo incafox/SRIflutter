@@ -69,9 +69,18 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
     //   print("build >> " + item.nombre.toString());
     // }
 
-    List<String> tempCodigos = productoInfo.getCodigosEmpresas();
+    List<String> tempCodigos = [];// productoInfo.getCodigosEmpresas();
 
-    List<String> tempNombres = productoInfo.getNombresEmpresas();
+    List<String> tempNombres = [];//productoInfo.getNombresEmpresas();
+
+    int i = 0;
+     for (Empresas item in productoInfo.empresas) {
+       tempNombres.add(i.toString()+". "+item.nombre);
+       tempCodigos.add(item.codigo);
+        print("primer >> " + item.nombre.toString());
+        i++;
+      }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
