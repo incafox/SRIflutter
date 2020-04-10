@@ -3,6 +3,6 @@
 3    package="com.example.pdfviewerplugin" >
 4
 5    <uses-sdk android:minSdkVersion="16" />
-5-->/home/abraham/Downloads/flutter_linux_v1.12.13+hotfix.8-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pdf_viewer_plugin-1.0.0+2/android/src/main/AndroidManifest.xml
+5-->C:\Users\lubeck\Downloads\flutter_windows\flutter\.pub-cache\hosted\pub.dartlang.org\pdf_viewer_plugin-1.0.0+2\android\src\main\AndroidManifest.xml
 6
 7</manifest>

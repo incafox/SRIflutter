@@ -340,6 +340,9 @@ class _FacturaPageState extends State<FacturaPage>
                       }
                       // print("sin impuesto  " + finalPrice.text);
                       // print("con impuesto  " + finalPriceConIM.text);
+                            sinIm = double.parse(sinIm.toStringAsFixed(2));
+                            conIm = double.parse(conIm.toStringAsFixed(2));
+
                       productoInfo.xml_precio_final_sin_im = sinIm.toString();
                       productoInfo.xml_precio_final_con_im = conIm.toString();
                       productoInfo.xml_precionfinalSin = sinIm.toString();
@@ -349,7 +352,7 @@ class _FacturaPageState extends State<FacturaPage>
                     //     http.Client(),
                     //     productoInfo.xml_empresaElegida,   
                     //     productoInfo.xml_FINAL);
-                    http.Response t = await productoInfo.sendXML(productoInfo.xml_empresaElegida,  productoInfo.xml_FINAL);
+                    http.Response t = await productoInfo.sendXML();
 
                     // String response = await productoInfo.fetchXML(http.Client(), productoInfo.xml_empresaElegida, productoInfo.xml_FINAL);
 
@@ -430,7 +433,7 @@ class _FacturaPageState extends State<FacturaPage>
                     productoInfo.xml_precionfinalCon = conIm.toString();
 
 
-                    print (productoInfo.xml_FINAL);
+                    print (productoInfo.get_xml_FINAL());
                     return showDialog(
                       context: context,
                       builder: (context) {
@@ -440,7 +443,7 @@ class _FacturaPageState extends State<FacturaPage>
                           //content: Text(singleton.MyXmlSingleton().forDebug.text),
                           content: SingleChildScrollView(
                             child: Text(
-                              productoInfo.xml_FINAL,
+                              productoInfo.get_xml_FINAL(),
                               style: TextStyle(fontSize: 8),
                             ),
                           ),

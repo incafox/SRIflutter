@@ -326,16 +326,13 @@ Future<List<Agencias>> fetchAgencias(
   };
   //encode Map to JSON
   var body = json.encode(data);
-
   print('asumiendo post > ' + body.toString());
   final response = await client
       .post('http://167.172.203.137/services/mssql/getagenci',
       headers: {"Content-Type": "application/json"},
        body: body);
-      
   client.close();
 //      await client.get('https://jsonplaceholder.typicode.com/photos');
-
   // Use the compute function to run parsePhotos in a separate isolate.
   return compute(parseAgencias, response.body);
 }

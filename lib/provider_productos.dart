@@ -253,14 +253,13 @@ class CartitaProducto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
-
     // TODO: implement build
-    //pide info al server si la cantidad es 1 
-    if (this.cantidad == 1) {
-      this._getALlPosts(this.codigo);
-      this.finalPrecio.text = this.actualPrecio.text;
-      this.totalPrecioConImpuesto.text = this.actualPrecio.text;
-    }
+    //pide info al server si la cantidad es 1
+    // if (this.cantidad == 1) {
+    this._getALlPosts(this.codigo);
+    // }
+    this.finalPrecio.text = this.actualPrecio.text;
+    this.totalPrecioConImpuesto.text = this.actualPrecio.text;
     // double t;
     // t = double.parse(this.actualPrecio.text);
     // this.finalPrecio.text = t.toString();
@@ -284,6 +283,7 @@ class CartitaProducto extends StatelessWidget {
                           </impuestos>
                         </detalle>
                           """;
+
     return ExpandablePanel(
       controller: control,
       tapBodyToCollapse: true, hasIcon: false,
@@ -353,13 +353,19 @@ class CartitaProducto extends StatelessWidget {
                           double t;
                           t = double.parse(val) *
                               double.parse(this.actualPrecio.text);
+                          t = double.parse(t.toStringAsFixed(2));
                           this.finalPrecio.text = t.toString();
                           if (this.impuestoPorcentaje.text != "0") {
                             double temp = double.parse(this.finalPrecio.text) *
                                 (double.parse(this.impuestoPorcentaje.text) /
                                     100);
+                            temp = double.parse(temp.toStringAsFixed(2));
+
                             double resto = temp;
                             temp += double.parse(this.finalPrecio.text);
+                            temp = double.parse(temp.toStringAsFixed(2));
+                            resto = double.parse(resto.toStringAsFixed(2));
+
                             this.cantidadImpuesto.text = resto.toString();
                             this.totalPrecioConImpuesto.text = temp.toString();
                           } else {
@@ -373,7 +379,7 @@ class CartitaProducto extends StatelessWidget {
                           <descripcion>${this.nombre}</descripcion>
                           <cantidad>${val.toString()}</cantidad>
                           <precioUnitario>${this.actualPrecio.text}</precioUnitario>
-                          <descuento>none</descuento>
+                          <descuento>0.0</descuento>
                           <precioTotalSinImpuesto>${this.finalPrecio.text}</precioTotalSinImpuesto>
                           <impuestos>
                             <impuesto>
@@ -400,6 +406,9 @@ class CartitaProducto extends StatelessWidget {
                             //  print( "con impuesto  " +finalPriceConIM.text);
                             // this.finalPrice.text = sinIm.toString();
                             // this.finalPriceConIM.text = conIm.toString();
+                            sinIm = double.parse(sinIm.toStringAsFixed(2));
+                            conIm = double.parse(conIm.toStringAsFixed(2));
+
                             productoInfo.xml_precionfinalSin = sinIm.toString();
                             productoInfo.xml_precionfinalCon = conIm.toString();
                           }
@@ -570,6 +579,36 @@ class ClienteElegido extends StatelessWidget {
           Text("email : " + this.email),
         ],
       ),
+    );
+  }
+}
+
+//para hacer fecth sincrono del secuencial
+Future<String> fetchSecuencial(http.Client client) async {
+  final response =
+      await client.get('http://167.172.203.137/services/mssql/get_secuencial');
+  client.close();
+//      await client.get('https://jsonplaceholder.typicode.com/photos');
+
+  // Use the compute function to run parsePhotos in a separate isolate.
+  return compute(parseSecuencial, response.body);
+}
+
+// A function that converts a response body into a List<Photo>.
+String parseSecuencial(String responseBody) {
+  // final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  return responseBody.toString();
+  // return parsed.map<Secuencial>((json) => Secuencial.fromJson(json)).toList();
+}
+
+class Secuencial {
+  final String secuencial;
+
+  Secuencial({this.secuencial}); //this.cod_corregir, this.nombre_principal,
+
+  factory Secuencial.fromJson(Map<String, dynamic> json) {
+    return Secuencial(
+      secuencial: json['secuencial'],
     );
   }
 }
@@ -1024,7 +1063,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_claveAcceso = cn;
   }
 
-  String _xml_codDoc = "";
+  String _xml_codDoc = "001";
   get xml_codDoc {
     return this._xml_codDoc;
   }
@@ -1105,29 +1144,92 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_dirEstablecimiento = cn;
   }
 
-  void genera_todo() {
-    //aca arrega detalles del xml
-    this.xml_ambiente = "1";
+  //sincrono
+
+  //no usar
+  Future<String> get_secuencial() async {
+    String res = "";
+    final p =
+        await http.post('http://167.172.203.137/services/mssql/get_secuencial',
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(<String, String>{
+              'empresa_id': this.xml_empresaElegida,
+              'agenci_id': this.xml_agenciaElegida,
+              'codDoc': this.xml_codDoc,
+            }));
+
+    print("enviando para secuencial >>>> ");
+    print("empresa > " + this.xml_empresaElegida);
+    print("agencia > " + this.xml_agenciaElegida);
+    print("codDoc > " + this.xml_codDoc);
+    return p.body
+        .toString()
+        .substring(p.body.toString().length - 9, p.body.toString().length);
+  }
+
+  void update_secuencial() async {
+    String res = "";
+    final p = await http.post(
+        'http://167.172.203.137/services/mssql/update_secuencial',
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'empresa_id': this.xml_empresaElegida,
+          'agenci_id': this.xml_agenciaElegida,
+          'codDoc': this.xml_codDoc,
+        }));
+
+    // print("enviando para secuencial >>>> ");
+    // print("empresa > " + this.xml_empresaElegida);
+    // print("agencia > "+ this.xml_agenciaElegida);
+    // print("codDoc > "+ this.xml_codDoc);
+    // return p.body.toString().substring(p.body.toString().length-9,p.body.toString().length);
+  }
+
+  Future<String> generaTodo() async {
+    final p = await http
+        .post('http://167.172.203.137/services/mssql/get_secuencial',
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(<String, String>{
+              'empresa_id': this.xml_empresaElegida,
+              'agenci_id': this.xml_agenciaElegida,
+              'codDoc': this.xml_codDoc,
+            }))
+        .then((p) {
+      String secuencial_recuperado = p.body
+          .toString()
+          .substring(p.body.toString().length - 9, p.body.toString().length);
+
+        this.xml_ambiente = "1";
     this.xml_tipoEmision = "1";
-    this.xml_secuencial = "00456787654";
     DateTime now = DateTime.now();
     this.xml_fecha = DateFormat('dd/MM/yyyy').format(now);
     this._xml_dirEstablecimiento = this._xml_dirMatriz;
-
+    this.xml_secuencial = secuencial_recuperado;
     //procede a generar la clave de acceso
     String cadena48 = "";
     cadena48 += this.xml_fecha;
-    cadena48.replaceAll("/", "");
-    cadena48 += this.codDoc;
+    cadena48 = cadena48.replaceAll("/", "");
+    cadena48 += this.xml_codDoc;
     cadena48 += this.xml_ruc;
     cadena48 += this.xml_ambiente;
-    cadena48 += "xxxxxx";
+    cadena48 += "001001";
     cadena48 += xml_secuencial;
     cadena48 += "12345678"; // depende de uno
     cadena48 += this.xml_tipoEmision;
     cadena48 += digitoVerificador(cadena48);
     print("rclave de acceso >> " + cadena48);
     this.xml_claveAcceso = cadena48;
+      return this.get_xml_FINAL();
+    });
+    // String secuencial_recuperado = p.body
+    //     .toString()
+    //     .substring(p.body.toString().length - 9, p.body.toString().length);
   }
 
   String digitoVerificador(cadena48) {
@@ -1137,6 +1239,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     int acum = 0;
     String temporal = cadena48.toString();
     print(temporal);
+    print(temporal.length);
     int multiplicador = 2;
     for (int i = temporal.length; i == 0; i--) {
       cadena.add(int.parse(temporal[i]) * multiplicador);
@@ -1166,8 +1269,15 @@ class ProductosArrayInfo extends ChangeNotifier {
   }
 
   String _xml_FINAL = "";
-  get xml_FINAL {
-    this.genera_todo();
+  // get xml_FINAL {
+  String get_xml_FINAL() {
+    print("fecha > " + this.xml_fecha);
+    print("coddoc > " + this.xml_codDoc);
+    print("ruc > " + this.xml_ruc);
+    print("ambiente > " + this.xml_ambiente);
+    print("sec > " + this.xml_secuencial);
+    print("tipo emision > " + this.xml_tipoEmision);
+    // print("verificador > " + digitoVerificador(cadena48));
 
     String primera = """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1177,7 +1287,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     <tipoEmision>${xml_tipoEmision}</tipoEmision>
     <razonSocial>${xml_razonSocial}</razonSocial>
     <ruc>${xml_ruc}</ruc>
-    <claveAcceso>vacio</claveAcceso>
+    <claveAcceso>${this.xml_claveAcceso}</claveAcceso>
     <codDoc>${xml_codDoc}</codDoc>
     <estab>${xml_estab}</estab>
     <ptoEmi>${xml_ptoEmi}</ptoEmi>
@@ -1185,7 +1295,9 @@ class ProductosArrayInfo extends ChangeNotifier {
     <dirMatriz>${xml_dirMatriz}</dirMatriz>
   </infoTributaria>
     """;
-
+    double fixfloat =
+        double.parse(xml_precionfinalCon) - double.parse(xml_precionfinalSin);
+    fixfloat = double.parse(fixfloat.toStringAsFixed(2));
     String segunda = """
     <infoFactura>
     <fechaEmision>${xml_fecha}</fechaEmision>
@@ -1202,7 +1314,7 @@ class ProductosArrayInfo extends ChangeNotifier {
         <codigoPorcentaje>2</codigoPorcentaje>
         <baseImponible>${xml_precionfinalSin}</baseImponible>
         <tarifa>12</tarifa>
-        <valor>${double.parse(xml_precionfinalCon) - double.parse(xml_precionfinalSin)}</valor>
+        <valor>${fixfloat}</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
@@ -1428,10 +1540,46 @@ class ProductosArrayInfo extends ChangeNotifier {
   }
 
 //post requests con FORM
-  Future<http.Response> sendXML(String empresa, String xml) {
+  Future<http.Response> sendXML() async {
+    final p = await http
+        .post('http://167.172.203.137/services/mssql/get_secuencial',
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(<String, String>{
+              'empresa_id': this.xml_empresaElegida,
+              'agenci_id': this.xml_agenciaElegida,
+              'codDoc': this.xml_codDoc,
+            }));
+    String secuencial_recuperado = p.body
+          .toString()
+          .substring(p.body.toString().length - 9, p.body.toString().length);
+        this.xml_ambiente = "1";
+    this.xml_tipoEmision = "1";
+    DateTime now = DateTime.now();
+    this.xml_fecha = DateFormat('dd/MM/yyyy').format(now);
+    this._xml_dirEstablecimiento = this._xml_dirMatriz;
+    this.xml_secuencial = secuencial_recuperado;
+    //procede a generar la clave de acceso
+    String cadena48 = "";
+    cadena48 += this.xml_fecha;
+    cadena48 = cadena48.replaceAll("/", "");
+    cadena48 += this.xml_codDoc;
+    cadena48 += this.xml_ruc;
+    cadena48 += this.xml_ambiente;
+    cadena48 += "001001";
+    cadena48 += xml_secuencial;
+    cadena48 += "12345678"; // depende de uno
+    cadena48 += this.xml_tipoEmision;
+    cadena48 += digitoVerificador(cadena48);
+    print("rclave de acceso >> " + cadena48);
+    this.xml_claveAcceso = cadena48;
+    String xmlfinal =  this.get_xml_FINAL();
+
     var map = new Map<String, dynamic>();
-    map['empresa_id'] = empresa;
-    map['xml'] = xml;
+    map['empresa_id'] = this.xml_empresaElegida;
+    map['xml'] = xmlfinal;
+    map['ambiente'] = this.xml_ambiente;
     return http.post(
       'http://167.172.203.137/services/mssql/send',
       body: map,
