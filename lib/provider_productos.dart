@@ -216,6 +216,7 @@ class CartitaProducto extends StatelessWidget {
   int cantidad = 1;
   String xmlConcepto = "";
 
+  bool primeraVez=false;
   TextEditingController input = TextEditingController(text: "1");
   TextEditingController finalPrecio = TextEditingController(text: "");
   TextEditingController actualPrecio = TextEditingController(text: "");
@@ -247,6 +248,37 @@ class CartitaProducto extends StatelessWidget {
       this.cantidadImpuesto.text = "0";
       this.totalPrecioConImpuesto.text = this.finalPrecio.text;
     }
+    
+
+    String val = "1";
+    this.cantidad = int.parse(val);
+    // productoInfo.xml_controller_expanded.expanded = true;
+    // productoInfo.xml_enabler = false;
+    double tx;
+    tx = double.parse(val) * double.parse(this.actualPrecio.text);
+    tx = double.parse(tx.toStringAsFixed(2));
+    this.finalPrecio.text = tx.toString();
+    if (this.impuestoPorcentaje.text != "0") {
+      double temp = double.parse(this.finalPrecio.text) *
+          (double.parse(this.impuestoPorcentaje.text) /
+              100);
+      temp = double.parse(temp.toStringAsFixed(2));
+
+      double resto = temp;
+      temp += double.parse(this.finalPrecio.text);
+      temp = double.parse(temp.toStringAsFixed(2));
+      resto = double.parse(resto.toStringAsFixed(2));
+
+      this.cantidadImpuesto.text = resto.toString();
+      this.totalPrecioConImpuesto.text = temp.toString();
+    } else {
+      this.cantidadImpuesto.text = "0";
+      this.totalPrecioConImpuesto.text =
+          this.finalPrecio.text;
+    }
+
+
+
     // return t;
   }
 
@@ -255,15 +287,50 @@ class CartitaProducto extends StatelessWidget {
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
     // TODO: implement build
     //pide info al server si la cantidad es 1
-    // if (this.cantidad == 1) {
-    this._getALlPosts(this.codigo);
-    // }
+    if (!this.primeraVez) {
+        this._getALlPosts(this.codigo);
+        this.primeraVez = true;
+    }
     this.finalPrecio.text = this.actualPrecio.text;
     this.totalPrecioConImpuesto.text = this.actualPrecio.text;
     // double t;
     // t = double.parse(this.actualPrecio.text);
     // this.finalPrecio.text = t.toString();
     productoInfo.xml_enabler = false;
+
+    // if (this.cantidad == 1) {
+    //     //this._getALlPosts(this.codigo);
+    // String val = "1";
+    // this.cantidad = int.parse(val);
+    // productoInfo.xml_controller_expanded.expanded = true;
+    // productoInfo.xml_enabler = false;
+    // double t;
+    // t = double.parse(val) *
+    //     double.parse(this.actualPrecio.text);
+    // t = double.parse(t.toStringAsFixed(2));
+    // this.finalPrecio.text = t.toString();
+    // if (this.impuestoPorcentaje.text != "0") {
+    //   double temp = double.parse(this.finalPrecio.text) *
+    //       (double.parse(this.impuestoPorcentaje.text) /
+    //           100);
+    //   temp = double.parse(temp.toStringAsFixed(2));
+
+    //   double resto = temp;
+    //   temp += double.parse(this.finalPrecio.text);
+    //   temp = double.parse(temp.toStringAsFixed(2));
+    //   resto = double.parse(resto.toStringAsFixed(2));
+
+    //   this.cantidadImpuesto.text = resto.toString();
+    //   this.totalPrecioConImpuesto.text = temp.toString();
+    // } else {
+    //   this.cantidadImpuesto.text = "0";
+    //   this.totalPrecioConImpuesto.text =
+    //       this.finalPrecio.text;
+    // }
+
+    // }
+  
+    
     this.xmlConcepto = """
                           <detalle>
                           <codigoPrincipal>${this.codigo}</codigoPrincipal>
@@ -563,6 +630,7 @@ class ClienteElegido extends StatelessWidget {
     this.codigo = cod;
     this.ruc = ruce;
     this.email = ema;
+    // this.telefono = ema;
   }
 
   @override
@@ -574,9 +642,10 @@ class ClienteElegido extends StatelessWidget {
             "" + this.nombre,
             style: TextStyle(fontSize: 16),
           ),
-          Text("Codigo Cliente : " + this.codigo),
-          Text("R.U.C. : " + this.ruc),
-          Text("email : " + this.email),
+          Align(alignment: Alignment.centerLeft, child: Text("Codigo Cliente : " + this.codigo)),
+          Align(alignment: Alignment.centerLeft , child: Text("R.U.C.  : " + this.ruc)),
+          Align(alignment: Alignment.centerLeft ,child: Text("Telefono : " + this.email)),
+          Align(alignment: Alignment.centerLeft ,child: Text("Email    : " + this.email)),
         ],
       ),
     );
@@ -1117,6 +1186,26 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_fecha = cn;
   }
 
+  //xml_cod_comprador
+  
+  String _xml_cod_comprador = "";
+  get xml_cod_comprador {
+    return this._xml_cod_comprador;
+  }
+
+  set xml_cod_comprador(String cn) {
+    this._xml_cod_comprador = cn;
+  }
+
+  String _xml_cod_vendedor = "";
+  get xml_cod_vendedor {
+    return this._xml_cod_vendedor;
+  }
+
+  set xml_cod_vendedor(String cn) {
+    this._xml_cod_vendedor = cn;
+  }
+
   String _xml_precio_final_sin_im = "";
   get xml_precio_final_sin_im {
     return this._xml_precio_final_sin_im;
@@ -1538,6 +1627,144 @@ class ProductosArrayInfo extends ChangeNotifier {
       }),
     );
   }
+
+
+  String _movCli ="";
+  get movCli{
+    return jsonEncode(<String, String>{
+       "empresa_id": this.xml_empresaElegida,
+		"agenci_id": this.xml_agenciaElegida,
+		"numtrx_mcl": this.xml_secuencial,
+		"linea_mcl" : "1",
+    });
+  } 
+
+  Future<http.Response> saveMovcli() {
+  return http.post(
+          'http://167.172.203.137/services/mssql/save_factura',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      "empresa_id": this.xml_empresaElegida,
+		"agenci_id": this.xml_agenciaElegida,
+		"numtrx_mcl": this.xml_secuencial,
+		"linea_mcl" : "1",
+		"fectrx_mcl" : this.xml_fecha,
+		"fecemi_mcl"  : this.xml_fecha,
+		"coddoc_mcl"  : "01",
+		"numdoc_mcl"  : "numero factura",
+		"numero_mcl"  : "numero factura",
+		"nutrap_mcl"  : this.xml_secuencial,
+		"codoap_mcl"  : "01",
+		"numapl_mcl"  : "numero factura",
+		"codcli_mcl"  : "codigo Cliente",
+		"codven_mcl"  : "codigo vendedor",
+		"refere_mcl"  : "numero factura",
+		"subtot_mcl"  : "subtotal de factura",
+		"descue_mcl"  : "descuecno de factura",
+		"propin_mcl"  : "propina de factura",
+		"otros_mcl"  : "0",
+		"iva_mcl"  : "iva de factura",
+		"ivacs_mcl"  : "0",
+		"ice_mcl"  : "0",
+		"flete_mcl"  : "0",
+		"total_mcl" : "",
+		"subiv1_mcl":	"Base 0% de IVA",
+	"subiv2_mcl":	"Base 12% de IVA",
+	"subsid_mcl":	"Subsidio de la factura",
+	"sinsub_mcl":	"Valor sin Subsidio",
+	"irbpnr_mcl":	"Impuesto redimible",
+	"nuaudo_mcl"	: "Numero de Acturización de la factura Ejemplo: 0304202001179184241300120010020000047440000699310",
+	"nusedo_mcl"	: "Punto de Venta + Emisión de la factura Ejemplo: 001-002",
+	"feaudo_mcl"	: "Fecha de la autorización de la factura respuesta del SRI, Ejemplo: 2020-04-03 14:00:13.000",
+	"claacc_mcl"	: "Clave de acceso de la factura: Ejemplo: 0304202001179184241300120010020000047440000699310",
+	"forpag_mcl"	: "Forma de Pago de la factura, ejemplo: 20",
+	"plazo_mcl"	: "Plazo de pago de la factura, ejemplo: 001 - Contado",
+	"nutrre_mcl"	: "",
+	"codore_mcl"	: "",
+	"nudore_mcl"	: "",
+	"observ_mcl"	: "Comentarios a la factura" ,
+	"motdev_mcl"	: "",
+	"estado_mcl":	"151=Emitida, 152=Autorizada y Enviada SRI",
+	"codusu_mcl":	this.xml_cod_comprador,
+	"fecusu_mcl":	this.xml_fecha,
+	// "usumod_mcl":	"Enviar este campo vacio, a menos que anule la factura pone el usuario que anulo la factura",
+	"usumod_mcl":	"",
+	// "fecmod_mcl":	"Enviar este campo vacio, a menos que anule la factura pone la fecha y hora que anulo la factura",
+	"fecmod_mcl":	"",
+    }),
+  );
+}
+
+
+Future<http.Response> saveMovart(String title) {
+  return http.post(
+    'https://jsonplaceholder.typicode.com/albums',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      "empresa_id":	this.xml_empresaElegida ,
+      "agenci_id"	: this.xml_agenciaElegida ,
+      "numtrx_mar":	"numero interno/secuencial seis digitos" ,
+      "fectrx_mar":	this.xml_fecha ,
+      "linea_mar":	"Linea de registro de cada item, si tengo 4 detalles debe estar numerada del 1 al 4" ,
+      "fecha_mar"	:"Fecha de la factura, deber ser el mismo de movcli",
+      "coddoc_mar":	"Codigo de Documento, en este caso si es factura electrónica es 201, y si es preimpresa es 207, debe ser el mismo de movcli",
+      "numero_mar":	"Numero de factura, el secuencial debe tomarlo de la tabla docume y debe ser el mismo de movcli",
+      "codcp_mar":	this.xml_cod_comprador ,
+      "codven_mar":	this.xml_cod_vendedor ,
+      "coplpr_mar":	"Codigo del plan de precio del producto",
+      "codart_mar":	"Codigo del articulo" ,
+      "coboor_mar":	"Codigo de bodega, se puede setear una predeterminada",
+      "cobode_mar":	"Este campo enviar vacio, es bodega de destino aplica para transferencias",
+      "codund_mar":	"Codigo de unidade de medida",
+      "fracci_mar":	"1",
+      "cantid_mar":	"Cantidad del item" ,
+      "preuni_mar":	"Precio unitario" ,
+      "precio_mar":	"Cantidad * Precio unitario, es el importe por cada items",
+      "costo_mar":	"La multiplicación de cosest_art * cantid_mar",
+      "descue_mar":	"El descuento del item * la cantidad",
+      "impiva_mar":	"Si aplica iva es 1, y si no aplica 0",
+      "iva_mar":	"El valor del iva del producto",
+      "ivacs_mar":	"0",
+      "impice_mar":	"Si aplica ice es 1, y si no aplica 0",
+      "ice_mar":	"El valor del ice del producto",
+      "impsub_mar":	"Si aplica subsidio es 1, y si no aplica 0",
+      "subsid_mar":	"El valor del subsisio",
+      "sinsub_mar":	"El valor sin subsidio",
+      "impire_mar":	"Si aplica Impuesto redimible es 1, y si no aplica 0",
+      "irbpnr_mar":	"El valor del impuesto redimible del producto",
+      "observa_mar":	"Alguna observación del item, si hay si no vacio",
+      "codkit_mar":	"Este campo enviar vacio, en caso que el item es kit se debe grabar el mismo codigo",
+      "ordpro_mar":	"Enviar este campo vacio, Orden de Producción",
+      "numlot_mar":	"Enviar este campo vacio, Lote de Producción",
+      "codser_mar":	"Enviar este campo vacio, Cuando el prodcuto se aplica por series",
+      "observ_mar":	"Alguna observación del item, si hay si no vacio",
+      "estado_mar":	"151=Emitida, 152=Autorizada y Enviada SRI",
+      "codusu_mar":	this.xml_cod_comprador,
+      "fecusu_mar":	"Fecha y hora del servidor, en la cual se registro la transación",
+      "usumod_mar":	"Enviar este campo vacio, a menos que anule la factura pone el usuario que anulo la factura",
+      "fecmod_mar":	"Enviar este campo vacio, a menos que anule la factura pone la fecha y hora que anulo la factura"
+    }),
+  );
+}
+
+Future<http.Response> createAlbum(String title) {
+  return http.post(
+    'http://167.172.203.137/services/mssql/testing',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, Map>{
+      "bio": {
+        "short": "tuuu",
+        "long": "teee",
+      },
+    }),
+  );
+}
 
 //post requests con FORM
   Future<http.Response> sendXML() async {

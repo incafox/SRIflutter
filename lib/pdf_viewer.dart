@@ -187,7 +187,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                           'tipo_pdf':'1',
                           'empresa_id':productoInfo.xml_empresaElegida,
                           'ruc': productoInfo.xml_ruc,
-                          'rucComprador': "ruc==comprador",
+                          'rucComprador': productoInfo.xml_ruc_comprador,
                           'clave': productoInfo.xml_claveAcceso,
                           'secuencial':productoInfo.xml_secuencial,
                           'dirMatriz':productoInfo.xml_dirMatriz,
@@ -200,7 +200,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                           'totalCon':productoInfo.xml_precionfinalCon,
                           'totalSin' : productoInfo.xml_precionfinalSin,
                           'conceptos': jsonEncode(send),
-                          'total':productoInfo.xml_precionfinalCon
+                          'total': productoInfo.xml_precionfinalCon
                         }));
                 print(p.body.toString());  
                 String nombreTicket = p.body.toString();
@@ -228,68 +228,83 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
           backgroundColor: Colors.white,
           leading: Container(),
           centerTitle: true,
-          title: RaisedButton(
-              shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0),
-              ),
-              color: Colors.red,
-              child: Text(
-                "Generar PDF",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () async {
-                // createPDF();
-                List<Map<String, dynamic>> send=[] ;
+          title: Row(
+            children: <Widget>[
+              RaisedButton(
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0),
+                  ),
+                  color: Colors.red,
+                  child: Text(
+                    "Generar PDF",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    // createPDF();
+                    List<Map<String, dynamic>> send=[] ;
 
-                setState(() => _isLoading = true);
-                for (CartitaProducto i in productoInfo.productosDB) {
-                      if (i.activo) {
-                        Map<String, dynamic> producto = {
-                          "nombre":i.nombre,
-                          "cantidad":i.cantidad.toString(),
-                          "unitario":i.actualPrecio.text,
-                          "total": i.finalPrecio.text,
-                          "impuesto": i.impuestoDescripcion.text,
-                          // "dscsf": send
-                        } ;
-                        send.add(producto) ;
-                  }
-                }
+                    setState(() => _isLoading = true);
+                    for (CartitaProducto i in productoInfo.productosDB) {
+                          if (i.activo) {
+                            Map<String, dynamic> producto = {
+                              "nombre":i.nombre,
+                              "cantidad":i.cantidad.toString(),
+                              "unitario":i.actualPrecio.text,
+                              "total": i.finalPrecio.text,
+                              "impuesto": i.impuestoDescripcion.text,
+                              // "dscsf": send
+                            } ;
+                            send.add(producto) ;
+                      }
+                    }
 
-                
-                //genera el pdf nombre
-                final p =
-                    await http.post('http://167.172.203.137/getpdfticketname',
-                        headers: <String, String>{
-                          'Content-Type': 'application/json; charset=UTF-8',
-                        },
-                        body: jsonEncode(<String, String>{
-                          'tipo_pdf':'1',
-                          'empresa_id':productoInfo.xml_empresaElegida,
-                          'ruc': productoInfo.xml_ruc,
-                          'rucComprador': "ruc==comprador",
-                          'clave': productoInfo.xml_claveAcceso,
-                          'secuencial':productoInfo.xml_secuencial,
-                          'dirMatriz':productoInfo.xml_dirMatriz,
-                          'fecha':productoInfo.xml_fecha,
-                          'secuencial':productoInfo.xml_secuencial,
-                          // 'fecha':productoInfo,
-                          //'xml':productoInfo.xml_FINAL,
-                          'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
-                          'razonSocial':productoInfo.xml_razonSocial,
-                          'totalCon':productoInfo.xml_precionfinalCon,
-                          'totalSin' : productoInfo.xml_precionfinalSin,
-                          'conceptos': jsonEncode(send),
-                          'total':productoInfo.xml_precionfinalCon
-                        }));
-                print(p.body.toString());  
-                String nombreTicket = p.body.toString();
+                    
+                    //genera el pdf nombre
+                    final p =
+                        await http.post('http://167.172.203.137/getpdfticketname',
+                            headers: <String, String>{
+                              'Content-Type': 'application/json; charset=UTF-8',
+                            },
+                            body: jsonEncode(<String, String>{
+                              'tipo_pdf':'1',
+                              'empresa_id':productoInfo.xml_empresaElegida,
+                              'ruc': productoInfo.xml_ruc,
+                              'rucComprador': productoInfo.xml_ruc_comprador,
+                              'clave': productoInfo.xml_claveAcceso,
+                              'secuencial':productoInfo.xml_secuencial,
+                              'dirMatriz':productoInfo.xml_dirMatriz,
+                              'fecha':productoInfo.xml_fecha,
+                              'secuencial':productoInfo.xml_secuencial,
+                              // 'fecha':productoInfo,
+                              //'xml':productoInfo.xml_FINAL,
+                              'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
+                              'razonSocial':productoInfo.xml_razonSocial,
+                              'totalCon':productoInfo.xml_precionfinalCon,
+                              'totalSin' : productoInfo.xml_precionfinalSin,
+                              'conceptos': jsonEncode(send),
+                              'total':productoInfo.xml_precionfinalCon
+                            }));
+                    print(p.body.toString());  
+                    String nombreTicket = p.body.toString();
 
-                document = await PDFDocument.fromURL(
-                    "http://167.172.203.137/getpdfticket/" + nombreTicket);
-                // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
-                setState(() => _isLoading = false);
-              }),
+                    document = await PDFDocument.fromURL(
+                        "http://167.172.203.137/getpdfticket/" + nombreTicket);
+                    // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
+                    setState(() => _isLoading = false);
+                  }),
+                  VerticalDivider(),
+                  RaisedButton(
+                     shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0),
+                  ),
+                    child: Text("Descargar PDF",style: TextStyle(color: Colors.white),)
+                    ,color:Colors.green
+                    ,onPressed: (){
+
+                    })
+
+            ],
+          ),
         ),
       ),
       body: Container(

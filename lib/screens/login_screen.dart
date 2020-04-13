@@ -114,6 +114,7 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
               options: tempNombres, //['0%','12%','14%'],
               onChanged: ((value) async {
                 productoInfo.empresa = value;
+                // productoInfo.xml_empresaElegida = value;
                 List<Agencias> tmp = await fetchAgencias(http.Client(), value);
                 productoInfo.agencias = tmp;
                 print ('consultando + empresa >> ' + value.toString());
@@ -160,8 +161,8 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
                   productoInfo.xml_ruc = empresitaxxx.rucEmp;
                   productoInfo.xml_tipoEmision="001";
                   productoInfo.xml_codDoc= "01";
-                  productoInfo.xml_estab="001";
-                  productoInfo.xml_ptoEmi="001";
+                  productoInfo.xml_ptoEmi=productoInfo.xml_cod_vendedor.toString().substring(1,productoInfo.xml_cod_vendedor.toString().length);
+                  productoInfo.xml_estab = value.substring(1,value.length);
                   productoInfo.xml_dirMatriz = empresitaxxx.direccEmp;
 
                   this.obtieneDataAuxiliar(productoInfo.xml_agenciaElegida, productoInfo.empresa);
@@ -509,6 +510,8 @@ class _LoginScreenState extends State<LoginScreen> {
             print("datos puestos : ");
             print(this._user.text);
             print(this._pass.text);
+            //asigna en provider
+            productoInfo.xml_cod_vendedor = this._user.text;
 
             if (item.codigo_usu == this._user.text &&
                 item.clave_usu == this._pass.text) {

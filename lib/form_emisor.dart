@@ -335,7 +335,8 @@ class _FormEmisorState extends State<FormEmisor> {
               labelWidth: 150,
               hintText: 'punto de emision',
               label: 'Punto Emision',
-              initialValue: productoInfo.xml_ptoEmi,
+              // initialValue: productoInfo.xml_ptoEmi,
+              initialValue: productoInfo.xml_agenciaElegida
               // validator: (value) {
               //   //if (!value.startsWith('http:')) return 'Must be a valid website.';
               // },

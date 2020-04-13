@@ -149,7 +149,12 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
 
                   ClienteElegido cli = new ClienteElegido(nombre: post.nombre_cli,
                   codigo: post.codigo_cli,ruc: post.rucci_cli,email: post.telefo_cli); 
+                  //actualiza todos los datos del cloente
                   productoInfo.clienteActual = cli;
+                  productoInfo.xml_ruc_comprador = post.rucci_cli;
+                  productoInfo.xml_cod_comprador = post.codigo_cli;
+                  productoInfo.xml_razonSocial_comprador = post.nombre_cli;
+                  
 
                 }),
                 title: Text(post.nombre_cli,textAlign: TextAlign.center),
