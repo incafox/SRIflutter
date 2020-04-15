@@ -248,7 +248,8 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                             }));
                     print(p.body.toString());  
                     String nombreTicket = p.body.toString();
-
+                    //guarda el nombre del pdf para poder descargarlo
+                    productoInfo.xml_pdf_ticker_nombre = nombreTicket;
                     document = await PDFDocument.fromURL(
                         "http://167.172.203.137/getpdfticket/" + nombreTicket);
                     // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");

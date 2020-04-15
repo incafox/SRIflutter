@@ -319,7 +319,6 @@ class _FormEmisorState extends State<FormEmisor> {
               onSaved: (value) => print ('dadsadddddd'),
               onChanged: ((value) {
                 print ('dasdadsddddd');
-
               }),
             ),
             CardSettingsText(controller: controller_estab,
@@ -373,7 +372,6 @@ class _FormEmisorState extends State<FormEmisor> {
               ),
             ),
 */
-
           ],
         ),
       ),

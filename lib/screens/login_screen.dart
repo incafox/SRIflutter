@@ -148,13 +148,11 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
                 onChanged: ((value) async {
                   productoInfo.xml_agenciaElegida = value;
                   print('agencia seleccionada > ' + value.toString());
-
                   Empresas empresitaxxx = productoInfo.getEmpresaElegida(productoInfo.xml_empresaElegida);
                   Agencias agencitaxxx = productoInfo.getAgenciaElegida(productoInfo.xml_agenciaElegida);
                   print ('elegidos');
                   print (empresitaxxx.nombre);
                   print (agencitaxxx.nombre);
-
                   productoInfo.xml_ambiente = empresitaxxx.ambienEmp;
                   productoInfo.xml_tipoEmision = '';
                   productoInfo.xml_razonSocial = empresitaxxx.nombre;
@@ -162,7 +160,7 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
                   productoInfo.xml_tipoEmision="001";
                   productoInfo.xml_codDoc= "01";
                   productoInfo.xml_ptoEmi=productoInfo.xml_cod_vendedor.toString().substring(1,productoInfo.xml_cod_vendedor.toString().length);
-                  productoInfo.xml_estab = value.substring(1,value.length);
+                  productoInfo.xml_estab = value.substring(2,value.length);
                   productoInfo.xml_dirMatriz = empresitaxxx.direccEmp;
 
                   this.obtieneDataAuxiliar(productoInfo.xml_agenciaElegida, productoInfo.empresa);
@@ -197,18 +195,13 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
                     //poner siguiente pantalla aca
                     Navigator.push(//original MyApp
                    context, MaterialPageRoute(builder: (context) => MyHomePage()));
-
+                    // productoInfo.get_empresa_logo();
 
                     //ENTREGA TODOS LOS DATOS A PROVIDER
                     // productoInfo.xml_ambiente = 
                     // productoInfo.xml_codDoc = 
                     // productoInfo.xml_dirEstablecimiento = 
                     // productoInfo.xml_dirMatriz = 
-                    
-
-
-
-
                   },
                   color: Colors.blue,
                   textColor: Colors.white,

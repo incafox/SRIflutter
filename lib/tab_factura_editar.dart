@@ -406,14 +406,14 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                     children: <Widget>[
                       //TITULO
                       Container(
-                        color: Colors.black,
+                        color: Colors.black38,
                         width: double.infinity,
                         height: 35.0,
                         child: Center(
                           child: Text(
                             'Datos Cliente',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
                       ),
@@ -443,7 +443,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                                         Text('\t      Elegir Cliente')
                                       ],
                                     ),
-                                    color: Colors.blue,
+                                    color: Color(0xFF478DE0),
                                     onPressed: () {
                                       Navigator.push(
                                           context,
@@ -498,14 +498,14 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                     children: <Widget>[
                       //TITULO
                       Container(
-                        color: Colors.black,
+                        color: Colors.black38,
                         width: double.infinity,
                         height: 35.0,
                         child: Center(
                           child: Text(
                             'Descripcion y Conceptos',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
                       ),
@@ -739,14 +739,14 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                     children: <Widget>[
                       //TITULO
                       Container(
-                        color: Colors.black,
+                        color: Colors.black38,
                         width: double.infinity,
                         height: 35.0,
                         child: Center(
                           child: Text(
                             'Total',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
                       ),

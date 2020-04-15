@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/home/abraham/flutter/SRIflutter/build/file_picker/intermediates/res/merged/release/values-v16/values-v16.xml",
+            "outputFile": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\file_picker\\intermediates\\res\\merged\\release\\values-v16\\values-v16.xml",
             "map": [
                 {
-                    "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/fecc98e05c7ccd4a0eedf7cff343a233/core-1.0.2/res/values-v16/values-v16.xml",
+                    "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\fecc98e05c7ccd4a0eedf7cff343a233\\core-1.0.2\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -16,10 +16,10 @@
             ]
         },
         {
-            "outputFile": "/home/abraham/flutter/SRIflutter/build/file_picker/intermediates/incremental/mergeReleaseResources/merged.dir/values-v16/values-v16.xml",
+            "outputFile": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\file_picker\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-v16\\values-v16.xml",
             "map": [
                 {
-                    "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/fecc98e05c7ccd4a0eedf7cff343a233/core-1.0.2/res/values-v16/values-v16.xml",
+                    "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\fecc98e05c7ccd4a0eedf7cff343a233\\core-1.0.2\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

@@ -1,4 +1,4 @@
-#Mon Mar 30 19:54:29 PET 2020
-base.0=/home/abraham/flutter/SRIflutter/build/app/intermediates/dex/release/mergeDexRelease/out/classes.dex
+#Wed Apr 15 12:45:34 COT 2020
+base.0=C\:\\Users\\lubeck\\flutter\\SRIflutter\\build\\app\\intermediates\\dex\\release\\mergeDexRelease\\out\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

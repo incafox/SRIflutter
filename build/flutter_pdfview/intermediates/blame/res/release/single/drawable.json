@@ -1,34 +1,34 @@
 [
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/default_scroll_handle_bottom.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/cce1f8d3de06139894cecf9d2d5af316/jetified-android-pdf-viewer-3.1.0-beta.1/res/drawable/default_scroll_handle_bottom.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\notification_tile_bg.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\0a271e99b6771ad4a84318244d532fb7\\core-1.0.0\\res\\drawable\\notification_tile_bg.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/notification_bg_low.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/0a271e99b6771ad4a84318244d532fb7/core-1.0.0/res/drawable/notification_bg_low.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\default_scroll_handle_top.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\6a7af29a47b07a3c2d8d05c4782dad34\\jetified-android-pdf-viewer-3.1.0-beta.1\\res\\drawable\\default_scroll_handle_top.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/notification_bg.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/0a271e99b6771ad4a84318244d532fb7/core-1.0.0/res/drawable/notification_bg.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\notification_icon_background.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\0a271e99b6771ad4a84318244d532fb7\\core-1.0.0\\res\\drawable\\notification_icon_background.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/default_scroll_handle_top.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/cce1f8d3de06139894cecf9d2d5af316/jetified-android-pdf-viewer-3.1.0-beta.1/res/drawable/default_scroll_handle_top.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\default_scroll_handle_right.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\6a7af29a47b07a3c2d8d05c4782dad34\\jetified-android-pdf-viewer-3.1.0-beta.1\\res\\drawable\\default_scroll_handle_right.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/notification_icon_background.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/0a271e99b6771ad4a84318244d532fb7/core-1.0.0/res/drawable/notification_icon_background.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\default_scroll_handle_bottom.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\6a7af29a47b07a3c2d8d05c4782dad34\\jetified-android-pdf-viewer-3.1.0-beta.1\\res\\drawable\\default_scroll_handle_bottom.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/notification_tile_bg.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/0a271e99b6771ad4a84318244d532fb7/core-1.0.0/res/drawable/notification_tile_bg.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\default_scroll_handle_left.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\6a7af29a47b07a3c2d8d05c4782dad34\\jetified-android-pdf-viewer-3.1.0-beta.1\\res\\drawable\\default_scroll_handle_left.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/default_scroll_handle_right.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/cce1f8d3de06139894cecf9d2d5af316/jetified-android-pdf-viewer-3.1.0-beta.1/res/drawable/default_scroll_handle_right.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\notification_bg.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\0a271e99b6771ad4a84318244d532fb7\\core-1.0.0\\res\\drawable\\notification_bg.xml"
     },
     {
-        "merged": "/home/abraham/flutter/SRIflutter/build/flutter_pdfview/intermediates/res/merged/release/drawable/default_scroll_handle_left.xml",
-        "source": "/home/abraham/.gradle/caches/transforms-2/files-2.1/cce1f8d3de06139894cecf9d2d5af316/jetified-android-pdf-viewer-3.1.0-beta.1/res/drawable/default_scroll_handle_left.xml"
+        "merged": "C:\\Users\\lubeck\\flutter\\SRIflutter\\build\\flutter_pdfview\\intermediates\\res\\merged\\release\\drawable\\notification_bg_low.xml",
+        "source": "C:\\Users\\lubeck\\.gradle\\caches\\transforms-2\\files-2.1\\0a271e99b6771ad4a84318244d532fb7\\core-1.0.0\\res\\drawable\\notification_bg_low.xml"
     }
 ]

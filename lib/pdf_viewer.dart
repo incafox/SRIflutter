@@ -275,6 +275,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                               'dirMatriz':productoInfo.xml_dirMatriz,
                               'fecha':productoInfo.xml_fecha,
                               'secuencial':productoInfo.xml_secuencial,
+                              'factura_no':productoInfo.xml_estab +"-"+ productoInfo.ptoEmi+"-"+ productoInfo.xml_secuencial,
                               // 'fecha':productoInfo,
                               //'xml':productoInfo.xml_FINAL,
                               'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
@@ -286,6 +287,8 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                             }));
                     print(p.body.toString());  
                     String nombreTicket = p.body.toString();
+                    //asigna nombre del pdf para poder bajarlo luego
+                    productoInfo.xml_pdf_ticker_nombre = nombreTicket;
 
                     document = await PDFDocument.fromURL(
                         "http://167.172.203.137/getpdfticket/" + nombreTicket);

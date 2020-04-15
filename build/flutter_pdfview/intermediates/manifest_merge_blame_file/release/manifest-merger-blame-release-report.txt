@@ -3,6 +3,6 @@
 3    package="io.endigo.plugins.pdfviewflutter" >
 4
 5    <uses-sdk android:minSdkVersion="16" />
-5-->/home/abraham/Downloads/flutter_linux_v1.12.13+hotfix.8-stable/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_pdfview-1.0.0+10/android/src/main/AndroidManifest.xml
+5-->C:\Users\lubeck\Downloads\flutter_windows\flutter\.pub-cache\hosted\pub.dartlang.org\flutter_pdfview-1.0.0+10\android\src\main\AndroidManifest.xml
 6
 7</manifest>

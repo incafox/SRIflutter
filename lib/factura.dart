@@ -117,6 +117,18 @@ class _FacturaPageState extends State<FacturaPage>
     return loginBtn;
   }
 
+  AlertDialog mensaje(String msn){
+    return AlertDialog(
+      content: SingleChildScrollView(
+        child: Text(
+          msn,
+          style: TextStyle(fontSize: 14),
+        ),
+      ),
+    );
+  }
+
+
   Future<bool> _onBackPressed() {
     final productoInfo =
         Provider.of<ProductosArrayInfo>(context, listen: false);
@@ -192,12 +204,17 @@ class _FacturaPageState extends State<FacturaPage>
         ) ??
         false;
       } ,//_onBackPressed,
+
+      // Color(0xFF73AEF5),
+      //                 Color(0xFF61A4F1),
+      //                 Color(0xFF478DE0),
+      //                 Color(0xFF398AE5),
       child: Scaffold(
           body: DefaultTabController(
             length: 4,
             child: Scaffold(
               appBar: AppBar(
-                backgroundColor: Colors.blue, elevation: 20,
+                backgroundColor: Color(0xFF478DE0) , elevation: 20,
                 bottom: TabBar(
                   tabs: [
                     Tab(
@@ -329,35 +346,34 @@ class _FacturaPageState extends State<FacturaPage>
                     // for (var item in tmr) {
                     //   print (item);
                     // }
-                    productoInfo.xml_controller_expanded.expanded = false;
-                    productoInfo.xml_enabler = true;
-                    double sinIm = 0;
-                    double conIm = 0;
-                    for (CartitaProducto i in productoInfo.productosDB) {
-                      if (i.activo) {
-                        sinIm += double.parse(i.finalPrecio.text);
-                        conIm += double.parse(i.totalPrecioConImpuesto.text);
-                      }
-                      // print("sin impuesto  " + finalPrice.text);
-                      // print("con impuesto  " + finalPriceConIM.text);
-                            sinIm = double.parse(sinIm.toStringAsFixed(2));
-                            conIm = double.parse(conIm.toStringAsFixed(2));
 
-                      productoInfo.xml_precio_final_sin_im = sinIm.toString();
-                      productoInfo.xml_precio_final_con_im = conIm.toString();
-                      productoInfo.xml_precionfinalSin = sinIm.toString();
-                      productoInfo.xml_precionfinalCon = conIm.toString();
-                    }
-                    // String t = await productoInfo.fetchXML(
-                    //     http.Client(),
-                    //     productoInfo.xml_empresaElegida,   
-                    //     productoInfo.xml_FINAL);
-                    http.Response t = await productoInfo.sendXML();
+                    if (productoInfo.control_nombre_producto && productoInfo.control_nombre_producto
+                     && productoInfo.control_ticket){
+                                            productoInfo.xml_controller_expanded.expanded = false;
+                          productoInfo.xml_enabler = true;
+                          double sinIm = 0;
+                          double conIm = 0;
+                          for (CartitaProducto i in productoInfo.productosDB) {
+                            if (i.activo) {
+                              sinIm += double.parse(i.finalPrecio.text);
+                              conIm += double.parse(i.totalPrecioConImpuesto.text);
+                            }
+                                  sinIm = double.parse(sinIm.toStringAsFixed(2));
+                                  conIm = double.parse(conIm.toStringAsFixed(2));
 
-                    // String response = await productoInfo.fetchXML(http.Client(), productoInfo.xml_empresaElegida, productoInfo.xml_FINAL);
-
-                    
-                    return showDialog(
+                            productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                            productoInfo.xml_precio_final_con_im = conIm.toString();
+                            productoInfo.xml_precionfinalSin = sinIm.toString();
+                            productoInfo.xml_precionfinalCon = conIm.toString();
+                          }
+                          // String t = await productoInfo.fetchXML(
+                          //     http.Client(),
+                          //     productoInfo.xml_empresaElegida,   
+                          //     productoInfo.xml_FINAL);
+                          http.Response t = await productoInfo.sendXML();
+                          // String response = await productoInfo.fetchXML(http.Client(), productoInfo.xml_empresaElegida, productoInfo.xml_FINAL);
+                          
+                          return showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -373,6 +389,48 @@ class _FacturaPageState extends State<FacturaPage>
                         );
                       },
                     );
+                    
+                    }
+                    //retorna habiso de completacion de proceso
+                    else {
+                      //si solamente haya nommbre y productos
+                      if ( !productoInfo.control_nombre_producto && 
+                        productoInfo.control_factura && productoInfo.control_ticket ){
+                         return showDialog(
+                            context: context,
+                            builder: (context) {
+                              return this.mensaje("Para enviar al sri, agregar cliente y/o productos");
+                          }
+                        );
+                      }
+
+                        if ( productoInfo.control_nombre_producto && 
+                        !productoInfo.control_factura && productoInfo.control_ticket ){
+                         return showDialog(
+                            context: context,
+                            builder: (context) {
+                              return this.mensaje("Para enviar al sri, primero generar el ticket pdf");
+                          }
+                        );
+                      }
+
+                      if ( productoInfo.control_nombre_producto && 
+                        productoInfo.control_factura && !productoInfo.control_ticket ){
+                         return showDialog(
+                            context: context,
+                            builder: (context) {
+                              return this.mensaje("Para enviar al sri, primer generar la factura pdf");
+                          }
+                        );
+                      }else{
+                         return showDialog(
+                            context: context,
+                            builder: (context) {
+                              return this.mensaje("completar los procesos: \ndefinicion de datos(cliente, productos)\npdf (ticket y factura)");
+                          }
+                        );
+                      }
+                    }
                   },
                 ),
                 SpeedDialChild(

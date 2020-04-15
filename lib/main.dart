@@ -486,25 +486,25 @@ class _MyHomePageState extends State<MyHomePage> {
               Divider(
                 height: 3,
               ),
-              ListTile(
-                title: Row(
-                  children: <Widget>[
-                    Icon(Icons.person_add),
-                    Text(
-                      'Registrar Cliente',
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                   Navigator.push(context,
-                       MaterialPageRoute(builder: (context) => documeJson()));
-                },
-              ),
+              // ListTile(
+              //   title: Row(
+              //     children: <Widget>[
+              //       Icon(Icons.person_add),
+              //       Text(
+              //         'Registrar Cliente',
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ],
+              //   ),
+              //   onTap: () {
+              //     // Update the state of the app
+              //     // ...
+              //     // Then close the drawer
+              //     Navigator.pop(context);
+              //      Navigator.push(context,
+              //          MaterialPageRoute(builder: (context) => documeJson()));
+              //   },
+              // ),
               Divider(
                 height: 3,
               ),

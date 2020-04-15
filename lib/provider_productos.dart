@@ -76,7 +76,7 @@ class _StackProductosState extends State<StackProductos>
                       Text('\t    Agrega Concepto')
                     ],
                   ),
-                  color: Colors.blue,
+                  color: Color(0xFF478DE0),
                   onPressed: () {
                     Navigator.push(
                         context,
@@ -872,6 +872,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     return temp;
   }
 
+
   loginScreen.Empresas getEmpresaElegida(String codigo) {
     int temp = _empresas.indexWhere((empre) {
       if (empre.codigo == codigo) {
@@ -1580,7 +1581,54 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_enabler = cn;
   }
 
-  String _xml_razonSocial_comprador = "9999999999999";
+  String _xml_pdf_ticker_nombre = "";
+  get xml_pdf_ticker_nombre {
+    return this._xml_pdf_ticker_nombre;
+  }
+
+  set xml_pdf_ticker_nombre(String cn) {
+    this._xml_pdf_ticker_nombre = cn;
+  }
+
+//flags para control de proceso
+bool _control_nombre_producto = false;
+  get control_nombre_producto {
+    return this._control_nombre_producto;
+  }
+
+  set control_nombre_producto(bool cn) {
+    this._control_nombre_producto = cn;
+  }
+
+bool _control_ticket = false;
+  get control_ticket {
+    return this._control_ticket;
+  }
+
+  set control_ticket(bool cn) {
+    this._control_ticket = cn;
+  }
+
+
+bool _control_factura = false;
+  get control_factura {
+    return this._control_factura;
+  }
+
+  set control_factura(bool cn) {
+    this._control_factura = cn;
+  }
+
+  String _xml_pdf_factura = "";
+  get xml_pdf_factura {
+    return this._xml_pdf_factura;
+  }
+
+  set xml_pdf_factura(String cn) {
+    this._xml_pdf_factura = cn;
+  }
+
+  String _xml_razonSocial_comprador = "";
   get xml_razonSocial_comprador {
     return this._xml_razonSocial_comprador;
   }
@@ -1647,52 +1695,52 @@ class ProductosArrayInfo extends ChangeNotifier {
     },
     body: jsonEncode(<String, String>{
       "empresa_id": this.xml_empresaElegida,
-		"agenci_id": this.xml_agenciaElegida,
-		"numtrx_mcl": this.xml_secuencial,
-		"linea_mcl" : "1",
-		"fectrx_mcl" : this.xml_fecha,
-		"fecemi_mcl"  : this.xml_fecha,
-		"coddoc_mcl"  : "01",
-		"numdoc_mcl"  : "numero factura",
-		"numero_mcl"  : "numero factura",
-		"nutrap_mcl"  : this.xml_secuencial,
-		"codoap_mcl"  : "01",
-		"numapl_mcl"  : "numero factura",
-		"codcli_mcl"  : "codigo Cliente",
-		"codven_mcl"  : "codigo vendedor",
-		"refere_mcl"  : "numero factura",
-		"subtot_mcl"  : "subtotal de factura",
-		"descue_mcl"  : "descuecno de factura",
-		"propin_mcl"  : "propina de factura",
-		"otros_mcl"  : "0",
-		"iva_mcl"  : "iva de factura",
-		"ivacs_mcl"  : "0",
-		"ice_mcl"  : "0",
-		"flete_mcl"  : "0",
-		"total_mcl" : "",
-		"subiv1_mcl":	"Base 0% de IVA",
-	"subiv2_mcl":	"Base 12% de IVA",
-	"subsid_mcl":	"Subsidio de la factura",
-	"sinsub_mcl":	"Valor sin Subsidio",
-	"irbpnr_mcl":	"Impuesto redimible",
-	"nuaudo_mcl"	: "Numero de Acturización de la factura Ejemplo: 0304202001179184241300120010020000047440000699310",
-	"nusedo_mcl"	: "Punto de Venta + Emisión de la factura Ejemplo: 001-002",
-	"feaudo_mcl"	: "Fecha de la autorización de la factura respuesta del SRI, Ejemplo: 2020-04-03 14:00:13.000",
-	"claacc_mcl"	: "Clave de acceso de la factura: Ejemplo: 0304202001179184241300120010020000047440000699310",
-	"forpag_mcl"	: "Forma de Pago de la factura, ejemplo: 20",
-	"plazo_mcl"	: "Plazo de pago de la factura, ejemplo: 001 - Contado",
-	"nutrre_mcl"	: "",
-	"codore_mcl"	: "",
-	"nudore_mcl"	: "",
-	"observ_mcl"	: "Comentarios a la factura" ,
-	"motdev_mcl"	: "",
-	"estado_mcl":	"151=Emitida, 152=Autorizada y Enviada SRI",
-	"codusu_mcl":	this.xml_cod_comprador,
-	"fecusu_mcl":	this.xml_fecha,
-	// "usumod_mcl":	"Enviar este campo vacio, a menos que anule la factura pone el usuario que anulo la factura",
-	"usumod_mcl":	"",
-	// "fecmod_mcl":	"Enviar este campo vacio, a menos que anule la factura pone la fecha y hora que anulo la factura",
-	"fecmod_mcl":	"",
+      "agenci_id": this.xml_agenciaElegida,
+      "numtrx_mcl": this.xml_secuencial,
+      "linea_mcl" : "1",
+      "fectrx_mcl" : this.xml_fecha,
+      "fecemi_mcl"  : this.xml_fecha,
+      "coddoc_mcl"  : "01",
+      "numdoc_mcl"  : "numero factura",
+      "numero_mcl"  : "numero factura",
+      "nutrap_mcl"  : this.xml_secuencial,
+      "codoap_mcl"  : "01",
+      "numapl_mcl"  :  this.xml_estab+this.xml_ptoEmi+this.xml_secuencial, //"numero factura",
+      "codcli_mcl"  :  this.xml_cod_comprador ,//"codigo Cliente",
+      "codven_mcl"  :  this.xml_cod_vendedor,  //"codigo vendedor",
+      "refere_mcl"  :  this.xml_estab+this.xml_ptoEmi+this.xml_secuencial,  // "numero factura",
+      "subtot_mcl"  :  "subtotal de factura",
+      "descue_mcl"  :  "descuecno de factura",
+      "propin_mcl"  :  "0" , // "propina de factura",
+      "otros_mcl"  : "0",
+      "iva_mcl"  : "iva de factura",
+      "ivacs_mcl"  : "0",
+      "ice_mcl"  : "0",
+      "flete_mcl"  : "0",
+      "total_mcl" : "",
+      "subiv1_mcl":	"Base 0% de IVA",
+      "subiv2_mcl":	"Base 12% de IVA",
+      "subsid_mcl":	"Subsidio de la factura",
+      "sinsub_mcl":	"Valor sin Subsidio",
+      "irbpnr_mcl":	"Impuesto redimible",
+      "nuaudo_mcl"	: "Numero de Acturización de la factura Ejemplo: 0304202001179184241300120010020000047440000699310",
+      "nusedo_mcl"	: "Punto de Venta + Emisión de la factura Ejemplo: 001-002",
+      "feaudo_mcl"	: "Fecha de la autorización de la factura respuesta del SRI, Ejemplo: 2020-04-03 14:00:13.000",
+      "claacc_mcl"	: "Clave de acceso de la factura: Ejemplo: 0304202001179184241300120010020000047440000699310",
+      "forpag_mcl"	: "Forma de Pago de la factura, ejemplo: 20",
+      "plazo_mcl"	: "Plazo de pago de la factura, ejemplo: 001 - Contado",
+      "nutrre_mcl"	: "",
+      "codore_mcl"	: "",
+      "nudore_mcl"	: "",
+      "observ_mcl"	: "Comentarios a la factura" ,
+      "motdev_mcl"	: "",
+      "estado_mcl":	"151=Emitida, 152=Autorizada y Enviada SRI",
+      "codusu_mcl":	this.xml_cod_comprador,
+      "fecusu_mcl":	this.xml_fecha,
+      // "usumod_mcl":	"Enviar este campo vacio, a menos que anule la factura pone el usuario que anulo la factura",
+      "usumod_mcl":	"",
+      // "fecmod_mcl":	"Enviar este campo vacio, a menos que anule la factura pone la fecha y hora que anulo la factura",
+      "fecmod_mcl":	"",
     }),
   );
 }
@@ -1811,6 +1859,12 @@ Future<http.Response> createAlbum(String title) {
       'http://167.172.203.137/services/mssql/send',
       body: map,
     );
+  }
+  
+
+  void get_empresa_logo() {
+
+
   }
   // A function that converts a response body into a List<Photo>.
   // List<PhotoSRI> parsePhotos(String responseBody) {
