@@ -152,6 +152,12 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "flutter_downloader",
+      "rootUri": "file:///C:/Users/lubeck/Downloads/flutter_windows/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_downloader-1.4.4",
+      "packageUri": "lib/",
+      "languageVersion": "1.20"
+    },
+    {
       "name": "flutter_email_sender",
       "rootUri": "file:///C:/Users/lubeck/Downloads/flutter_windows/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_email_sender-2.2.2",
       "packageUri": "lib/",
@@ -506,7 +512,7 @@
       "languageVersion": "2.1"
     }
   ],
-  "generated": "2020-04-09T04:04:12.926425Z",
+  "generated": "2020-04-22T00:56:03.493644Z",
   "generator": "pub",
   "generatorVersion": "2.7.0"
 }

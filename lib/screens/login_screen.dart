@@ -493,11 +493,9 @@ class _LoginScreenState extends State<LoginScreen> {
           //Para test
           // Navigator.pushReplacement(//ProductosJsonSearchPage MyApp
           //     context, MaterialPageRoute(builder: (context) => MyApp()));
-
           //FINAL
           // Navigator.pushReplacement(//ProductosJsonSearchPage MyApp
           //         context, MaterialPageRoute(builder: (context) => MyApp()));
-
           List<Photo> temp = await fetchPhotos(http.Client());
           for (Photo item in temp) {
             print("datos puestos : ");
@@ -505,7 +503,6 @@ class _LoginScreenState extends State<LoginScreen> {
             print(this._pass.text);
             //asigna en provider
             productoInfo.xml_cod_vendedor = this._user.text;
-
             if (item.codigo_usu == this._user.text &&
                 item.clave_usu == this._pass.text) {
               this._claveCorrecta = true;
@@ -698,7 +695,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: BoxDecoration(  
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

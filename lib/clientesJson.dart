@@ -34,37 +34,8 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
 
   //  dynamic o = fetchPhotos(http.Client());
   Future<List<Photo>> _getALlPosts(String text) async {
-    //await Future.delayed(Duration(seconds: text.length == 4 ? 1 : 1));
-    // if (isReplay) return [Post("Replaying !", "Replaying body")];
-    // if (text.length == 5) throw Error();
-    // if (text.length == 6) return [];
-    // List<Post> posts = [];
     List<Photo> t = await fetchClientes(http.Client(), text,"10004");//cambiar
-    //List<Photo> t = await fetchPhotos(http.Client());
-    //print("gol > "+temporal.length.toString());
-    // List<Photo> temi = [];
-    // for (Photo item in t) {
-    //   if (item.codigo_art.contains(text.toUpperCase()) ||
-    //       item.nombre_art.contains(text.toUpperCase())) {
-    //     temi.add(item);
-    //   }
-    // }
     return t;
-    // return List.generate(text.length, (int index) {
-    //   t.
-    // return Photo(nombre_art: "$text $index",
-    // codigo_art: "$text $index"
-    //   //"def :$text $index",
-    //   );
-    // });
-    // final productoInfo=Provider.of<ProductosArrayInfo>(context);
-    // posts = productoInfo.productosJson;
-    // var random = new Random();
-    // for (int i = 0; i < 10; i++) {
-    //   posts.add(Post("$text $i", "body random number : ${random.nextInt(100)}"));
-    // }
-    //return posts;
-    // return t;
   }
 
   @override
@@ -80,7 +51,11 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
           searchBarPadding: EdgeInsets.symmetric(horizontal: 15),
           headerPadding: EdgeInsets.symmetric(horizontal: 10),
           listPadding: EdgeInsets.symmetric(horizontal: 10),
-          onSearch: _getALlPosts,
+          // onSearch: _getALlPosts,
+          onSearch: (texto)async{
+            List<Photo> t = await fetchClientes(http.Client(), texto,productoInfo.xml_empresaElegida);//cambiar
+            return t;
+          },
           searchBarController: _searchBarController,
           placeHolder: Center(
             child: 
@@ -94,7 +69,7 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
           cancellationWidget: Text("Cancel"),
           emptyWidget: Text("empty"),
           indexedScaledTileBuilder: (int index) =>
-              ScaledTile.count(3, 0.25), //, //index.isEven ? 2 : 1),
+              ScaledTile.count(3, 0.27), //, //index.isEven ? 2 : 1),
           header: Row(
             children: <Widget>[
               // RaisedButton(
@@ -148,14 +123,13 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
                   // );
 
                   ClienteElegido cli = new ClienteElegido(nombre: post.nombre_cli,
-                  codigo: post.codigo_cli,ruc: post.rucci_cli,email: post.telefo_cli); 
+                  codigo: post.codigo_cli, ruc: post.rucci_cli,email: post.email_cli ); 
                   //actualiza todos los datos del cloente
                   productoInfo.clienteActual = cli;
                   productoInfo.xml_ruc_comprador = post.rucci_cli;
                   productoInfo.xml_cod_comprador = post.codigo_cli;
                   productoInfo.xml_razonSocial_comprador = post.nombre_cli;
-                  
-
+                  productoInfo.xml_email_comprador = post.email_cli;
                 }),
                 title: Text(post.nombre_cli,textAlign: TextAlign.center),
                 isThreeLine: true,
@@ -163,7 +137,8 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
                   children: <Widget>[
                     Text("cod. cliente : "+post.codigo_cli),
                     Text("R.U.C.: "+post.rucci_cli),
-                    Text("email : "+post.telefo_cli),
+                    Text("email : "+post.email_cli),
+                    Text("telefono : "+post.telefo_cli),
                     // Text(post.),
                   ],
                 ),
@@ -256,6 +231,7 @@ class Photo {
   final String rucci_cli;
   final String direcc_cli;
   final String telefo_cli;
+  final String email_cli;
 
 //  Photo({this.albumId, this.id, this.title, this.url, this.thumbnailUrl});
   Photo(
@@ -264,7 +240,9 @@ class Photo {
       this.razsoc_cli,
       this.rucci_cli,
       this.direcc_cli,
-      this.telefo_cli
+      this.telefo_cli,
+      this.email_cli
+
       }); //this.cod_corregir, this.nombre_principal,
 //    this.rgb, this.color, this.accion, this.observaciones, this.codificacion, this.des_codificacion, this.aux});
 
@@ -276,6 +254,7 @@ class Photo {
       rucci_cli:  json['rucci_cli'],
       direcc_cli: json['direcc_cli'],
       telefo_cli: json['telefo_cli'],
+      email_cli: json['email_cli'],
     );
   }
 }

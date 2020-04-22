@@ -258,7 +258,6 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                       }
                     }
 
-                    
                     //genera el pdf nombre
                     final p =
                         await http.post('http://167.172.203.137/getpdfticketname',
@@ -275,7 +274,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                               'dirMatriz':productoInfo.xml_dirMatriz,
                               'fecha':productoInfo.xml_fecha,
                               'secuencial':productoInfo.xml_secuencial,
-                              'factura_no':productoInfo.xml_estab +"-"+ productoInfo.ptoEmi+"-"+ productoInfo.xml_secuencial,
+                              'factura_no':productoInfo.xml_estab.toString() +"-"+ productoInfo.ptoEmi.toString()+"-"+ productoInfo.xml_secuencial.toString(),
                               // 'fecha':productoInfo,
                               //'xml':productoInfo.xml_FINAL,
                               'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
@@ -294,6 +293,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                         "http://167.172.203.137/getpdfticket/" + nombreTicket);
                     // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
                     setState(() => _isLoading = false);
+                    productoInfo.control_ticket = true;
                   }),
                   VerticalDivider(),
                   RaisedButton(

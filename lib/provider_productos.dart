@@ -364,22 +364,23 @@ class CartitaProducto extends StatelessWidget {
         child: Card(
             child: Column(
           children: <Widget>[
-            Divider(),
+            // Divider(),
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: 60,
-                    height: 30,
-                    child: RaisedButton(
+                  padding: const EdgeInsets.only(left: 7),
+                  child: ButtonTheme(
+                            minWidth: 8.0,
+                            height: 30.0,
+                                      child: RaisedButton(
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(29.0),
+                            borderRadius: new BorderRadius.circular(1.0),
                             side: BorderSide(color: Colors.red)),
                         color: Colors.red,
                         child: Icon(
                           Icons.close,
                           color: Colors.white,
+                          size: 15,
                         ),
                         onPressed: () {
                           control.expanded = true;
@@ -390,14 +391,18 @@ class CartitaProducto extends StatelessWidget {
                 ),
                 VerticalDivider(),
                 SizedBox(
-                  child: Column(
-                    children: <Widget>[
-                      Text(this.nombre),
-                      Text(this.codigo),
-                      Divider(),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(this.nombre,style: TextStyle(fontSize: 17),),
+                        Text(this.codigo),
+                        Divider(),
+                      ],
+                    ),
                   ),
                 ),
+                // Text("asda")
               ],
             ),
             Divider(),
@@ -567,6 +572,24 @@ class CartitaProducto extends StatelessWidget {
                 // )
               ],
             ),
+            Divider(),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left:7),
+                  child: RaisedButton(
+                    color: Colors.green,
+                    child: Text("Consulta Descuento", style: TextStyle(color: Colors.white),),
+                    onPressed: (){
+                    print ("ge");
+                  }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left:40),
+                  child: Text("Disponible: 0"),
+                ),
+              ],
+            )
             // Text(this.totalPrecioConImpuesto.text)
           ],
         )),
@@ -623,6 +646,7 @@ class ClienteElegido extends StatelessWidget {
   String codigo;
   String ruc;
   String email;
+  String telefono;
   ClienteElegido({this.nombre, this.codigo, this.ruc, this.email});
 
   void updateData(String nom, String cod, String ruce, String ema) {
@@ -644,7 +668,7 @@ class ClienteElegido extends StatelessWidget {
           ),
           Align(alignment: Alignment.centerLeft, child: Text("Codigo Cliente : " + this.codigo)),
           Align(alignment: Alignment.centerLeft , child: Text("R.U.C.  : " + this.ruc)),
-          Align(alignment: Alignment.centerLeft ,child: Text("Telefono : " + this.email)),
+          // Align(alignment: Alignment.centerLeft ,child: Text("Telefono : " + this.telefono)),
           Align(alignment: Alignment.centerLeft ,child: Text("Email    : " + this.email)),
         ],
       ),
@@ -1206,6 +1230,17 @@ class ProductosArrayInfo extends ChangeNotifier {
   set xml_cod_vendedor(String cn) {
     this._xml_cod_vendedor = cn;
   }
+
+
+String _xml_email_comprador = "";
+  get xml_email_comprador {
+    return this._xml_email_comprador;
+  }
+
+  set xml_email_comprador(String cn) {
+    this._xml_email_comprador = cn;
+  }
+
 
   String _xml_precio_final_sin_im = "";
   get xml_precio_final_sin_im {

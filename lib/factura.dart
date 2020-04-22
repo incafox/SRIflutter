@@ -189,7 +189,11 @@ class _FacturaPageState extends State<FacturaPage>
             ),
             actions: <Widget>[
               new GestureDetector(
-                onTap: () => Navigator.of(context).pop(false),
+                onTap: () { 
+                  productoInfo.control_factura = false;
+                  productoInfo.control_ticket = false;
+                  Navigator.of(context).pop(false);
+                  },
                 child: roundedButton("No", Colors.red, const Color(0xFFFFFFFF)),
                 //FlatButton(color: Colors.green,child: Text('NO'),),
               ),
@@ -347,32 +351,37 @@ class _FacturaPageState extends State<FacturaPage>
                     //   print (item);
                     // }
 
+                    productoInfo.xml_controller_expanded.expanded = false;
+                    productoInfo.xml_enabler = true;
+                    double sinIm = 0;
+                    double conIm = 0;
+                    int contador = 0;
+                    for (CartitaProducto i in productoInfo.productosDB) {
+                      if (i.activo) {
+                        contador+=1;
+                        sinIm += double.parse(i.finalPrecio.text);
+                        conIm += double.parse(i.totalPrecioConImpuesto.text);
+                      }
+                            sinIm = double.parse(sinIm.toStringAsFixed(2));
+                            conIm = double.parse(conIm.toStringAsFixed(2));
+
+                      productoInfo.xml_precio_final_sin_im = sinIm.toString();
+                      productoInfo.xml_precio_final_con_im = conIm.toString();
+                      productoInfo.xml_precionfinalSin = sinIm.toString();
+                      productoInfo.xml_precionfinalCon = conIm.toString();
+                    }
+                    String temporalxc = productoInfo.xml_cod_comprador;
+                    if (temporalxc.length > 0 && contador >0){
+                      productoInfo.control_nombre_producto = true;
+                    }
                     if (productoInfo.control_nombre_producto && productoInfo.control_nombre_producto
                      && productoInfo.control_ticket){
-                                            productoInfo.xml_controller_expanded.expanded = false;
-                          productoInfo.xml_enabler = true;
-                          double sinIm = 0;
-                          double conIm = 0;
-                          for (CartitaProducto i in productoInfo.productosDB) {
-                            if (i.activo) {
-                              sinIm += double.parse(i.finalPrecio.text);
-                              conIm += double.parse(i.totalPrecioConImpuesto.text);
-                            }
-                                  sinIm = double.parse(sinIm.toStringAsFixed(2));
-                                  conIm = double.parse(conIm.toStringAsFixed(2));
-
-                            productoInfo.xml_precio_final_sin_im = sinIm.toString();
-                            productoInfo.xml_precio_final_con_im = conIm.toString();
-                            productoInfo.xml_precionfinalSin = sinIm.toString();
-                            productoInfo.xml_precionfinalCon = conIm.toString();
-                          }
                           // String t = await productoInfo.fetchXML(
                           //     http.Client(),
                           //     productoInfo.xml_empresaElegida,   
                           //     productoInfo.xml_FINAL);
                           http.Response t = await productoInfo.sendXML();
                           // String response = await productoInfo.fetchXML(http.Client(), productoInfo.xml_empresaElegida, productoInfo.xml_FINAL);
-                          
                           return showDialog(
                       context: context,
                       builder: (context) {

@@ -332,7 +332,7 @@ class _FormEmisorState extends State<FormEmisor> {
             ),
             CardSettingsText(controller: controller_ptoEmi,
               labelWidth: 150,
-              hintText: 'punto de emision',
+              hintText: 'punto de emission',   
               label: 'Punto Emision',
               // initialValue: productoInfo.xml_ptoEmi,
               initialValue: productoInfo.xml_agenciaElegida

@@ -254,6 +254,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                         "http://167.172.203.137/getpdfticket/" + nombreTicket);
                     // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
                     setState(() => _isLoading = false);
+                    productoInfo.control_factura = true;
                   }),
                   VerticalDivider(),
                   RaisedButton(
@@ -263,9 +264,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                     child: Text("Descargar PDF",style: TextStyle(color: Colors.white),)
                     ,color:Colors.green
                     ,onPressed: (){
-
                     })
-                  
             ],
           ),
         ),
