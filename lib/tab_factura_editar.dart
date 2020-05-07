@@ -34,6 +34,171 @@ import 'singleton_formulario_actual.dart' as singleton;
 //     return Column(children: this.productos.toList(),);
 //   }
 // }
+class PreciosFinales extends StatefulWidget {
+  @override
+  _PreciosFinalesState createState() => _PreciosFinalesState();
+}
+
+class _PreciosFinalesState extends State<PreciosFinales> {
+  @override
+  Widget build(BuildContext context) {
+    final productoInfo = Provider.of<ProductosArrayInfo>(context);
+    return Card(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                          width: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Text(
+                              "Subtotal 12% :",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                      Container(
+                        height: 20,
+                        width: 100,
+                        child: TextField(
+                          style: TextStyle(fontSize: 14),
+                          decoration: null,
+                          enabled: false,
+                          controller: productoInfo.xml_subtotal_12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                          width: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Text(
+                              "Subtotal 0% :",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                      Container(
+                        height: 20,
+                        width: 100,
+                        child: TextField(
+                          style: TextStyle(fontSize: 14),
+                          decoration: null,
+                          enabled: false,
+                          controller: productoInfo.xml_subtotal_0,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        height: 21,
+                          width: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Text(
+                              "Descuento :",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                      Text("0.0"),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        height: 21,
+                          width: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Text(
+                              "Subtotal :",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                      Container(
+                        height: 21,
+                        width: 100,
+                        child: TextField(
+                          style: TextStyle(fontSize: 14),
+                          decoration: null,
+                          enabled: false,
+                          controller:
+                          productoInfo.xml_precio_final_sin_im_controller,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        height: 21,
+                          width: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Text(
+                              "IVA 12% :",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                      Container(width: 100,
+                        height: 21,
+                        child: TextField(
+                          style: TextStyle(fontSize: 14),
+                          decoration: null,
+                          enabled: false,
+                          controller: productoInfo.xml_iva12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                          width: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: Text(
+                              "Total :",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                      Container(
+                        height: 21,
+                        width: 100,
+                        child: TextField(
+                          style: TextStyle(fontSize: 14),
+                          decoration: null,
+                          enabled: false,
+                          controller:
+                              productoInfo.xml_precio_final_con_im_controller,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class StackProductos extends StatefulWidget {
   @override
@@ -67,7 +232,10 @@ class _StackProductosState extends State<StackProductos> {
           children: <Widget>[
             SizedBox(
               width: 200,
-              child: MaterialButton(
+              child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0),
+                      side: BorderSide(color: Colors.red)),
                   textColor: Colors.white,
                   child: Row(
                     children: <Widget>[
@@ -83,7 +251,6 @@ class _StackProductosState extends State<StackProductos> {
                             indice: this.productos.length,
                           ));
                       productoInfo.productos = this.productos;
-
                       // print ('eee');
                       // List<Widget> todos = productoInfo.productos;
                       // print (todos.length);
@@ -140,6 +307,28 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
     getSharedPrefs();
   }
 
+  void update_prices(ProductosArrayInfo productoInfo) async {
+    //ProductosArrayInfo
+    productoInfo.xml_controller_expanded.expanded = false;
+    productoInfo.xml_enabler = true;
+    double sinIm = 0;
+    double conIm = 0;
+    for (CartitaProducto i in productoInfo.productosDB) {
+      if (i.activo) {
+        sinIm += double.parse(i.finalPrecioSinImpuesto.text);
+        conIm += double.parse(i.totalPrecioConImpuesto.text);
+      }
+      print("sin impuesto  " + finalPrice.text);
+      print("con impuesto  " + finalPriceConIM.text);
+      this.finalPrice.text = sinIm.toString();
+      this.finalPriceConIM.text = conIm.toString();
+      productoInfo.xml_precio_final_sin_im = sinIm.toString();
+      productoInfo.xml_precionfinalSin = sinIm.toString();
+      productoInfo.xml_precionfinalCon = conIm.toString();
+      productoInfo.xml_precio_final_con_im = conIm.toString();
+    }
+  }
+
   Future<Null> getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -187,90 +376,6 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
     // productoInfo.addProducto();
     // productoInfo.addProducto();
     // productoInfo.addProducto();
-
-    Table tab = new Table(
-      columnWidths: const <int, TableColumnWidth>{
-        0: FlexColumnWidth(30.0),
-        1: FlexColumnWidth(50.0),
-      },
-      border: TableBorder.all(color: Colors.black45),
-      children: [
-        TableRow(children: [
-          Text('\tAmbiente'),
-          Text(this.controller_ambiente.text),
-          // Text(productoInfo.ambiente),
-        ]),
-        TableRow(children: [
-          Text('\tTipo emision'),
-          Text(this.controller_tipoEmision.text),
-        ]),
-        TableRow(children: [
-          Text('\tRazon social'),
-          Text(this.controller_razonSocial.text),
-        ]),
-        TableRow(children: [
-          Text('\tRuc'),
-          Text(this.controller_ruc.text),
-        ]),
-        // TableRow(children: [
-        //   Text('\tClave acceso'),
-        //   Text(this.controller_claveAcceso.text),
-        // ]),
-        TableRow(children: [
-          Text('\tCodigo documentario'),
-          Text(this.controller_codDoc.text),
-        ]),
-        TableRow(children: [
-          Text('\tEstablecimiento'),
-          Text(this.controller_estab.text),
-        ]),
-        TableRow(children: [
-          Text('\tPunto de emision'),
-          Text(this.controller_ptoEmi.text),
-        ]),
-        TableRow(children: [
-          Text('\tSecuencial'),
-          Text(this.controller_secuencial.text),
-        ]),
-        TableRow(children: [
-          Text('\tDir matriz'),
-          Text(this.controller_dirMatriz.text),
-        ])
-      ],
-    );
-
-    Table tabDatosCliente = new Table(
-        columnWidths: const <int, TableColumnWidth>{
-          0: FlexColumnWidth(30.0),
-          1: FlexColumnWidth(50.0),
-        },
-        border: TableBorder.all(color: Colors.black45),
-        children: [
-          TableRow(children: [
-            Text('\tRazon Social'),
-            Text(productoInfo.cliente_razonSocial),
-          ]),
-          TableRow(children: [
-            Text('\tEmail'),
-            Text(productoInfo.cliente_email),
-          ]),
-          TableRow(children: [
-            Text('\tDireccion'),
-            Text(productoInfo.cliente_direccion),
-          ]),
-          TableRow(children: [
-            Text('\tContabilidad'),
-            Text(productoInfo.cliente_contabilidad),
-          ]),
-          TableRow(children: [
-            Text('\ttipo identificacion'),
-            Text(productoInfo.cliente_tipoIdentificacion),
-          ]),
-          TableRow(children: [
-            Text('\tIdentificacion'),
-            Text(productoInfo.cliente_identificacion),
-          ]),
-        ]);
 
     return Container(
       color: Colors.black12,
@@ -420,7 +525,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                       Column(
                         children: <Widget>[
                           Container(
-                            height: 45,
+                            height: 41,
                           ),
                           //PARA CONTENIDO
                           // Container(
@@ -435,22 +540,29 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                               children: <Widget>[
                                 productoInfo.clienteActual,
                                 // productoInfo.clienteElegido,
-                                MaterialButton(
-                                    textColor: Colors.white,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(Icons.add_box),
-                                        Text('\t      Elegir Cliente')
-                                      ],
-                                    ),
-                                    color: Color(0xFF478DE0),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ClientesJsonSearchPage()));
-                                    }),
+                                SizedBox(width: 200,
+                                                                  child: RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(20.0),
+                                          side: BorderSide(
+                                              color: Color(0xFF478DE0))),
+                                      textColor: Colors.white,
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(Icons.add_box),
+                                          Text('\t      Elegir Cliente')
+                                        ],
+                                      ),
+                                      color: Color(0xFF478DE0),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ClientesJsonSearchPage()));
+                                      }),
+                                ),
                                 // MaterialButton(
                                 // textColor: Colors.white,
                                 // child: Row(
@@ -465,7 +577,6 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                                 //   //     context,
                                 //   //     MaterialPageRoute(
                                 //   //         builder: (context) => ClientesJsonSearchPage()));
-
                                 // })
                               ],
                             ),
@@ -517,8 +628,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                             Container(
                               height: 35,
                             ),
-
-//                                  .text), //= new TextEditingController(text: prefs.getString("secuencial"));
+                            //.text), //= new TextEditingController(text: prefs.getString("secuencial"));
                           ],
                         ),
                       )
@@ -530,7 +640,6 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
               color: Colors.white,
             ),
           ),
-
           productoInfo.stack,
           //StackProductos(),
           Column(
@@ -744,7 +853,7 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                         height: 35.0,
                         child: Center(
                           child: Text(
-                            'Total',
+                            '',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
@@ -758,32 +867,38 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
                             Container(
                               height: 35,
                             ),
-                            RaisedButton(
-                                child: Text("Calcular Precio Total"),
-                                onPressed: () {
-                                  productoInfo
-                                      .xml_controller_expanded.expanded = false;
-                                  productoInfo.xml_enabler = true;
-                                  double sinIm = 0;
-                                  double conIm = 0;
-                                  for (CartitaProducto i
-                                      in productoInfo.productosDB) {
-                                    if (i.activo) {
-                                      sinIm += double.parse(i.finalPrecio.text);
-                                      conIm += double.parse(
-                                          i.totalPrecioConImpuesto.text);
-                                    }
-                                    print("sin impuesto  " + finalPrice.text);
-                                    print("con impuesto  " +
-                                        finalPriceConIM.text);
-                                    this.finalPrice.text = sinIm.toString();
-                                    this.finalPriceConIM.text = conIm.toString();
-                                    productoInfo.xml_precio_final_sin_im = sinIm.toString();
-                                    productoInfo.xml_precionfinalSin = sinIm.toString();
-                                    productoInfo.xml_precionfinalCon = conIm.toString();
-                                    productoInfo.xml_precio_final_con_im = conIm.toString();
-                                  }
-                                }),
+                            // RaisedButton(
+                            //     child: Text("Calcular Precio Total"),
+                            //     onPressed: () {
+                            //       //ProductosArrayInfo
+                            //       productoInfo
+                            //           .xml_controller_expanded.expanded = false;
+                            //       productoInfo.xml_enabler = true;
+                            //       double sinIm = 0;
+                            //       double conIm = 0;
+                            //       for (CartitaProducto i
+                            //           in productoInfo.productosDB) {
+                            //         if (i.activo) {
+                            //           sinIm += double.parse(i.finalPrecio.text);
+                            //           conIm += double.parse(
+                            //               i.totalPrecioConImpuesto.text);
+                            //         }
+                            //         print("sin impuesto  " + finalPrice.text);
+                            //         print("con impuesto  " +
+                            //             finalPriceConIM.text);
+                            //         this.finalPrice.text = sinIm.toString();
+                            //         this.finalPriceConIM.text =
+                            //             conIm.toString();
+                            //         productoInfo.xml_precio_final_sin_im =
+                            //             sinIm.toString();
+                            //         productoInfo.xml_precionfinalSin =
+                            //             sinIm.toString();
+                            //         productoInfo.xml_precionfinalCon =
+                            //             conIm.toString();
+                            //         productoInfo.xml_precio_final_con_im =
+                            //             conIm.toString();
+                            //       }
+                            //     }),
 
                             // if (productoInfo.xml_enabler == true)
                             //   new Container(
@@ -841,63 +956,68 @@ class _TabFacturaEditarState extends State<TabFacturaEditar>
             ),
           ),
           // Text(productoInfo.xml_precionfinalSin),
-          // Text(productoInfo.xml_precionfinalCon),
-          ExpandablePanel(
-            controller: productoInfo.xml_controller_expanded,
-            header: null,
-            collapsed: Padding(
-              padding: const EdgeInsets.only(left: 5, right: 5),
-              child: Container(
-                // height: 55,
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text("       Total sin impuesto :   "),
-                        Container(
-                          width: 150,
-                          child: TextField(
-                            readOnly: true,
-                            maxLines: 1,
-                            controller: this.finalPrice,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                // border: InputBorder.,
-                                hintText: 'Cantidad'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text("       Total con impuesto :   "),
-                        Container(
-                          width: 150,
-                          child: TextField(
-                            readOnly: true,
-                            maxLines: 1,
-                            controller: this.finalPriceConIM,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                // border: InputBorder.,
-                                hintText: 'Cantidad'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            expanded: Container(
-              child: Card(),
-              height: 15,
-              color: Colors.white,
-            ),
-            tapHeaderToExpand: false,
-            hasIcon: false,
-          )
+          // Text(productoInfo.xml_precio_final_con_im),
+          // ExpandablePanel(
+          //   controller: productoInfo.xml_controller_expanded,
+          //   header: null,
+          //   collapsed: Padding(
+          //     padding: const EdgeInsets.only(left: 5, right: 5),
+          //     child: Container(
+          //       // height: 55,
+          //       color: Colors.white,
+          //       child: Column(
+          //         children: <Widget>[
+          //           Row(
+          //             children: <Widget>[
+          //               Text("       Total sin impuesto :   "),
+          //               Container(
+          //                 width: 150,
+          //                 child: TextField(
+          //                   readOnly: true,
+          //                   maxLines: 1,
+          //                   controller: this.finalPrice,
+          //                   keyboardType: TextInputType.number,
+          //                   decoration: InputDecoration(
+          //                       // border: InputBorder.,
+          //                       hintText: 'Cantidad'),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           Row(
+          //             children: <Widget>[
+          //               Text("       Total con impuesto :   "),
+          //               // Text(productoInfo.xml_precio_final_con_im),
+          //               // Text(productoInfo.xml_precio_final_sin_im),
+          //               Container(
+          //                 width: 150,
+          //                 child: TextField(
+          //                   readOnly: true,
+          //                   maxLines: 1,
+          //                   // controller: this.finalPriceConIM,
+          //                   controller:
+          //                       productoInfo.xml_precio_final_con_im_controller ,
+          //                   keyboardType: TextInputType.number,
+          //                   decoration: InputDecoration(
+          //                       // border: InputBorder.,
+          //                       hintText: 'Cantidad'),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          //   expanded: Container(
+          //     child: Card(),
+          //     height: 15,
+          //     color: Colors.white,
+          //   ),
+          //   tapHeaderToExpand: false,
+          //   hasIcon: false,
+          // ),
+          PreciosFinales()
 
           // TextField(controller: this.finalPriceSIN ,),
           // TextField(controller: this.finalPriceCON ,),

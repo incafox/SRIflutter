@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
+import 'package:open_file/open_file.dart';
 import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -113,6 +115,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp> {
   bool _isLoading = true;
   PDFDocument document;
+  var dio = Dio();
 
   @override
   void initState() {
@@ -155,6 +158,35 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
     );
   }
 
+ void showDownloadProgress(received, total) {
+    if (total != -1) {
+      print((received / total * 100).toStringAsFixed(0) + "%");
+    }
+  }
+  Future download2(Dio dio, String url, String savePath) async {
+    try {
+      Response response = await dio.get(
+        url,
+        onReceiveProgress: showDownloadProgress,
+        //Received data with List<int>
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
+      print(response.headers);
+      File file = File(savePath);
+      var raf = file.openSync(mode: FileMode.write);
+      // response.data is List<int> type
+      raf.writeFromSync(response.data);
+      await raf.close();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<void> enviaTicket(BuildContext contextxxx)async{
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
 
@@ -168,7 +200,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                           "nombre":i.nombre,
                           "cantidad":i.cantidad.toString(),
                           "unitario":i.actualPrecio.text,
-                          "total": i.finalPrecio.text,
+                          "total": i.finalPrecioSinImpuesto.text,
                           "impuesto": i.impuestoDescripcion.text,
                           // "dscsf": send
                         } ;
@@ -250,7 +282,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                               "nombre":i.nombre,
                               "cantidad":i.cantidad.toString(),
                               "unitario":i.actualPrecio.text,
-                              "total": i.finalPrecio.text,
+                              "total": i.finalPrecioSinImpuesto.text,
                               "impuesto": i.impuestoDescripcion.text,
                               // "dscsf": send
                             } ;
@@ -287,8 +319,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                     print(p.body.toString());  
                     String nombreTicket = p.body.toString();
                     //asigna nombre del pdf para poder bajarlo luego
-                    productoInfo.xml_pdf_ticker_nombre = nombreTicket;
-
+                    productoInfo.xml_pdf_factura = nombreTicket;
                     document = await PDFDocument.fromURL(
                         "http://167.172.203.137/getpdfticket/" + nombreTicket);
                     // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
@@ -300,10 +331,17 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                      shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30.0),
                   ),
-                    child: Text("Descargar PDF",style: TextStyle(color: Colors.white),)
+                    child: Text("Abrir PDF Ticket",style: TextStyle(color: Colors.white),)
                     ,color:Colors.green
-                    ,onPressed: (){
-
+                    ,onPressed: ()async{
+                      String urlTemp = "http://167.172.203.137/getpdfticket/" + productoInfo.xml_pdf_factura;
+                      var tempDir = await getTemporaryDirectory();
+                      String fullPath = tempDir.path + "/${productoInfo.xml_pdf_ticker_nombre}";
+                      // print('full path ${fullPath}');
+                      download2(dio, urlTemp, fullPath);
+                      // var file = await cache_manager.DefaultCacheManager().getSingleFile(urlTemp);
+                      // OpenFile.open(file.path);
+                      OpenFile.open(fullPath);
                     })
 
             ],

@@ -1,9 +1,7 @@
 import 'dart:ffi';
-// import 'dart:html';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,16 +9,13 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-
 import 'form_descripcion.dart';
 import 'package:flutter_final_sri/productosJson.dart';
-
 import 'package:flutter_final_sri/screens/login_screen.dart' as loginScreen;
 
 class StackProductos extends StatefulWidget {
   @override
   final globalKey = GlobalKey<_StackProductosState>();
-
   @override
   _StackProductosState createState() => _StackProductosState();
 }
@@ -28,7 +23,6 @@ class StackProductos extends StatefulWidget {
 class _StackProductosState extends State<StackProductos>
     with AutomaticKeepAliveClientMixin<StackProductos> {
   List<Widget> productos;
-  // CardProduct t = CardProduct();
 
   List<String> getProductos() {
     List<String> descrip = [];
@@ -68,12 +62,15 @@ class _StackProductosState extends State<StackProductos>
           children: <Widget>[
             SizedBox(
               width: 200,
-              child: MaterialButton(
+              child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0),
+                      side: BorderSide(color: Color(0xFF478DE0))),
                   textColor: Colors.white,
                   child: Row(
                     children: <Widget>[
                       Icon(Icons.add_box),
-                      Text('\t    Agrega Concepto')
+                      Text('\t    Agrega Concepto'),
                     ],
                   ),
                   color: Color(0xFF478DE0),
@@ -92,6 +89,47 @@ class _StackProductosState extends State<StackProductos>
                     //   // List<Widget> todos = productoInfo.productos;
                     // });
                   }),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(0.2),
+              child: Row(
+                children: <Widget>[
+                  Card(
+                    child: SizedBox(
+                        width: 140,
+                        child: Center(
+                            child: Text("Producto",
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold )))),
+                  ),
+                  Expanded(
+                                      child: Card(
+                        child: SizedBox(
+                            width: 80,
+                            child: Center(
+                                child: Text(
+                              "Cantidad",
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))))),
+                  ),
+                  Expanded(
+                                      child: Card(
+                        child: SizedBox(
+                            width: 80,
+                            child: Center(
+                                child: Text("Unidad",
+                                    style: TextStyle(
+                                        fontSize: 13,  fontWeight: FontWeight.bold))))),
+                  ),
+                  Expanded(
+                                      child: Card(
+                        child: SizedBox(
+                            width: 80,
+                            child: Center(
+                                child: Text("Total",
+                                    style: TextStyle(
+                                        fontSize: 13,  fontWeight: FontWeight.bold))))),
+                  ),
+                ],
+              ),
             ),
             Column(
               children: this.productos.toList(),
@@ -206,96 +244,93 @@ List<PhotoPrice> parsePhotos(String responseBody) {
 class CartitaProducto extends StatelessWidget {
   //State<CartitaProducto> {
 
-  final String nombre;
-  final String codigo;
+   String nombre="";
+   String codigo;
 
   CartitaProducto({this.nombre, this.codigo});
   bool activo = true;
   bool tienePrecio = false;
   double precio = 0;
   int cantidad = 1;
+
   String xmlConcepto = "";
 
   bool primeraVez = false;
   bool habilitarEditCantidad = true;
 
   TextEditingController input = TextEditingController(text: "1");
-  TextEditingController finalPrecio = TextEditingController(text: "");
+  TextEditingController finalPrecioSinImpuesto = TextEditingController(text: "");
   TextEditingController actualPrecio = TextEditingController(text: "");
   ExpandableController control = ExpandableController();
   TextEditingController impuestoDescripcion = TextEditingController(text: "");
   TextEditingController impuestoPorcentaje = TextEditingController(text: "");
-  TextEditingController totalPrecioConImpuesto =
-      TextEditingController(text: "");
+  TextEditingController totalPrecioConImpuesto = TextEditingController(text: "");
   TextEditingController cantidadImpuesto = TextEditingController(text: "");
 
-  void _getALlPosts(String codigo) async {
+  void _getALlPosts(String codigo, ProductosArrayInfo productos) async {
     List<PhotoPrice> t = await fetchClientes(http.Client(), codigo);
     List<PhotoImpuesto> r = await fetchImpuesto(http.Client(), codigo);
 
     this.actualPrecio.text = t[0].precio;
-    this.finalPrecio.text = t[0].precio;
+    this.finalPrecioSinImpuesto.text = t[0].precio;
     this.impuestoDescripcion.text = r[0].descripcion;
     this.impuestoPorcentaje.text = r[0].porcentaje;
-    // this.impuestoCantidad
     this.tienePrecio = true;
-    if (this.impuestoPorcentaje.text != "0") {
-      double temp = double.parse(this.finalPrecio.text) *
-          (double.parse(this.impuestoPorcentaje.text) / 100);
-      double resto = temp;
-      temp = double.parse(this.actualPrecio.text) + temp;
-      this.cantidadImpuesto.text = resto.toString();
-      this.totalPrecioConImpuesto.text = temp.toString();
-    } else {
-      this.cantidadImpuesto.text = "0";
-      this.totalPrecioConImpuesto.text = this.finalPrecio.text;
-    }
+    // if (this.impuestoPorcentaje.text != "0") {
+    //   double temp = double.parse(this.finalPrecio.text) * (double.parse(this.impuestoPorcentaje.text) / 100);
+    //   double resto = temp;
+    //   temp = double.parse(this.actualPrecio.text) + temp;
+    //   this.cantidadImpuesto.text = resto.toString();
+    //   this.totalPrecioConImpuesto.text = temp.toString();
+    // } 
+    // else {
+    //   this.cantidadImpuesto.text = "0";
+    //   this.totalPrecioConImpuesto.text = this.finalPrecio.text;
+    // }
     String val = "1";
     this.cantidad = int.parse(val);
-    // productoInfo.xml_controller_expanded.expanded = true;
-    // productoInfo.xml_enabler = false;
     double tx;
     tx = double.parse(val) * double.parse(this.actualPrecio.text);
     tx = double.parse(tx.toStringAsFixed(2));
-    this.finalPrecio.text = tx.toString();
+    this.finalPrecioSinImpuesto.text = tx.toString();
     if (this.impuestoPorcentaje.text != "0") {
-      double temp = double.parse(this.finalPrecio.text) *
-          (double.parse(this.impuestoPorcentaje.text) / 100);
-      temp = double.parse(temp.toStringAsFixed(2));
-      double resto = temp;
-      temp += double.parse(this.finalPrecio.text);
-      temp = double.parse(temp.toStringAsFixed(2));
+      this.nombre = ""+ this.nombre;
+      double impuestoMontoNumero = double.parse(this.finalPrecioSinImpuesto.text) * (double.parse(this.impuestoPorcentaje.text) / 100);
+      impuestoMontoNumero = double.parse(impuestoMontoNumero.toStringAsFixed(2)); //redondea
+      
+      double resto = impuestoMontoNumero;
+      impuestoMontoNumero += double.parse(this.finalPrecioSinImpuesto.text);
+      impuestoMontoNumero = double.parse(impuestoMontoNumero.toStringAsFixed(2)); //redondea
+      
       resto = double.parse(resto.toStringAsFixed(2));
-
       this.cantidadImpuesto.text = resto.toString();
-      this.totalPrecioConImpuesto.text = temp.toString();
-    } else {
+      this.totalPrecioConImpuesto.text = impuestoMontoNumero.toString();
+    } 
+    else {
       this.cantidadImpuesto.text = "0";
-      this.totalPrecioConImpuesto.text = this.finalPrecio.text;
+      this.totalPrecioConImpuesto.text = this.finalPrecioSinImpuesto.text;
     }
-
-      this.habilitarEditCantidad = true;
-    // return t;
+    this.habilitarEditCantidad = true;
     this.xmlConcepto = """
-                          <detalle>
-                          <codigoPrincipal>${this.codigo}</codigoPrincipal>
-                          <descripcion>${this.nombre}</descripcion>
-                          <cantidad>1</cantidad>
-                          <precioUnitario>${this.actualPrecio.text}</precioUnitario>
-                          <descuento>0</descuento>
-                          <precioTotalSinImpuesto>${this.finalPrecio.text}</precioTotalSinImpuesto>
-                          <impuestos>
-                            <impuesto>
-                              <codigo>2</codigo>
-                              <codigoPorcentaje>2</codigoPorcentaje>
-                              <tarifa>${this.impuestoPorcentaje.text}</tarifa>
-                              <baseImponible>${this.finalPrecio.text}</baseImponible>
-                              <valor>${this.cantidadImpuesto.text}</valor>
-                            </impuesto>
-                          </impuestos>
-                        </detalle>
+              <detalle>
+              <codigoPrincipal>${this.codigo}</codigoPrincipal>
+              <descripcion>${this.nombre}</descripcion>
+              <cantidad>1</cantidad>
+              <precioUnitario>${this.actualPrecio.text}</precioUnitario>
+              <descuento>0</descuento>
+              <precioTotalSinImpuesto>${this.finalPrecioSinImpuesto.text}</precioTotalSinImpuesto>
+              <impuestos>
+                <impuesto>
+                  <codigo>2</codigo>
+                  <codigoPorcentaje>2</codigoPorcentaje>
+                  <tarifa>${this.impuestoPorcentaje.text}</tarifa>
+                  <baseImponible>${this.finalPrecioSinImpuesto.text}</baseImponible>
+                  <valor>${this.cantidadImpuesto.text}</valor>
+                </impuesto>
+              </impuestos>
+            </detalle>
                           """;
-
+    productos.calcular_precio_final(); // actualiza los precios finales
   }
 
   @override
@@ -303,7 +338,6 @@ class CartitaProducto extends StatelessWidget {
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
     // TODO: implement build
     //pide info al server si la cantidad es 1
-
     this.xmlConcepto = """
                           <detalle>
                           <codigoPrincipal>${this.codigo}</codigoPrincipal>
@@ -311,13 +345,13 @@ class CartitaProducto extends StatelessWidget {
                           <cantidad>1</cantidad>
                           <precioUnitario>${this.actualPrecio.text}</precioUnitario>
                           <descuento>0</descuento>
-                          <precioTotalSinImpuesto>${this.finalPrecio.text}</precioTotalSinImpuesto>
+                          <precioTotalSinImpuesto>${this.finalPrecioSinImpuesto.text}</precioTotalSinImpuesto>
                           <impuestos>
                             <impuesto>
                               <codigo>2</codigo>
                               <codigoPorcentaje>2</codigoPorcentaje>
                               <tarifa>${this.impuestoPorcentaje.text}</tarifa>
-                              <baseImponible>${this.finalPrecio.text}</baseImponible>
+                              <baseImponible>${this.finalPrecioSinImpuesto.text}</baseImponible>
                               <valor>${this.cantidadImpuesto.text}</valor>
                             </impuesto>
                           </impuestos>
@@ -325,16 +359,13 @@ class CartitaProducto extends StatelessWidget {
                           """;
 
     if (!this.primeraVez) {
-      this._getALlPosts(this.codigo);
+      this._getALlPosts(this.codigo, productoInfo);
       this.primeraVez = true;
     }
-    this.finalPrecio.text = this.actualPrecio.text;
+    this.finalPrecioSinImpuesto.text = this.actualPrecio.text;
     this.totalPrecioConImpuesto.text = this.actualPrecio.text;
-    // double t;
-    // t = double.parse(this.actualPrecio.text);
-    // this.finalPrecio.text = t.toString();
-    productoInfo.xml_enabler = false;
 
+    productoInfo.xml_enabler = false;
     // if (this.cantidad == 1) {
     //     //this._getALlPosts(this.codigo);
     // String val = "1";
@@ -351,12 +382,10 @@ class CartitaProducto extends StatelessWidget {
     //       (double.parse(this.impuestoPorcentaje.text) /
     //           100);
     //   temp = double.parse(temp.toStringAsFixed(2));
-
     //   double resto = temp;
     //   temp += double.parse(this.finalPrecio.text);
     //   temp = double.parse(temp.toStringAsFixed(2));
     //   resto = double.parse(resto.toStringAsFixed(2));
-
     //   this.cantidadImpuesto.text = resto.toString();
     //   this.totalPrecioConImpuesto.text = temp.toString();
     // } else {
@@ -376,145 +405,171 @@ class CartitaProducto extends StatelessWidget {
         // height: 70,
         // width: double.infinity,
         // color: Colors.white,
-        child: Card(
-            child: Column(
+        child: Row(
           children: <Widget>[
             // Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 7),
-                  child: ButtonTheme(
-                    minWidth: 8.0,
-                    height: 30.0,
-                    child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(1.0),
-                            side: BorderSide(color: Colors.red)),
-                        color: Colors.red,
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 15,
-                        ),
-                        onPressed: () {
-                          control.expanded = true;
-                          this.activo = false;
-                          // print(this.visib);
-                        }),
-                  ),
-                ),
-                VerticalDivider(),
-                SizedBox(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          this.nombre,
-                          style: TextStyle(fontSize: 17),
-                        ),
-                        Text(this.codigo),
-                        Divider(),
-                      ],
+            Card(
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0),
+                              side: BorderSide(color: Colors.red)),
+                          color: Colors.red,
+                          // child: Icon(
+                          //   Icons.close,
+                          //   color: Colors.white,
+                          //   size: 14,
+                          // ),
+                          onPressed: () {
+                            control.expanded = true;
+                            this.activo = false;
+                            productoInfo
+                                .calcular_precio_final(); // actualiza los precios finales
+                            // print(this.visib);
+                          }),
                     ),
                   ),
-                ),
-                // Text("asda")
-              ],
+                  // VerticalDivider(),
+                  SizedBox(
+                    height: 45,
+                    width: 117,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2, top: 5.0),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            this.nombre,
+                            style: TextStyle(fontSize: 10),
+                            maxLines: 3,
+                          ),
+                          // Text(this.codigo,style: TextStyle(fontSize: 12)),
+                          // Divider(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Container(
+                  //   width: 70,
+                  //   child: TextField(
+                  //     style: TextStyle(fontSize: 10),
+                  //     textAlign: TextAlign.center,
+                  //     readOnly: true,
+                  //     maxLines: 1,
+                  //     controller: this.impuestoDescripcion,
+                  //     keyboardType: TextInputType.number,
+                  //     decoration: InputDecoration(),
+                  //   ),
+                  // )
+                  // Text("asda")
+                ],
+              ),
             ),
-            Divider(),
+            // Divider(),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 1),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Wrap(
-                  spacing: 8,
+                  spacing: 0,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
-                    Text("cantidad : "),
-                    Container(
-                      width: 50,
-                      child: TextFormField(
-                        enabled: this.habilitarEditCantidad,
-                        
-                        onChanged: (val) {
-                          this.cantidad = int.parse(val);
-                          productoInfo.xml_controller_expanded.expanded = true;
-                          productoInfo.xml_enabler = false;
-                          double t;
-                          t = double.parse(val) *
-                              double.parse(this.actualPrecio.text);
-                          t = double.parse(t.toStringAsFixed(2));
-                          this.finalPrecio.text = t.toString();
-                          if (this.impuestoPorcentaje.text != "0") {
-                            double temp = double.parse(this.finalPrecio.text) *
-                                (double.parse(this.impuestoPorcentaje.text) /
-                                    100);
-                            temp = double.parse(temp.toStringAsFixed(2));
+                    // Text("x:"),CANTIDAD
+                    Card(
+                      child: Container(
+                        height: 45,
+                        width: 80,
+                        child: TextFormField(
+                          style: TextStyle(fontSize: 13),
+                          textAlign: TextAlign.center,
+                          enabled: this.habilitarEditCantidad,
+                          onChanged: (val) {
+                            this.cantidad = int.parse(val);
+                            productoInfo.xml_controller_expanded.expanded =
+                                true;
+                            productoInfo.xml_enabler = false;
+                            double t;
+                            t = double.parse(val) *
+                                double.parse(this.actualPrecio.text);
+                            t = double.parse(t.toStringAsFixed(2));
+                            this.finalPrecioSinImpuesto.text = t.toString();
+                            if (this.impuestoPorcentaje.text != "0") {
+                              double temp = double.parse(
+                                      this.finalPrecioSinImpuesto.text) *
+                                  (double.parse(this.impuestoPorcentaje.text) /
+                                      100);
+                              temp = double.parse(temp.toStringAsFixed(2));
 
-                            double resto = temp;
-                            temp += double.parse(this.finalPrecio.text);
-                            temp = double.parse(temp.toStringAsFixed(2));
-                            resto = double.parse(resto.toStringAsFixed(2));
+                              double resto = temp;
+                              temp += double.parse(this.finalPrecioSinImpuesto.text);
+                              temp = double.parse(temp.toStringAsFixed(2));
+                              resto = double.parse(resto.toStringAsFixed(2));
 
-                            this.cantidadImpuesto.text = resto.toString();
-                            this.totalPrecioConImpuesto.text = temp.toString();
-                          } else {
-                            this.cantidadImpuesto.text = "0";
-                            this.totalPrecioConImpuesto.text =
-                                this.finalPrecio.text;
-                          }
-                          this.xmlConcepto = """
-                          <detalle>
-                          <codigoPrincipal>${this.codigo}</codigoPrincipal>
-                          <descripcion>${this.nombre}</descripcion>
-                          <cantidad>${val.toString()}</cantidad>
-                          <precioUnitario>${this.actualPrecio.text}</precioUnitario>
-                          <descuento>0.0</descuento>
-                          <precioTotalSinImpuesto>${this.finalPrecio.text}</precioTotalSinImpuesto>
-                          <impuestos>
-                            <impuesto>
-                              <codigo>2</codigo>
-                              <codigoPorcentaje>2</codigoPorcentaje>
-                              <tarifa>${this.impuestoPorcentaje.text}</tarifa>
-                              <baseImponible>${this.finalPrecio.text}</baseImponible>
-                              <valor>${this.cantidadImpuesto.text}</valor>
-                            </impuesto>
-                          </impuestos>
-                        </detalle>
-                          """;
-                          double sinIm = 0;
-                          double conIm = 0;
-                          for (CartitaProducto i in productoInfo.productosDB) {
-                            if (i.activo) {
-                              // print(i.finalPrecio.text);
-                              // print(i.totalPrecioConImpuesto.text);
-                              sinIm += double.parse(i.finalPrecio.text);
-                              conIm +=
-                                  double.parse(i.totalPrecioConImpuesto.text);
+                              this.cantidadImpuesto.text = resto.toString();
+                              this.totalPrecioConImpuesto.text =
+                                  temp.toString();
+                            } else {
+                              this.cantidadImpuesto.text = "0";
+                              this.totalPrecioConImpuesto.text =
+                                  this.finalPrecioSinImpuesto.text;
                             }
-                            //  print( "sin impuesto  " +finalPrice.text);
-                            //  print( "con impuesto  " +finalPriceConIM.text);
-                            // this.finalPrice.text = sinIm.toString();
-                            // this.finalPriceConIM.text = conIm.toString();
-                            sinIm = double.parse(sinIm.toStringAsFixed(2));
-                            conIm = double.parse(conIm.toStringAsFixed(2));
+                            this.xmlConcepto = """
+                        <detalle>
+                        <codigoPrincipal>${this.codigo}</codigoPrincipal>
+                        <descripcion>${this.nombre}</descripcion>
+                        <cantidad>${val.toString()}</cantidad>
+                        <precioUnitario>${this.actualPrecio.text}</precioUnitario>
+                        <descuento>0.0</descuento>
+                        <precioTotalSinImpuesto>${this.finalPrecioSinImpuesto.text}</precioTotalSinImpuesto>
+                        <impuestos>
+                          <impuesto>
+                            <codigo>2</codigo>
+                            <codigoPorcentaje>2</codigoPorcentaje>
+                            <tarifa>${this.impuestoPorcentaje.text}</tarifa>
+                            <baseImponible>${this.finalPrecioSinImpuesto.text}</baseImponible>
+                            <valor>${this.cantidadImpuesto.text}</valor>
+                          </impuesto>
+                        </impuestos>
+                      </detalle>
+                        """;
+                            double sinIm = 0;
+                            double conIm = 0;
+                            for (CartitaProducto i
+                                in productoInfo.productosDB) {
+                              if (i.activo) {
+                                // print(i.finalPrecio.text);
+                                // print(i.totalPrecioConImpuesto.text);
+                                sinIm += double.parse(i.finalPrecioSinImpuesto.text);
+                                conIm += double.parse(i.totalPrecioConImpuesto.text);
+                              }
+                              //  print( "sin impuesto  " +finalPrice.text);
+                              //  print( "con impuesto  " +finalPriceConIM.text);
+                              // this.finalPrice.text = sinIm.toString();
+                              // this.finalPriceConIM.text = conIm.toString();
+                              sinIm = double.parse(sinIm.toStringAsFixed(2));
+                              conIm = double.parse(conIm.toStringAsFixed(2));
 
-                            productoInfo.xml_precionfinalSin = sinIm.toString();
-                            productoInfo.xml_precionfinalCon = conIm.toString();
-                          }
-                        },
-                        controller: this.input,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          WhitelistingTextInputFormatter.digitsOnly
-                        ],
-                        // decoration: InputDecoration(
-                        //     labelText:"whatever you want",
-                        //     hintText: "whatever you want",
-                        //     icon: Icon(Icons.phone_iphone)
-                        // )
+                              productoInfo.xml_precionfinalSin = sinIm.toString();
+                              productoInfo.xml_precionfinalCon = conIm.toString();
+                            }
+                            productoInfo.calcular_precio_final(); // actualiza los precios finales
+                          },
+                          controller: this.input,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          // decoration: InputDecoration(
+                          //     labelText:"whatever you want",
+                          //     hintText: "whatever you want",
+                          //     icon: Icon(Icons.phone_iphone)
+                          // )
+                        ),
                       ),
                     ),
                     // Container(
@@ -531,30 +586,48 @@ class CartitaProducto extends StatelessWidget {
                     //   ),
                     // ),
                     // Divider(),
-                    Text("precio : "),
-                    Container(
-                      width: 50,
-                      child: TextField(
-                        readOnly: true,
-                        maxLines: 1,
-                        controller: this.actualPrecio,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            // border: InputBorder.,
+                    // Text("precio : "),
+                    Card(
+                      child: Center(
+                        child: Container(
+                          height: 45,
+                          width: 80,
+                          child: Center(
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 13),
+                              readOnly: true,
+                              maxLines: 1,
+                              controller: this.actualPrecio,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  // border: InputBorder.,
+                                  ),
                             ),
+                          ),
+                        ),
                       ),
                     ),
-                    Text("total : "),
-                    Container(
-                      width: 50,
-                      child: TextField(
-                        readOnly: true,
-                        maxLines: 1,
-                        controller: this.finalPrecio,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            // border: InputBorder.,
-                            hintText: 'Cantidad'),
+                    // Text("total : "),
+                    Card(
+                      child: Center(
+                        child: Container(
+                          height: 45,
+                          width: 77,
+                          child: Center(
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 13),
+                              readOnly: true,
+                              maxLines: 1,
+                              controller: this.finalPrecioSinImpuesto,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  // border: InputBorder.,
+                                  hintText: 'Cantidad'),
+                            ),
+                          ),
+                        ),
                       ),
                     )
                   ],
@@ -562,60 +635,52 @@ class CartitaProducto extends StatelessWidget {
               ),
             ),
 
-            // Text(this.impuestoDescripcion.text),
-            Wrap(
-              spacing: 8,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                Text("tipo de impuesto"),
-                Container(
-                  width: 100,
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    readOnly: true,
-                    maxLines: 1,
-                    controller: this.impuestoDescripcion,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(),
-                  ),
-                ),
-                // Container(
-                //   width: 90,
-                //   child: TextField(
-                //     readOnly: true,
-                //     maxLines: 1,
-                //     controller: this.totalPrecioConImpuesto,
-                //     keyboardType: TextInputType.number,
-                //     decoration: InputDecoration(
-                //         ),
-                //   ),
-                // )
-              ],
-            ),
-            Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 7),
-                  child: RaisedButton(
-                      color: Colors.green,
-                      child: Text(
-                        "Consulta Descuento",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        print("ge");
-                      }),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 40),
-                  child: Text("Disponible: 0"),
-                ),
-              ],
-            )
+            // Wrap(
+            //   spacing: 8,
+            //   crossAxisAlignment: WrapCrossAlignment.center,
+            //   children: <Widget>[
+            //     Text("tipo de impuesto"),
+            //     Container(
+            //       width: 100,
+            //       child: TextField(
+            //         textAlign: TextAlign.center,
+            //         readOnly: true,
+            //         maxLines: 1,
+            //         controller: this.impuestoDescripcion,
+            //         keyboardType: TextInputType.number,
+            //         decoration: InputDecoration(),
+            //       ),
+            //     ),
+
+            //   ],
+            // ),
+            // Divider(),
+            // Row(
+            //   children: <Widget>[
+            //     Padding(
+            //       padding: const EdgeInsets.only(left: 7),
+            //       child: RaisedButton(
+            //           shape: RoundedRectangleBorder(
+            //               borderRadius: new BorderRadius.circular(20.0),
+            //               side: BorderSide(color: Colors.green)),
+            //           color: Colors.green,
+            //           child: Text(
+            //             "Consulta Descuento",
+            //             style: TextStyle(color: Colors.white),
+            //           ),
+            //           onPressed: () {
+            //             print("ge");
+            //           }),
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.only(left: 40),
+            //       child: Text("Disponible: 0"),
+            //     ),
+            //   ],
+            // )
             // Text(this.totalPrecioConImpuesto.text)
           ],
-        )),
+        ),
       ),
     );
   }
@@ -630,7 +695,7 @@ class CartaPrecioFinal extends StatelessWidget {
     double conIm;
     for (CartitaProducto item in tmr) {
       if (item.activo) {
-        sinIm += double.parse(item.finalPrecio.text);
+        sinIm += double.parse(item.finalPrecioSinImpuesto.text);
         conIm += double.parse(item.totalPrecioConImpuesto.text);
       }
     }
@@ -687,18 +752,33 @@ class ClienteElegido extends StatelessWidget {
         children: <Widget>[
           Text(
             "" + this.nombre,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
           ),
           Align(
               alignment: Alignment.centerLeft,
-              child: Text("Codigo Cliente : " + this.codigo)),
+              child: Row(
+                children: <Widget>[
+                  Container(width:100,child: Text("Codigo Cliente",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold),)),
+                  Text(this.codigo)
+                ],
+              )),
           Align(
               alignment: Alignment.centerLeft,
-              child: Text("R.U.C.  : " + this.ruc)),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 100,child: Text("R.U.C. ",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold) )),
+                  Text(this.ruc)
+                ],
+              )),
           // Align(alignment: Alignment.centerLeft ,child: Text("Telefono : " + this.telefono)),
           Align(
               alignment: Alignment.centerLeft,
-              child: Text("Email    : " + this.email)),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 100,child: Text("Email ",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold))),
+                  Text(this.email)
+                ],
+              )),
         ],
       ),
     );
@@ -1167,7 +1247,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     this._xml_ruc = cn;
   }
 
-  String _xml_ruc_comprador = "";
+  String _xml_ruc_comprador = "9999999999999";
   get xml_ruc_comprador {
     return this._xml_ruc_comprador;
   }
@@ -1284,6 +1364,68 @@ class ProductosArrayInfo extends ChangeNotifier {
 
   set xml_precio_final_con_im(String cn) {
     this._xml_precio_final_con_im = cn;
+  }
+
+//controller
+  TextEditingController _xml_precio_final_con_im_controller =
+      TextEditingController(text: "0");
+  get xml_precio_final_con_im_controller {
+    return this._xml_precio_final_con_im_controller;
+  }
+
+  set xml_precio_final_con_im_controller(String cn) {
+    this._xml_precio_final_con_im_controller.text = cn;
+  }
+
+//controller
+  TextEditingController _xml_subtotal_12 = TextEditingController(text: "0");
+  get xml_subtotal_12 {
+    return this._xml_subtotal_12;
+  }
+
+  set xml_subtotal_12(String cn) {
+    this._xml_subtotal_12.text = cn;
+  }
+
+  //controller
+  TextEditingController _xml_subtotal = TextEditingController(text: "0");
+  get xml_subtotal {
+    return this._xml_subtotal;
+  }
+
+  set xml_subtotal(String cn) {
+    this._xml_subtotal.text = cn;
+  }
+
+  //controller
+  TextEditingController _xml_iva12 = TextEditingController(text: "0");
+  get xml_iva12 {
+    return this._xml_iva12;
+  }
+
+  set xml_iva12(String cn) {
+    this._xml_iva12.text = cn;
+  }
+
+//controller
+  TextEditingController _xml_subtotal_0 = TextEditingController(text: "0");
+  get xml_subtotal_0 {
+    return this._xml_subtotal_0;
+  }
+
+  set xml_subtotal_0(String cn) {
+    this._xml_subtotal_0.text = cn;
+  }
+
+//controller
+  TextEditingController _xml_precio_final_sin_im_controller =
+      TextEditingController(text: "0");
+  get xml_precio_final_sin_im_controller {
+    return this._xml_precio_final_sin_im_controller;
+  }
+
+  set xml_precio_final_sin_im_controller(String cn) {
+    this._xml_precio_final_sin_im_controller.text = cn;
   }
 
   String _xml_dirEstablecimiento = "";
@@ -1428,8 +1570,8 @@ class ProductosArrayInfo extends ChangeNotifier {
     print("ambiente > " + this.xml_ambiente);
     print("sec > " + this.xml_secuencial);
     print("tipo emision > " + this.xml_tipoEmision);
+    // this.xml_claveAcceso = (this.)
     // print("verificador > " + digitoVerificador(cadena48));
-
     String primera = """
 <?xml version="1.0" encoding="UTF-8"?>
 <factura id="comprobante" version="1.0.0">
@@ -1455,8 +1597,10 @@ class ProductosArrayInfo extends ChangeNotifier {
     <dirEstablecimiento>${xml_dirEstablecimiento}</dirEstablecimiento>
     <obligadoContabilidad>SI</obligadoContabilidad>
     <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
+    <guiaRemision>001-001-000000001</guiaRemision>
     <razonSocialComprador>${xml_razonSocial_comprador}</razonSocialComprador>
-    <identificacionComprador>9999999999999</identificacionComprador>
+    <identificacionComprador>${this.xml_ruc_comprador}</identificacionComprador>
+    <direccionComprador>salinas y santiago</direccionComprador> 
     <totalSinImpuestos>${_xml_precionfinalSin}</totalSinImpuestos>
     <totalDescuento>0.00</totalDescuento>
     <totalConImpuestos>
@@ -1465,16 +1609,16 @@ class ProductosArrayInfo extends ChangeNotifier {
         <codigoPorcentaje>2</codigoPorcentaje>
         <baseImponible>${xml_precionfinalSin}</baseImponible>
         <tarifa>12</tarifa>
-        <valor>${fixfloat}</valor>
+        <valor>${this.xml_iva12.text}</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
-    <importeTotal>${xml_precionfinalCon}</importeTotal>
+    <importeTotal>${xml_precio_final_con_im_controller.text}</importeTotal>
     <moneda>dolar</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>${xml_precionfinalCon}</total>
+        <total>${xml_precio_final_con_im_controller.text}</total>
       </pago>
     </pagos>
   </infoFactura>
@@ -1489,7 +1633,7 @@ class ProductosArrayInfo extends ChangeNotifier {
         segunda +
         "<detalles>" +
         tempi +
-        "</detalles> \n </factura>";
+        "</detalles></factura>";
   }
 
   set xml_FINAL(String cn) {
@@ -1595,7 +1739,7 @@ class ProductosArrayInfo extends ChangeNotifier {
     double precio = 0;
     for (CartitaProducto item in _productosDB) {
       if (item.tienePrecio && item.activo) {
-        precio += double.parse(item.finalPrecio.text);
+        precio += double.parse(item.finalPrecioSinImpuesto.text);
       }
     }
     String precioTot = precio.toString();
@@ -1874,6 +2018,50 @@ class ProductosArrayInfo extends ChangeNotifier {
     );
   }
 
+  double calcular_precio_final() {
+    double precioFinal = 0;
+    this.xml_controller_expanded.expanded = false;
+    this.xml_enabler = true;
+    double sinIm = 0;
+    double conIm = 0;
+    double impuestos = 0;
+    for (CartitaProducto i in this.productosDB) {
+      if (i.activo) {
+        sinIm += double.parse(i.finalPrecioSinImpuesto.text); //precios unitarios >> no usar
+        impuestos += double.parse(i.cantidadImpuesto.text); // monto impuestos 
+        conIm += double.parse(i.totalPrecioConImpuesto.text);// monto con impuesto
+      }
+      // print("sin impuesto  " + finalPrice.text);
+      // print("con impuesto  " +
+      // finalPriceConIM.text);
+      // this.finalPrice.text = sinIm.toString();
+      // this.finalPriceConIM.text = conIm.toString();
+      this.xml_precionfinalSin = sinIm.toString();
+      this.xml_precionfinalCon = conIm.toString();
+    }
+    this.xml_precio_final_sin_im = sinIm.toString();
+    this.xml_precio_final_con_im = conIm.toString();
+    this.xml_subtotal=conIm.toString();
+    this.xml_subtotal_12=conIm.toString();
+    // this.xml_iva12 = this.impuestos.toString();
+    this.xml_iva12 = (conIm-sinIm).toStringAsFixed(2);
+    // this.xml_contr(conIm-sinIm).toString();
+    // print(this.xml_precio_final_con_im);
+    
+    this.xml_precio_final_con_im_controller = (conIm).toString();
+    this.xml_precio_final_sin_im_controller = this.xml_precio_final_sin_im;
+
+    print("****************");
+    print(" >>>> calcula precio final >>>> ");
+    print("[xml_iva12]"+this.xml_iva12.text);
+    print("[xml_subtotal]"+this.xml_subtotal.text);
+    print("[xml_subtotal_0]"+this.xml_subtotal_0.text);
+    print("[xml_subtotal_12]"+this.xml_subtotal_12.text);
+    print("[xml_precio_final_con_im_controller]"+this.xml_precio_final_con_im_controller.text);
+
+    return precioFinal;
+  }
+
   Future<http.Response> createAlbum(String title) {
     return http.post(
       'http://167.172.203.137/services/mssql/testing',
@@ -1891,25 +2079,28 @@ class ProductosArrayInfo extends ChangeNotifier {
 
 //post requests con FORM
   Future<http.Response> sendXML() async {
-    final p =
-        await http.post('http://167.172.203.137/services/mssql/get_secuencial',
+    final p = await http.post('http://167.172.203.137/services/mssql/get_secuencial',
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
             body: jsonEncode(<String, String>{
-              'empresa_id': this.xml_empresaElegida,
-              'agenci_id': this.xml_agenciaElegida,
+              'empresa_id': this.xml_empresaElegida, //"10004"
+              'agenci_id': this.xml_agenciaElegida, //"10003"
               'codDoc': this.xml_codDoc,
             }));
-    String secuencial_recuperado = p.body
-        .toString()
-        .substring(p.body.toString().length - 9, p.body.toString().length);
-    this.xml_ambiente = "1";
+    // print("[get secuencial]" + p.body.toString());
+    String secuencial_recuperado= "";
+    if (p.body.toString().length >= 10){
+      // secuencial_recuperado = p.body.toString().substring(p.body.toString().length - 9, p.body.toString().length);
+      secuencial_recuperado = p.body.toString().substring(p.body.toString().length - 9, p.body.toString().length);
+    }
+    this.xml_secuencial = secuencial_recuperado;
+
+    this.xml_ambiente = "2";
     this.xml_tipoEmision = "1";
     DateTime now = DateTime.now();
     this.xml_fecha = DateFormat('dd/MM/yyyy').format(now);
     this._xml_dirEstablecimiento = this._xml_dirMatriz;
-    this.xml_secuencial = secuencial_recuperado;
     //procede a generar la clave de acceso
     String cadena48 = "";
     cadena48 += this.xml_fecha;
@@ -1922,10 +2113,12 @@ class ProductosArrayInfo extends ChangeNotifier {
     cadena48 += "12345678"; // depende de uno
     cadena48 += this.xml_tipoEmision;
     cadena48 += digitoVerificador(cadena48);
-    print("rclave de acceso >> " + cadena48);
     this.xml_claveAcceso = cadena48;
+    print(" [clave de acceso] >> " + cadena48);
+    print(" [ SECUENCIAL RECUPERADO ] >> " + this.xml_secuencial);
+    // print(" [ CLAVE DE ACCESO ] >> " + this.xml_s);
+    // this.xml_claveAcceso = cadena48 + 
     String xmlfinal = this.get_xml_FINAL();
-
     var map = new Map<String, dynamic>();
     map['empresa_id'] = this.xml_empresaElegida;
     map['xml'] = xmlfinal;

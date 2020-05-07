@@ -13,6 +13,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_final_sri/productosJson.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import '../provider_productos.dart';
 
@@ -47,7 +48,7 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
   String dropdownValue = 'One';
   bool _completo = false;
   bool _agenciaVisible = false;
-  bool _continuarVisible=false;
+  bool _continuarVisible = false;
   //todo > metodo flask para
   TextEditingController controller_descripcion = TextEditingController();
   TextEditingController controller_costoUnitario =
@@ -56,11 +57,7 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
   TextEditingController controller_total = TextEditingController(text: '0');
   TextEditingController controller_impuesto = TextEditingController(text: '0');
 
-
-  void obtieneDataAuxiliar(String empresa, String agencia){
-    
-  }
-
+  void obtieneDataAuxiliar(String empresa, String agencia) {}
 
   @override
   Widget build(BuildContext context) {
@@ -68,19 +65,15 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
     // for (Empresas item in productoInfo.empresas) {
     //   print("build >> " + item.nombre.toString());
     // }
-
-    List<String> tempCodigos = [];// productoInfo.getCodigosEmpresas();
-
-    List<String> tempNombres = [];//productoInfo.getNombresEmpresas();
-
+    List<String> tempCodigos = []; // productoInfo.getCodigosEmpresas();
+    List<String> tempNombres = []; //productoInfo.getNombresEmpresas();
     int i = 0;
-     for (Empresas item in productoInfo.empresas) {
-       tempNombres.add(i.toString()+". "+item.nombre);
-       tempCodigos.add(item.codigo);
-        print("primer >> " + item.nombre.toString());
-        i++;
-      }
-
+    for (Empresas item in productoInfo.empresas) {
+      tempNombres.add(i.toString() + ". " + item.nombre);
+      tempCodigos.add(item.codigo);
+      print("primer >> " + item.nombre.toString());
+      i++;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -117,7 +110,7 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
                 // productoInfo.xml_empresaElegida = value;
                 List<Agencias> tmp = await fetchAgencias(http.Client(), value);
                 productoInfo.agencias = tmp;
-                print ('consultando + empresa >> ' + value.toString());
+                print('consultando + empresa >> ' + value.toString());
                 for (Agencias item in tmp) {
                   print("build agencia >> " + item.nombre.toString());
                 }
@@ -132,50 +125,56 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
                 productoInfo.xml_empresaElegida = value;
                 print(" im " + im.toString());
                 setState(() {
-                  this._agenciaVisible=true;
+                  this._agenciaVisible = true;
                 });
               }),
             ),
-            Visibility(visible: this._agenciaVisible,
-                          child: CardSettingsListPicker(
+            Visibility(
+              visible: this._agenciaVisible,
+              child: CardSettingsListPicker(
                 contentAlign: TextAlign.center,
                 values: productoInfo.getCodigosAgencias(), // ['0','12','14'],
                 //hintText: 'ada',
                 //hintText: 'Seleccione',
                 label: 'Agencia',
                 initialValue: '1',
-                options: productoInfo.getNombresAgencias(), // ['0%','12%','14%'],
+                options:
+                    productoInfo.getNombresAgencias(), // ['0%','12%','14%'],
                 onChanged: ((value) async {
-                  productoInfo.xml_agenciaElegida = value;
-                  print('agencia seleccionada > ' + value.toString());
-                  Empresas empresitaxxx = productoInfo.getEmpresaElegida(productoInfo.xml_empresaElegida);
-                  Agencias agencitaxxx = productoInfo.getAgenciaElegida(productoInfo.xml_agenciaElegida);
-                  print ('elegidos');
-                  print (empresitaxxx.nombre);
-                  print (agencitaxxx.nombre);
+                  //value es el segundo campo aka agencias
+                  Agencias agencitaxxx = productoInfo.getAgenciaElegida(value);
+                  // print(productoInfo.xml_agenciaElegida);
+                  // print('agencia seleccionada > ' + value.toString());
+                  Empresas empresitaxxx = productoInfo
+                      .getEmpresaElegida(productoInfo.xml_empresaElegida);
+                  print('elegidos');
+                  print(empresitaxxx.nombre);
+                  print(agencitaxxx.nombre);
                   productoInfo.xml_ambiente = empresitaxxx.ambienEmp;
                   productoInfo.xml_tipoEmision = '';
                   productoInfo.xml_razonSocial = empresitaxxx.nombre;
                   productoInfo.xml_ruc = empresitaxxx.rucEmp;
-                  productoInfo.xml_tipoEmision="001";
-                  productoInfo.xml_codDoc= "01";
-                  productoInfo.xml_ptoEmi=productoInfo.xml_cod_vendedor.toString().substring(1,productoInfo.xml_cod_vendedor.toString().length);
-                  productoInfo.xml_estab = value.substring(2,value.length);
+                  productoInfo.xml_tipoEmision = "001";
+                  productoInfo.xml_codDoc = "01";
+                  productoInfo.xml_ptoEmi = productoInfo.xml_cod_vendedor
+                      .toString()
+                      .substring(
+                          3, productoInfo.xml_cod_vendedor.toString().length);
+                  productoInfo.xml_estab =
+                      "001"; //value.substring(2,value.length);
+                  print("pto emision elegida " + value);
                   productoInfo.xml_dirMatriz = empresitaxxx.direccEmp;
-
-                  this.obtieneDataAuxiliar(productoInfo.xml_agenciaElegida, productoInfo.empresa);
+                  // this.obtieneDataAuxiliar(value, productoInfo.empresa);
+                  productoInfo.xml_agenciaElegida = value; //.substring(1);
+                  print(
+                      "pto emision setada  " + productoInfo.xml_agenciaElegida);
 
                   // productoInfo.xml_codDoc = empresitaxxx.co
-                  print("mascota debug");
-                  print(empresitaxxx.rucEmp);
-                  print(productoInfo.xml_ruc);
-
-
+                  // print("mascota debug");
+                  // print("ruc empresa "+empresitaxxx.rucEmp);
+                  // print(""+productoInfo.xml_ruc);
                   setState(() {
                     this._continuarVisible = true;
-
-
-
                   });
                   // print(" im "+im.toString());
                 }),
@@ -183,25 +182,71 @@ class _SecondScrenLoginState extends State<SecondScrenLogin> {
             ),
             Visibility(
               visible: this._continuarVisible,
-                          child: Padding(
+              child: Padding(
                 padding: EdgeInsets.all(100.0),
                 child: RaisedButton(
                   shape: new RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(18.0),
                       side: BorderSide(color: Colors.blue)),
-                  onPressed: () {
+                  onPressed: () async{
+                    print(" ** [datos de consulta secuencial] ** ");
+                    print("[empresa ] "+ productoInfo.xml_empresaElegida);
+                    print("[agencia ] "+ productoInfo.xml_agenciaElegida);
+                    // productoInfo.xml_codDoc="001";
+                    print("[codDoc ] "+ "001");
+                    //primero solicita el ultimo secuencial
+                    final p = await http.post(
+                        'http://167.172.203.137/services/mssql/get_secuencial',
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        },
+                        body: jsonEncode(<String, String>{
+                          'empresa_id': productoInfo.xml_empresaElegida, //"10004"
+                          'agenci_id': productoInfo.xml_agenciaElegida, //"10003"
+                          'codDoc':  "001"//productoInfo.xml_codDoc,
+                        }));
+                    // print("[get secuencial]" + p.body.toString());
+                    String secuencial_recuperado = p.body.toString();
+                    if (p.body.toString().length >= 10) {
+                      // secuencial_recuperado = p.body.toString().substring(p.body.toString().length - 9, p.body.toString().length);
+                      secuencial_recuperado = p.body.toString().substring(
+                          p.body.toString().length - 9,
+                          p.body.toString().length);
+                    }
+                    productoInfo.xml_secuencial = secuencial_recuperado;
+                    print("[primer secuencial] > " +secuencial_recuperado);
+                    productoInfo.xml_ambiente = "2";
+                    productoInfo.xml_tipoEmision = "1";
+                    DateTime now = DateTime.now();
+                    productoInfo.xml_fecha = DateFormat('dd/MM/yyyy').format(now);
+                    // productoInfo.xml_dirEstablecimiento = productoInfo.xml_dirMatriz;
+                    //procede a generar la clave de acceso
+                    String cadena48 = "";
+                    cadena48 += productoInfo.xml_fecha;
+                    cadena48 = cadena48.replaceAll("/", "");
+                    cadena48 += productoInfo.xml_codDoc;
+                    cadena48 += productoInfo.xml_ruc;
+                    cadena48 += productoInfo.xml_ambiente;
+                    cadena48 += "001001";
+                    cadena48 += productoInfo.xml_secuencial;
+                    cadena48 += "12345678"; // depende de uno
+                    cadena48 += productoInfo.xml_tipoEmision;
+                    cadena48 += productoInfo.digitoVerificador(cadena48);
+                    productoInfo.xml_claveAcceso = cadena48;
                     //mediante funcion de otro .dart con parametros todos los datos de
                     //del form, generar el xml, codificar y enviar
                     //poner siguiente pantalla aca
-                    Navigator.push(//original MyApp
-                   context, MaterialPageRoute(builder: (context) => MyHomePage()));
+                    Navigator.push(
+                        //original MyApp
+                        context,
+                        MaterialPageRoute(builder: (context) => MyHomePage()));
                     // productoInfo.get_empresa_logo();
 
                     //ENTREGA TODOS LOS DATOS A PROVIDER
-                    // productoInfo.xml_ambiente = 
-                    // productoInfo.xml_codDoc = 
-                    // productoInfo.xml_dirEstablecimiento = 
-                    // productoInfo.xml_dirMatriz = 
+                    // productoInfo.xml_ambiente =
+                    // productoInfo.xml_codDoc =
+                    // productoInfo.xml_dirEstablecimiento =
+                    // productoInfo.xml_dirMatriz =
                   },
                   color: Colors.blue,
                   textColor: Colors.white,
@@ -298,16 +343,19 @@ class Empresas {
   final String rucEmp;
   final String direccEmp;
   Empresas(
-      {this.codigo, this.nombre, this.ambienEmp, this.rucEmp, this.direccEmp}); //this.cod_corregir, this.nombre_principal,
+      {this.codigo,
+      this.nombre,
+      this.ambienEmp,
+      this.rucEmp,
+      this.direccEmp}); //this.cod_corregir, this.nombre_principal,
 
   factory Empresas.fromJson(Map<String, dynamic> json) {
     return Empresas(
-      codigo: json['empresa_id'],
-      nombre: json['razsoc_emp'],
-      ambienEmp: json['ambien_emp'],
-      rucEmp: json['ruc_emp'],
-      direccEmp: json['direcc_emp']
-    );
+        codigo: json['empresa_id'],
+        nombre: json['razsoc_emp'],
+        ambienEmp: json['ambien_emp'],
+        rucEmp: json['ruc_emp'],
+        direccEmp: json['direcc_emp']);
   }
 }
 
@@ -315,18 +363,16 @@ Future<List<Agencias>> fetchAgencias(
     http.Client client, String empreCod) async {
   // Map map = new Map<String, dynamic>();
   // map["empresa"] = empreCod;
-    Map data = {
-    'empresa': empreCod
-  };
+  Map data = {'empresa': empreCod};
   //encode Map to JSON
   var body = json.encode(data);
   print('asumiendo post > ' + body.toString());
-  final response = await client
-      .post('http://167.172.203.137/services/mssql/getagenci',
+  final response = await client.post(
+      'http://167.172.203.137/services/mssql/getagenci',
       headers: {"Content-Type": "application/json"},
-       body: body);
+      body: body);
   client.close();
-//      await client.get('https://jsonplaceholder.typicode.com/photos');
+  // await client.get('https://jsonplaceholder.typicode.com/photos');
   // Use the compute function to run parsePhotos in a separate isolate.
   return compute(parseAgencias, response.body);
 }
@@ -334,7 +380,6 @@ Future<List<Agencias>> fetchAgencias(
 // A function that converts a response body into a List<Photo>.
 List<Agencias> parseAgencias(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
   return parsed.map<Agencias>((json) => Agencias.fromJson(json)).toList();
 }
 
@@ -346,7 +391,6 @@ class Agencias {
       {this.codigo,
       this.direc,
       this.nombre}); //this.cod_corregir, this.nombre_principal,
-
   factory Agencias.fromJson(Map<String, dynamic> json) {
     return Agencias(
         codigo: json['agenci_id'],
@@ -695,7 +739,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(  
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

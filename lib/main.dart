@@ -151,6 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController controller_secuencial = TextEditingController();
   TextEditingController controller_codDoc = TextEditingController();
   TextEditingController controller_claveAcceso = TextEditingController();
+  
 /*
   Future<bool> saveData() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -223,120 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //        //print ('sadsa');
 //
 //      }),
-//        //key: _formKey,
-//        child: CardSettings( //cardElevation: 67,
-//          children: <Widget>[
-//            CardSettingsHeader(
-//              labelAlign: TextAlign.center,
-//              label: 'Datos de Emisor',
-//              color: Colors.blueAccent,
-//
-//            ),
-//            CardSettingsListPicker(contentAlign: TextAlign.center,
-//              values: ['dad','dad'],
-//              //hintText: 'ada',
-//              initialValue: 'None',
-//              label: 'Ambiente',
-//
-//              options: ['Prueba','Produccion'],
-//              onChanged: ((value){
-//                print (value);
-//              }),
-//            ),
-//            CardSettingsListPicker(contentAlign: TextAlign.center,
-//              values: ['01','02','03'],
-//              validator: (String value) {
-//                if (value == null || value.isEmpty) return 'You must pick a type.';
-//                return null;
-//              },
-//              key: this._fbKey,
-//              hintText: 'Select One',
-//              autovalidate: true,
-//              initialValue: 'daa',
-//              label: 'Tipo Emision',
-//              showMaterialonIOS: true,
-//              options: ['nota de credito','factura','sin cargo'],
-//              onChanged: ((value){
-//                print (value);
-//              }),
-//            ),
-//            CardSettingsText(hintText: 'sadad',
-//              //hintText: 'ayua',
-//              controller: controller,
-//              labelWidth: 150,
-//              label: 'Razon Social',
-//              initialValue: title,
-//              validator: (value) {
-//                if (value == null || value.isEmpty) return 'Title is required.';
-//              },
-//              onSaved: (value) => print ('dadsadddddd'),
-//              onChanged: ((value) {
-//                print ('dasdadsddddd');
-//
-//              }),
-//            ),
-//            CardSettingsText(
-//            controller: controller_ruc,
-//              labelWidth: 150,
-//              label: 'Ruc',
-//              initialValue: 'Editar direccion',
-//              validator: (value) {
-//                if (!value.startsWith('http:')) return 'Must be a valid website.';
-//              },
-//              onSaved: (value) => url = value,
-//              onChanged: ((value){
-//                setState(() {
-//
-//                });
-//              }),
-//            ),
-//            CardSettingsText(controller: controller_codDoc,
-//              labelWidth: 150,
-//              label: 'Cod Documentario',
-//              initialValue: 'Editar estado',
-//              validator: (value) {
-//                if (!value.startsWith('http:')) return 'Must be a valid website.';
-//              },
-//              onSaved: (value) => url = value,
-//            ),
-//            CardSettingsText(controller: controller_estab,
-//              hintText: 'ndjka',labelWidth: 150,
-//              label: 'Establecimiento',
-//              //initialValue: 'Editar tipo identificacion',
-//              validator: (value) {
-//                if (!value.startsWith('http:')) return 'Must be a valid website.';
-//              },
-//              onSaved: (value) => url = value,
-//            ),
-//            CardSettingsText(controller: controller_ptoEmi,
-//              labelWidth: 150,
-//              label: 'Pto Emision',
-//              //initialValue: 'Editar razon social',
-//              validator: (value) {
-//                if (!value.startsWith('http:')) return 'Must be a valid website.';
-//              },
-//              onSaved: (value) => url = value,
-//            ),
-//            CardSettingsText(controller: controller_secuencial,
-//              labelWidth: 150,
-//              label: 'Secuencial',
-//              //initialValue: 'Editar identificacion',
-//              validator: (value) {
-//                if (!value.startsWith('http:')) return 'Must be a valid website.';
-//              },
-//              onSaved: (value) => url = value,
-//            ),
-//
-//            //fullpdfview.MyApp(),
-      ///*
-//            Padding(
-//              padding: EdgeInsets.all(20.0),
-//              child: RaisedButton(
-//                shape: new RoundedRectangleBorder(
-//                    borderRadius: new BorderRadius.circular(18.0),
-//                    side: BorderSide(color: Colors.red)),
-//                onPressed: () {
-//
+//       
 //                  //mediante funcion de otro .dart con parametros todos los datos de
 //                  //del form, generar el xml, codificar y enviar
 //                },

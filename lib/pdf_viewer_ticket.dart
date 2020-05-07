@@ -2,14 +2,22 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_final_sri/provider_productos.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
-import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
+// import 'package:path_provider/path_provider.dart';
+
+import 'package:open_file/open_file.dart';
+// import 'package:flutter_cache_manager/flutter_cache_manager.dart'as cache_manager;
+
 
 // void main() => runApp(MyApp());
 
@@ -104,7 +112,7 @@ import 'package:provider/provider.dart';
 //     );
 //   }
 // }
-
+// var dio = Dio();
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -113,11 +121,29 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>{
   bool _isLoading = true;
   PDFDocument document;
+  String url_descarga= "";
+  String downloadMessage  = 'iniciando';
+  bool _isDownloading=false;
+  String nombrepdf="";
+  String _openResult = 'Unknown';
+  var dio = Dio();
+
 
   @override
   void initState() {
     super.initState();
     loadDocument();
+  }
+
+  Future<void> openFile() async {
+
+    final filePath = '/storage/emulated/0/update.apk';
+    final result = await OpenFile.open(filePath);
+
+    setState(() {
+      _openResult = "type=${result.type}  message=${result.message}";
+    });
+
   }
 
   loadDocument() async {
@@ -154,6 +180,47 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
       }),
     );
   }
+   void showDownloadProgress(received, total) {
+    if (total != -1) {
+      print((received / total * 100).toStringAsFixed(0) + "%");
+    }
+  }
+
+
+  Future download1(Dio dio, String url, savePath) async {
+    CancelToken cancelToken = CancelToken();
+    try {
+      await dio.download(url, savePath,
+          onReceiveProgress: showDownloadProgress, cancelToken: cancelToken);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  Future download2(Dio dio, String url, String savePath) async {
+    try {
+      Response response = await dio.get(
+        url,
+        onReceiveProgress: showDownloadProgress,
+        //Received data with List<int>
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
+      print(response.headers);
+      File file = File(savePath);
+      var raf = file.openSync(mode: FileMode.write);
+      // response.data is List<int> type
+      raf.writeFromSync(response.data);
+      await raf.close();
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,25 +228,6 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
     final productoInfo = Provider.of<ProductosArrayInfo>(context);
 
     return Scaffold(
-      // drawer: Drawer(
-      //   child: Column(
-      //     children: <Widget>[
-      //       // SizedBox(height: 36),
-      //       ListTile(
-      //         title: Text('Load from Assets'),
-      //         onTap: () {
-      //           changePDF(1);
-      //         },
-      //       ),
-      //       ListTile(
-      //         title: Text('Restore default'),
-      //         onTap: () {
-      //           changePDF(3);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40.0),
         child: AppBar(
@@ -200,9 +248,6 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                   onPressed: () async {
                     // createPDF();
                     List<Map<String, dynamic>> send=[] ;
-
-
-
                     setState(() => _isLoading = true);
                     for (CartitaProducto i in productoInfo.productosDB) {
                           if (i.activo) {
@@ -210,7 +255,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                               "nombre":i.nombre,
                               "unitario":i.actualPrecio.text,
                               "cantidad":i.cantidad.toString(),
-                              "total": i.finalPrecio.text,
+                              "total": i.finalPrecioSinImpuesto.text,
                               "impuesto": i.impuestoDescripcion.text,
                               "codigo": i.codigo
                               // "dscsf": send
@@ -226,11 +271,12 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                             },
                             body: jsonEncode(<String, String>{
                               'tipo_pdf':'2',
-                              'ambiente':productoInfo.xml_ambiente,
+                              'ambiente':'2',//productoInfo.xml_ambiente,
                               'dirSucursal':productoInfo.xml_dirEstablecimiento,
                               'empresa_id':productoInfo.xml_empresaElegida,
                               'ruc': productoInfo.xml_ruc,
                               'rucComprador': productoInfo.xml_ruc_comprador,
+                              'emailComprador': productoInfo.xml_email_comprador,
                               'clave': productoInfo.xml_claveAcceso,
                               'secuencial':productoInfo.xml_secuencial,
                               'dirMatriz':productoInfo.xml_dirMatriz,
@@ -239,12 +285,16 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                               'fecha' : productoInfo.xml_fecha,
                               // 'fecha':productoInfo,
                               //'xml':productoInfo.xml_FINAL,
+                              'iva12':productoInfo.xml_iva12.text,
+                              'subtotal12':productoInfo.xml_subtotal_12.text,
+                              'subtotal0':productoInfo.xml_subtotal_0.text,
+                              'subtotal':productoInfo.xml_precio_final_sin_im,
                               'razonSocialComprador':productoInfo.xml_razonSocial_comprador,
                               'razonSocial':productoInfo.xml_razonSocial,
-                              'totalCon':productoInfo.xml_precionfinalCon,
+                              'totalCon':productoInfo.xml_precio_final_con_im,
                               'totalSin' : productoInfo.xml_precionfinalSin,
                               'conceptos': jsonEncode(send),
-                              'total':productoInfo.xml_precionfinalCon
+                              'total':productoInfo.xml_precio_final_con_im_controller.text
                             }));
                     print(p.body.toString());  
                     String nombreTicket = p.body.toString();
@@ -252,7 +302,9 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                     productoInfo.xml_pdf_ticker_nombre = nombreTicket;
                     document = await PDFDocument.fromURL(
                         "http://167.172.203.137/getpdfticket/" + nombreTicket);
+                    url_descarga="http://167.172.203.137/getpdfticket/" + nombreTicket;
                     // "http://conorlastowka.com/book/CitationNeededBook-Sample.pdf");
+                    this.nombrepdf = nombreTicket;
                     setState(() => _isLoading = false);
                     productoInfo.control_factura = true;
                   }),
@@ -261,9 +313,17 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin<MyApp>
                      shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30.0),
                   ),
-                    child: Text("Descargar PDF",style: TextStyle(color: Colors.white),)
+                    child: Text("Abrir PDF",style: TextStyle(color: Colors.white),)
                     ,color:Colors.green
-                    ,onPressed: (){
+                    ,onPressed: () async{
+                      String urlTemp = "http://167.172.203.137/getpdfticket/" + productoInfo.xml_pdf_ticker_nombre;
+                      var tempDir = await getTemporaryDirectory();
+                      String fullPath = tempDir.path + "/${productoInfo.xml_pdf_ticker_nombre}";
+                      // print('full path ${fullPath}');
+                      download2(dio, urlTemp, fullPath);
+                      // var file = await cache_manager.DefaultCacheManager().getSingleFile(urlTemp);
+                      // OpenFile.open(file.path);
+                      OpenFile.open(fullPath);
                     })
             ],
           ),

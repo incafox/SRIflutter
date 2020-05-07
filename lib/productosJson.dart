@@ -22,7 +22,7 @@ class Post {
   Post(this.title, this.body);
 }
 
-class ProductosJsonSearchPage extends StatefulWidget {
+class   ProductosJsonSearchPage extends StatefulWidget {
   @override
   _ProductosJsonSearchPageState createState() =>
       _ProductosJsonSearchPageState();
@@ -76,6 +76,7 @@ class _ProductosJsonSearchPageState extends State<ProductosJsonSearchPage> {
     //   productoInfo.forSearch = val;
     // });
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.blueAccent),
       body: SafeArea(
         child: SearchBar<Photo>(
           searchBarPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -128,8 +129,10 @@ class _ProductosJsonSearchPageState extends State<ProductosJsonSearchPage> {
               color: Colors.white,
               child: ListTile(
                 leading: IconButton(icon: Icon(Icons.add), 
-                onPressed: () {
+                onPressed: () async{
                   productoInfo.productosDB=[post.nombre_art,post.codigo_art];
+                  Navigator.pop(context);
+
                 }),
                 title: Text(post.nombre_art),
                 isThreeLine: true,
@@ -167,7 +170,6 @@ class Detail extends StatelessWidget {
 }
 
 //buscador termina
-
 List<Photo> temporal = [];
 Future<List<Photo>> fetchPhotos(http.Client client) async {
   final response =

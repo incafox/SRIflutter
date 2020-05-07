@@ -46,6 +46,7 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
     //   productoInfo.forSearch = val;
     // });
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: SearchBar<Photo>(
           searchBarPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -107,7 +108,7 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
               // height: 10,
               color: Colors.white,
               child: ListTile(
-                leading: IconButton(icon: Icon(Icons.add), 
+                leading: IconButton(icon: Icon(Icons.add_circle), 
                 onPressed: () {
                   // productoInfo.clienteElegido=Container(
                   //   // width: 500,
@@ -130,22 +131,26 @@ class _ClientesJsonSearchPageState extends State<ClientesJsonSearchPage> {
                   productoInfo.xml_cod_comprador = post.codigo_cli;
                   productoInfo.xml_razonSocial_comprador = post.nombre_cli;
                   productoInfo.xml_email_comprador = post.email_cli;
+                  
+                  Navigator.pop(context);
+
+
                 }),
                 title: Text(post.nombre_cli,textAlign: TextAlign.center),
                 isThreeLine: true,
                 subtitle: Column(
                   children: <Widget>[
-                    Text("cod. cliente : "+post.codigo_cli),
-                    Text("R.U.C.: "+post.rucci_cli),
-                    Text("email : "+post.email_cli),
-                    Text("telefono : "+post.telefo_cli),
+                    Container(width: 320,child: Text("cod. cliente  "+post.codigo_cli)),
+                    Container(width: 320,child: Text("R.U.C. "+post.rucci_cli)),
+                    Container(width: 320,child: Text("email  "+post.email_cli)),
+                    Container(width: 320,child: Text("telefono  "+post.telefo_cli)),
                     // Text(post.),
                   ],
                 ),
-                onTap: () {
-                  // Navigator.of(context)
-                  //     .push(MaterialPageRoute(builder: (context) => Detail()));
-                },
+                // onTap: () {
+                //   // Navigator.of(context)
+                //   //     .push(MaterialPageRoute(builder: (context) => Detail()));
+                // },
               ),
             );
           },

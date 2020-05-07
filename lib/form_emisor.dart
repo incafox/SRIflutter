@@ -155,8 +155,6 @@ class _FormEmisorState extends State<FormEmisor> {
         // pref.setString('estab',this.controller_estab.text);
         // pref.setString('ptoEmi',this.controller_ptoEmi.text);
         // pref.setString('dirMatriz',this.controller_dirMatriz.text);
-
-        
         //this.controller_ambiente.text;
         // productoInfo.tipoEmision= this.controller_tipoEmision.text;
         // productoInfo.razonSocial = this.controller.text;
@@ -168,8 +166,6 @@ class _FormEmisorState extends State<FormEmisor> {
 
         // print ("[cnotroller ]" + this.controller_ambiente.text);
         //print ( productoInfo.ambiente);
-
-
         //print ('sadsa');
       }),
         //key: _formKey,
@@ -179,33 +175,10 @@ class _FormEmisorState extends State<FormEmisor> {
               labelAlign: TextAlign.center,
               label: 'Datos de Emisor',
               color: Colors.blue,
-
             ),
-            // CardSettingsListPicker(contentAlign: TextAlign.center,
-            //   values: ['1','2'],
-            //   //hintText: 'ada',
-            //   //hintText: 'Seleccione',
-            //   label: 'Ambiente',
-            //   initialValue: '1',
-            //   options: ['Prueba','Produccion'],
-            //   onChanged: ((value) async{
-            //       print ('[valor] ' +value);
-            //       SharedPreferences prefs = await SharedPreferences.getInstance();
-            //       switch (int.parse(value)) {
-            //         case 1:
-            //         productoInfo.ambiente = 'prueba';
-            //             prefs.setString('ambiente', 'prueba');
-            //           break;
-            //         case 2:
-            //         productoInfo.ambiente = 'produccion';
-            //             prefs.setString('ambiente', 'produccion');
-            //           break;
-            //         default:
-            //       }
-            //       //prefs.setString('ambiente', value);
-            //   }),
-            // ),
-            CardSettingsText(hintText: 'sadad',
+            CardSettingsText(
+              enabled: false,
+              //hintText: 'sadad',
               //hintText: 'ayua',
               // controller: controller,
               labelWidth: 150,
@@ -233,21 +206,21 @@ class _FormEmisorState extends State<FormEmisor> {
             //     prefs.setString('tipoEmision', value);
             //   }),
             // ),
-            CardSettingsText(hintText: 'sadad',
-              //hintText: 'ayua',
-              controller: controller,
-              labelWidth: 150,
-              label: 'Tipo de emision',
-              initialValue: title,
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Title is required.';
-              },
-              onSaved: (value) => print ('dadsadddddd'),
-              onChanged: ((value) {
-                print ('dasdadsddddd');
+            // CardSettingsText(hintText: 'sadad',
+            //   //hintText: 'ayua',
+            //   controller: controller,
+            //   labelWidth: 150,
+            //   label: 'Tipo de emision',
+            //   initialValue: title,
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) return 'Title is required.';
+            //   },
+            //   onSaved: (value) => print ('dadsadddddd'),
+            //   onChanged: ((value) {
+            //     print ('dasdadsddddd');
 
-              }),
-            ),
+            //   }),
+            // ),
             CardSettingsText(
               enabled: false,
               // ,hintText: 'sadad',
@@ -262,17 +235,17 @@ class _FormEmisorState extends State<FormEmisor> {
               onSaved: (value) => print ('dadsadddddd'),
               onChanged: ((value) {
                 // print ('dasdadsddddd');
-
               }),
             ),
             CardSettingsText(
+              enabled: false,
               controller: controller_ruc,
               keyboardType: TextInputType.numberWithOptions(),
 
               maxLength: 13,
               autovalidate: true,
               labelWidth: 150,
-              label: 'Ruc',
+              label: 'R.U.C.',
               initialValue: productoInfo.xml_ruc,
               // hintText: 'ruc 13 digitos',
               validator: (value) {
@@ -292,24 +265,9 @@ class _FormEmisorState extends State<FormEmisor> {
                 });
               }),
             ),
-            // CardSettingsListPicker(
-            //   contentAlign: TextAlign.center,
-            //   values: ['01','03','04','05','06','07'],
-            //   //hintText: 'ada',
-            //   hintText: 'Factura',
-            //   label: 'Codigo Doc',
-            //   initialValue: 'Prueba',
-            //   options: ['Factura','Liquidacion', 'Nota de credito'
-            //     , 'Nota de debito','Guia de remision','comprobante de retencion'],
-            //   onChanged: ((value) {
-            //     //print (value);
-            //     // SharedPreferences prefs = await SharedPreferences.getInstance();
-            //     // prefs.setString('codDoc', value);
-            //   }),
-            // ),
             CardSettingsText(hintText: 'sadad',
               //hintText: 'ayua',
-              
+              enabled: false,
               labelWidth: 150,
               label: 'Codigo Doc.',
               initialValue: productoInfo.xml_codDoc,
@@ -321,7 +279,9 @@ class _FormEmisorState extends State<FormEmisor> {
                 print ('dasdadsddddd');
               }),
             ),
-            CardSettingsText(controller: controller_estab,
+            CardSettingsText(
+              enabled: false,
+              controller: controller_estab,
               hintText: 'Establecimiento',labelWidth: 150,
               label: 'Establecimiento',
               initialValue: productoInfo.xml_estab,
@@ -330,18 +290,23 @@ class _FormEmisorState extends State<FormEmisor> {
               // },
               // onSaved: (value) => url = value,
             ),
-            CardSettingsText(controller: controller_ptoEmi,
+            CardSettingsText(
+              controller: controller_ptoEmi,
+              enabled: false,
               labelWidth: 150,
               hintText: 'punto de emission',   
-              label: 'Punto Emision',
+              label: 'Punto de Emision',
               // initialValue: productoInfo.xml_ptoEmi,
               initialValue: productoInfo.xml_agenciaElegida
+              // initialValue: productoInfo.xml_ptoEmi
               // validator: (value) {
               //   //if (!value.startsWith('http:')) return 'Must be a valid website.';
               // },
               // onSaved: (value) => url = value,
             ),
-            CardSettingsText(controller: controller_dirMatriz,
+            CardSettingsText(
+              enabled: false,
+              // controller: controller_dirMatriz,
               labelWidth: 150,
               hintText: 'direccion matriz',
               label: 'Dir Matriz',

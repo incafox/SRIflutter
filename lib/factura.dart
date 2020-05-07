@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 //import 'package:dart_mssql/dart_mssql.dart';
@@ -176,6 +177,8 @@ class _FacturaPageState extends State<FacturaPage>
     return WillPopScope(
       onWillPop: (){
         productoInfo.clearProductosDB();
+        productoInfo.calcular_precio_final(); // actualiza los precios finales
+        
         return showDialog(
           context: context,
           builder: (context) => new AlertDialog(
@@ -287,7 +290,7 @@ class _FacturaPageState extends State<FacturaPage>
               // If true user is forced to close dial manually
               // by tapping main button and overlay is not rendered.
               closeManually: false,
-              curve: Curves.decelerate,
+              curve: Curves.slowMiddle,
               overlayColor: Colors.black54,
               overlayOpacity: 0.5,
               onOpen: () => print('OPENING DIAL'),
@@ -295,7 +298,7 @@ class _FacturaPageState extends State<FacturaPage>
               tooltip: 'Speed Dial',
               heroTag: 'speed-dial-hero-tag',
               backgroundColor: Colors.yellow,
-              foregroundColor: Colors.black,
+              foregroundColor: Colors.white,
               elevation: 4.0,
               shape: CircleBorder(),
               children: [
@@ -305,19 +308,19 @@ class _FacturaPageState extends State<FacturaPage>
                     label: 'Enviar Correo',
                     labelStyle: TextStyle(fontSize: 16.0),
                     onTap: () async {
-                      final Email email = Email(
-                        body: 'Envio adjunto factura',
-                        subject: 'Factura electronica',
-                        recipients: [
-                          productoInfo.cliente_email
-                        ], //el que va a recibir
-                        // cc: ['cc@example.com'],
-                        // bcc: ['bcc@example.com'],
-                        //attachmentPath: '/path/to/attachment.zip',
-                        isHTML: false,
-                      );
+                    print("nombre file " + productoInfo.xml_pdf_ticker_nombre);
+                    final p = await http.post('http://167.172.203.137/services/mssql/send_email',
+                            headers: <String, String>{
+                              'Content-Type': 'application/json; charset=UTF-8',
+                            },
+                            body: jsonEncode(<String, String>{
+                              'empresa_id': productoInfo.xml_empresaElegida,
+                              'filename': productoInfo.xml_pdf_ticker_nombre,
+                              'receptor': "efren_suarez@hotmail.com"//"lubeck05@gmail.com",
+                            }));
+                    
+                    print("[p ptm]" + p.body.toString());
 
-                      await FlutterEmailSender.send(email);
                     }),
                 SpeedDialChild(
                   child: Icon(Icons.cloud_upload),
@@ -325,21 +328,6 @@ class _FacturaPageState extends State<FacturaPage>
                   label: 'Enviar SRI',
                   labelStyle: TextStyle(fontSize: 16.0),
                   onTap: () async {
-                    // StackProductos x = productoInfo.stack;  // getDescripciones();
-                    // List<String> r = x.globalKey.currentState.getProductos();
-                    // for (var item in r) {
-                    //   print (item);
-                    // }
-                    // print('SECOND CHILD');
-                    // List<Widget> y = productoInfo.productos;
-
-                    // print('size > ' + y.length.toString());
-
-                    // List <String> r = productoInfo.descripciones;
-                    // List <String> co = productoInfo.costosUnitarios;
-                    // List <String> ca = productoInfo.cantidades;
-                    // List <String> to = productoInfo.totales;
-
                     // for (var i = 0; i < 10; i++) {
                     //   print('indice > ' + i.toString());
                     //   print (r[i].toString() + "=" +co[i].toString() +"=" + ca[i].toString() +"=" + to[i].toString());
@@ -350,7 +338,6 @@ class _FacturaPageState extends State<FacturaPage>
                     // for (var item in tmr) {
                     //   print (item);
                     // }
-
                     productoInfo.xml_controller_expanded.expanded = false;
                     productoInfo.xml_enabler = true;
                     double sinIm = 0;
@@ -359,12 +346,11 @@ class _FacturaPageState extends State<FacturaPage>
                     for (CartitaProducto i in productoInfo.productosDB) {
                       if (i.activo) {
                         contador+=1;
-                        sinIm += double.parse(i.finalPrecio.text);
+                        sinIm += double.parse(i.finalPrecioSinImpuesto.text);
                         conIm += double.parse(i.totalPrecioConImpuesto.text);
                       }
                             sinIm = double.parse(sinIm.toStringAsFixed(2));
                             conIm = double.parse(conIm.toStringAsFixed(2));
-
                       productoInfo.xml_precio_final_sin_im = sinIm.toString();
                       productoInfo.xml_precio_final_con_im = conIm.toString();
                       productoInfo.xml_precionfinalSin = sinIm.toString();
@@ -398,7 +384,6 @@ class _FacturaPageState extends State<FacturaPage>
                         );
                       },
                     );
-                    
                     }
                     //retorna habiso de completacion de proceso
                     else {
@@ -412,7 +397,6 @@ class _FacturaPageState extends State<FacturaPage>
                           }
                         );
                       }
-
                         if ( productoInfo.control_nombre_producto && 
                         !productoInfo.control_factura && productoInfo.control_ticket ){
                          return showDialog(
@@ -456,50 +440,42 @@ class _FacturaPageState extends State<FacturaPage>
                     //calcula el total
                     for (CartitaProducto i in productoInfo.productosDB) {
                       if (i.activo ) {
-                        sinIm += double.parse(i.finalPrecio.text);
+                        sinIm += double.parse(i.finalPrecioSinImpuesto.text);
                         // conIm += double.parse(i.totalPrecioConImpuesto.text);
                       }
                       if (i.activo && i.impuestoPorcentaje.text =='0'){
-                        total0 += double.parse(i.finalPrecio.text);   
+                        total0 += double.parse(i.finalPrecioSinImpuesto.text);   
                       }
                       // productoInfo.xml_precio_final_sin_im = sinIm.toString();
                       // productoInfo.xml_precio_final_con_im = conIm.toString();
                       // productoInfo.xml_precionfinalSin = sinIm.toString();
                       // productoInfo.xml_precionfinalCon = conIm.toString();
                     }
-                    
                     productoInfo.xml_precio_final_sin_im = sinIm.toString();
                     productoInfo.xml_precionfinalSin = sinIm.toString();
-                    
                     double temp3 = 0;
                     double total12 =0;
                     //calcula los de 12
                     for (CartitaProducto i in productoInfo.productosDB) {
                       if (i.activo && i.impuestoPorcentaje.text=="12") {
-                        temp3 += double.parse(i.finalPrecio.text);
+                        temp3 += double.parse(i.finalPrecioSinImpuesto.text);
                         // conIm += double.parse(i.totalPrecioConImpuesto.text);
                       }
                     }
                     total12 = (temp3 * 0.12) + temp3; 
-
                     double temp4 = 0;
                     double total14 = 0;
                     //calcula los de 14                    
                     for (CartitaProducto i in productoInfo.productosDB) {
                       if (i.activo && i.impuestoPorcentaje.text=="14") {
-                        temp4 += double.parse(i.finalPrecio.text);
+                        temp4 += double.parse(i.finalPrecioSinImpuesto.text);
                         // conIm += double.parse(i.totalPrecioConImpuesto.text);
                       }
                     }
-
                     total14 = (temp4*0.14) + temp4;
-
                     conIm = total0+total12+total14;
-
-                     productoInfo.xml_precio_final_con_im = conIm.toString();
+                    productoInfo.xml_precio_final_con_im = conIm.toString();
                     productoInfo.xml_precionfinalCon = conIm.toString();
-
-
                     print (productoInfo.get_xml_FINAL());
                     return showDialog(
                       context: context,

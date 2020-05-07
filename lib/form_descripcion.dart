@@ -226,7 +226,6 @@ class FormDescripcion extends StatelessWidget {
   final String total;
   final String impuesto;
 
-
   FormDescripcion({Key key,@required this.func,
                     @required this.descripcion,@required this.costoUnitario,
                     @required this.cantidad,@required this.total,
@@ -249,7 +248,6 @@ class FormDescripcion extends StatelessWidget {
   TextEditingController controller_cantidad  = TextEditingController(text: '1');
   TextEditingController controller_total  = TextEditingController(text: '0');
   TextEditingController controller_impuesto  = TextEditingController(text: '0');
-
 
   BoxDecoration myBoxDecoration() {
     return BoxDecoration(
@@ -366,7 +364,6 @@ class FormDescripcion extends StatelessWidget {
               maxLength: 70,
               // initialValue: productoInfo.lista,
               initialValue: controller_descripcion.text,
-
               // validator: (value) {
               //   if (value == null || value.isEmpty) return 'Title is required.';
               // },
